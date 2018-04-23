@@ -8,7 +8,7 @@
 <script>
 import * as hp from 'helper-js'
 import * as th from 'tree-helper'
-import TreeNode from '@/components/TreeNode'
+import TreeNode from './TreeNode'
 export default {
   props: {
     data: {},
@@ -17,6 +17,7 @@ export default {
     indentType: {default: 'margin'}, // margin/padding
     activatedClass: {default: 'active'},
     openedClass: {default: 'open'},
+    space: {default: 10}, // space between node, unit px
   },
   components: {TreeNode},
   data() {
@@ -25,6 +26,7 @@ export default {
       rootData: null,
       activated: [],
       opened: [],
+      idMapping: {},
     }
   },
   computed: {
@@ -33,25 +35,30 @@ export default {
     data: {
       immediate: true,
       handler(data) {
+        this.rootData = {children: data}
         const activated = []
         const opened = []
+        const idMapping = {}
         th.forIn(data, (item, k, parent) => {
           const compeletedData = {
-            open: false,
+            open: true,
             children: [],
             active: false,
             style: {},
             class: '',
+            innerStyle: {},
+            innerClass: '',
           }
           for (const key in compeletedData) {
             if (!item.hasOwnProperty(key)) {
               this.$set(item, key, compeletedData[key])
             }
           }
-          this.$set(data, 'parent', parent)
+          this.$set(item, 'parent', parent || this.rootData)
           if (!item.hasOwnProperty('_id')) {
             item._id = 'TreeNodeId_' + hp.strRand(this.idLength)
           }
+          idMapping[item._id] = item
           if (item.active) {
             activated.push(item)
           }
@@ -59,9 +66,9 @@ export default {
             opened.push(item)
           }
         })
-        this.rootData = {children: data}
         this.activated = activated
         this.opened = opened
+        this.idMapping = idMapping
       }
     }
   },
@@ -76,6 +83,8 @@ export default {
       delete t.active
       delete t.style
       delete t.class
+      delete t.innerStyle
+      delete t.innerClass
       if (withChildren && data.children) {
         t.children = data.children.slice()
         t.children.forEach((v, k) => {

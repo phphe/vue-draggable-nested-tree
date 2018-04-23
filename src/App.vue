@@ -3,12 +3,12 @@
 #app
   Tree(:data="data")
     div(slot-scope="{data, level, store}")
-      b(v-if="data.children.length" @click="store.toggleOpen(data)") {{data.open ? '-' : '+'}}&nbsp;
+      b(v-if="data.children && data.children.length" @click="store.toggleOpen(data)") {{data.open ? '-' : '+'}}&nbsp;
       span {{data.text}}
 </template>
 
 <script>
-import Tree from '@/components/Tree'
+import Tree from '@/components/DraggableTree'
 export default {
   components: {Tree},
   data() {
@@ -18,11 +18,20 @@ export default {
         {text: 'node 2'},
         {text: 'node 3'},
         {text: 'node 4'},
+        {text: 'node 4 undroppable', droppable: false},
         {text: 'node 5', children: [
           {text: 'node 1'},
           {text: 'node 2', children: [
             {text: 'node 3'},
             {text: 'node 4'},
+          ]},
+          {text: 'node 2 undroppable', droppable: false, children: [
+            {text: 'node 3'},
+            {text: 'node 4'},
+          ]},
+          {text: 'node 2', children: [
+            {text: 'node 3'},
+            {text: 'node 4 undroppable', droppable: false},
           ]},
           {text: 'node 3'},
           {text: 'node 4'},
@@ -39,5 +48,29 @@ export default {
 </script>
 
 <style lang="scss">
-#app{}
+#app{
+}
+.he-tree{
+  border: 1px solid #ccc;
+  padding: 20px;
+  display: inline-block;
+}
+.tree-node{
+}
+.tree-node-inner{
+  padding: 5px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+.draggable-placeholder{
+}
+.draggable-placeholder-inner{
+  border: 1px dashed #0088F8;
+  background: rgba(0, 136, 249, 0.09);
+  color: #0088f9;
+  text-align: center;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
 </style>

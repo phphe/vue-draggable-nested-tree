@@ -14,3 +14,6 @@ selenium-debug.log
 *.ntvs*
 *.njsproj
 *.sln
+
+# dev
+/src/components/autoMoveDragPlaceHolderDev.js
