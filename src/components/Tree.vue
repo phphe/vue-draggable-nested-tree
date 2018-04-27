@@ -8,13 +8,12 @@
 <script>
 import * as hp from 'helper-js'
 import * as th from 'tree-helper'
-import TreeNode from './TreeNode'
+import TreeNode from './TreeNode.vue'
 export default {
   props: {
     data: {},
     idLength: {default: 5},
     indent: {default: 16},
-    indentType: {default: 'margin'}, // margin/padding
     activatedClass: {default: 'active'},
     openedClass: {default: 'open'},
     space: {default: 10}, // space between node, unit px
@@ -34,8 +33,10 @@ export default {
   watch: {
     data: {
       immediate: true,
-      handler(data) {
-        this.rootData = {children: data}
+      handler(data, old) {
+        // make rootData always use a same object
+        this.rootData = this.rootData || {isRoot: true, _id: `tree_${this._uid}_node_root`}
+        this.rootData.children = data
         const activated = []
         const opened = []
         const idMapping = {}
@@ -48,6 +49,8 @@ export default {
             class: '',
             innerStyle: {},
             innerClass: '',
+            innerBackStyle: {},
+            innerBackClass: {},
           }
           for (const key in compeletedData) {
             if (!item.hasOwnProperty(key)) {
@@ -56,7 +59,7 @@ export default {
           }
           this.$set(item, 'parent', parent || this.rootData)
           if (!item.hasOwnProperty('_id')) {
-            item._id = 'TreeNodeId_' + hp.strRand(this.idLength)
+            item._id = `tree_${this._uid}_node_${hp.strRand(this.idLength)}`
           }
           idMapping[item._id] = item
           if (item.active) {
@@ -85,6 +88,13 @@ export default {
       delete t.class
       delete t.innerStyle
       delete t.innerClass
+      delete t.innerBackStyle
+      delete t.innerBackClass
+      for (const key of Object.keys(t)) {
+        if (key.startsWidth('_')) {
+          delete t[key]
+        }
+      }
       if (withChildren && data.children) {
         t.children = data.children.slice()
         t.children.forEach((v, k) => {

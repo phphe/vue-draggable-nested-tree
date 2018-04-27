@@ -1,7 +1,11 @@
 <!-- this is an example -->
 <template lang="pug">
-#app
-  Tree(:data="data")
+#app(style="height:10000px")
+  Tree(:data="data" draggable crossTree)
+    div(slot-scope="{data, level, store}")
+      b(v-if="data.children && data.children.length" @click="store.toggleOpen(data)") {{data.open ? '-' : '+'}}&nbsp;
+      span {{data.text}}
+  Tree(:data="data2" draggable crossTree)
     div(slot-scope="{data, level, store}")
       b(v-if="data.children && data.children.length" @click="store.toggleOpen(data)") {{data.open ? '-' : '+'}}&nbsp;
       span {{data.text}}
@@ -35,7 +39,19 @@ export default {
           ]},
           {text: 'node 3'},
           {text: 'node 4'},
+          {text: 'node 3'},
+          {text: 'node 4'},
+          {text: 'node 3'},
+          {text: 'node 4'},
+          {text: 'node 3'},
+          {text: 'node 4'},
         ]},
+      ],
+      data2: [
+        {text: 'node 1'},
+        {text: 'node 2'},
+        {text: 'node 3'},
+        {text: 'node 4'},
       ],
     }
   },
@@ -66,6 +82,7 @@ export default {
 }
 .draggable-placeholder-inner{
   border: 1px dashed #0088F8;
+  box-sizing: border-box;
   background: rgba(0, 136, 249, 0.09);
   color: #0088f9;
   text-align: center;

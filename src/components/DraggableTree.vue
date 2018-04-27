@@ -2,19 +2,23 @@
 import * as hp from 'helper-js'
 import * as th from 'tree-helper'
 import draggableHelper from 'draggable-helper'
-import TreeNode from './TreeNode'
-import Tree from './Tree'
-import autoMoveDragPlaceHolder from './autoMoveDragPlaceHolderDev'
-
+import TreeNode from './TreeNode.vue'
+import Tree from './Tree.vue'
+import autoMoveDragPlaceHolder from './autoMoveDragPlaceHolder'
+import * as ut from '../plugins/utils'
+window.dh = draggableHelper
 const trees = [] // for multiple trees
 // DragPlaceHolder, unique
 const dplh = {
-  _id: 'DragPlaceHolder',
+  _id: 'draggable_tree_drag_placeHolder',
+  droppable: false,
   isDragPlaceHolder: true,
   class: 'draggable-placeholder',
   style: {},
   innerStyle: {},
   innerClass: 'draggable-placeholder-inner',
+  innerBackStyle: {},
+  innerBackClass: 'draggable-placeholder-inner-back',
   // children: [],
 }
 
@@ -27,7 +31,7 @@ const DraggableNode = {
     }
     const {dplh} = this.store
     this.$watch('store.draggable', (draggable) => {
-      if (draggable) {
+      if (ut.isPropTrue(draggable)) {
         const triggerEl = this.store.getTriggerEl ? this.store.getTriggerEl(this) : this.$el.querySelector('.tree-node-inner')
         this._draggableDestroy = draggableHelper(triggerEl, {
           // trigger el
@@ -71,7 +75,8 @@ export default {
   extends: Tree,
   props: {
     getTriggerEl: {},
-    draggable: {default: true},
+    draggable: {},
+    droppable: {default: true},
     crossTree: {},
     isNodeDroppable: {type: Function},
     // todo hooks
@@ -86,11 +91,19 @@ export default {
     }
   },
   // computed: {},
-  // watch: {},
+  watch: {
+    idMapping: {
+      immediate: true,
+      handler(idMapping) {
+        idMapping[this.dplh._id] = this.dplh
+      }
+    }
+  },
   // methods: {},
-  // created() {},
-  mounted() {
+  created() {
     trees.push(this)
+  },
+  mounted() {
   },
   beforeDestroy() {
     hp.arrayRemove(trees, this)

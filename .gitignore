@@ -17,3 +17,4 @@ selenium-debug.log
 
 # dev
 /src/components/autoMoveDragPlaceHolderDev.js
+/src/components/_info.json
