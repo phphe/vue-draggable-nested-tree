@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v1.0.0
+ * vue-draggable-nested-tree v1.0.1
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -1037,6 +1037,10 @@ var DraggableTreeNode = {
               return false;
             }
 
+            if (!isNodeDraggable(_this.data)) {
+              return false;
+            }
+
             dplh.innerStyle.height = store.el.offsetHeight + 'px';
             insertAfter(dplh, _this.data);
             _this.data.class += ' dragging';
@@ -1068,6 +1072,18 @@ var DraggableTreeNode = {
     });
   }
 };
+
+function isNodeDraggable(node) {
+  while (!node.hasOwnProperty('draggable') && node.parent) {
+    node = node.parent;
+  }
+
+  if (node.hasOwnProperty('draggable')) {
+    return node.draggable;
+  } else {
+    return true;
+  }
+}
 
 var trees = []; // for multiple trees
 // DragPlaceHolder, unique

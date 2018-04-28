@@ -26,6 +26,9 @@ export default {
             if (this.store.ondragstart && this.store.ondragstart(this.data, this, e, opt, store) === false) {
               return false
             }
+            if (!isNodeDraggable(this.data)) {
+              return false
+            }
             dplh.innerStyle.height = store.el.offsetHeight + 'px'
             th.insertAfter(dplh, this.data)
             this.data.class += ' dragging'
@@ -53,5 +56,16 @@ export default {
       }
     }, {immediate: true})
   },
+}
+
+function isNodeDraggable(node) {
+  while (!node.hasOwnProperty('draggable') && node.parent) {
+    node = node.parent
+  }
+  if (node.hasOwnProperty('draggable')) {
+    return node.draggable
+  } else {
+    return true
+  }
 }
 </script>
