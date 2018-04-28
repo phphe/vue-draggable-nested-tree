@@ -400,7 +400,7 @@ function isPropTrue(v) {
 // 对 drag placeholder进行的操作
 
 var targets = {
-  'nothing': function nothing(input) {},
+  'nothing': function nothing(info) {},
   'after': function after(_ref) {
     var dplh = _ref.dplh,
         targetNode = _ref.targetNode,
@@ -425,15 +425,15 @@ var targets = {
     th.appendTo(dplh, targetNode);
     targetNode.open = true;
   },
-  'prepend': function prepend(input) {
-    var dplh = input.dplh,
-        targetNode = input.targetNode;
+  'prepend': function prepend(info) {
+    var dplh = info.dplh,
+        targetNode = info.targetNode;
     th.prependTo(dplh, targetNode);
     targetNode.open = true; // prepend may open a closed node which has children
 
     if (!targetNode.open) {
       targetNode.open = true;
-      resolveBranchDroppable(input, targetNode);
+      resolveBranchDroppable(info, targetNode);
     }
   },
   'after target parent': function afterTargetParent(_ref4) {
@@ -452,14 +452,14 @@ var targets = {
   }
 };
 
-function findChild(input, children, handler, reverse) {
+function findChild(info, children, handler, reverse) {
   var len = children.length;
 
   if (reverse) {
     for (var i = len - 1; i >= 0; i--) {
       var item = children[i]; // excluding dragging node
 
-      if (item !== input.node) {
+      if (item !== info.node) {
         if (handler(item, i)) {
           return item;
         }
@@ -469,7 +469,7 @@ function findChild(input, children, handler, reverse) {
     for (var _i = 0; _i < len; _i++) {
       var _item = children[_i]; // excluding dragging node
 
-      if (_item !== input.node) {
+      if (_item !== info.node) {
         if (handler(_item, _i)) {
           return _item;
         }
@@ -480,78 +480,78 @@ function findChild(input, children, handler, reverse) {
 
 var rules = {
   // 另一节点存在
-  'targetNode existed': function targetNodeExisted(input) {
-    return input.targetNode;
+  'targetNode existed': function targetNodeExisted(info) {
+    return info.targetNode;
   },
   // 另一节点是拖动占位节点
-  'targetNode is placeholder': function targetNodeIsPlaceholder(input) {
-    return input.targetNode.isDragPlaceHolder;
+  'targetNode is placeholder': function targetNodeIsPlaceholder(info) {
+    return info.targetNode.isDragPlaceHolder;
   },
   // 另一节点父级是根节点
-  'targetNode parent is root': function targetNodeParentIsRoot(input) {
-    return input.targetNode.parent.isRoot;
+  'targetNode parent is root': function targetNodeParentIsRoot(info) {
+    return info.targetNode.parent.isRoot;
   },
   // 拖动点坐标在任一树中, 同时, 起始树要可拖出, 当前树要可拖入
-  'currentTree existed': function currentTreeExisted(input) {
-    return input.currentTree;
+  'currentTree existed': function currentTreeExisted(info) {
+    return info.currentTree;
   },
   // 占位节点存在
-  'placeholder existed': function placeholderExisted(input) {
-    return input.dplhEl;
+  'placeholder existed': function placeholderExisted(info) {
+    return info.dplhEl;
   },
   // 占位节点在当前树中
-  'placeholder in currentTree': function placeholderInCurrentTree(input) {
-    return input.dplhElInCurrentTree;
+  'placeholder in currentTree': function placeholderInCurrentTree(info) {
+    return info.dplhElInCurrentTree;
   },
   // 占位节点在最上面
-  'placeholder at top': function placeholderAtTop(input) {
-    return input.dplhAtTop;
+  'placeholder at top': function placeholderAtTop(info) {
+    return info.dplhAtTop;
   },
   // 另一节点是打开的
-  'targetNode is open': function targetNodeIsOpen(input) {
-    return input.targetNode.open;
+  'targetNode is open': function targetNodeIsOpen(info) {
+    return info.targetNode.open;
   },
   // 另一节点是根节点
-  'targetNode is root': function targetNodeIsRoot(input) {
-    return input.targetNode.isRoot;
+  'targetNode is root': function targetNodeIsRoot(info) {
+    return info.targetNode.isRoot;
   },
   // 另一节点有子(不包括占位节点)
-  'targetNode has children excluding placeholder': function targetNodeHasChildrenExcludingPlaceholder(input) {
-    return findChild(input, input.targetNode.children, function (v) {
-      return v !== input.dplh;
+  'targetNode has children excluding placeholder': function targetNodeHasChildrenExcludingPlaceholder(info) {
+    return findChild(info, info.targetNode.children, function (v) {
+      return v !== info.dplh;
     });
   },
   // 另一节点可放置
-  'targetNode is droppable': function targetNodeIsDroppable(input) {
-    return input.targetNode._droppable;
+  'targetNode is droppable': function targetNodeIsDroppable(info) {
+    return info.targetNode._droppable;
   },
   // 另一节点是第一个节点
-  'targetNode is 1st child': function targetNodeIs1stChild(input) {
-    return findChild(input, input.targetNode.parent.children, function (v) {
+  'targetNode is 1st child': function targetNodeIs1stChild(info) {
+    return findChild(info, info.targetNode.parent.children, function (v) {
       return v;
-    }) === input.targetNode;
+    }) === info.targetNode;
   },
   // 另一节点是最后节点
-  'targetNode is last child': function targetNodeIsLastChild(input) {
-    return findChild(input, input.targetNode.parent.children, function (v) {
+  'targetNode is last child': function targetNodeIsLastChild(info) {
+    return findChild(info, info.targetNode.parent.children, function (v) {
       return v;
-    }, true) === input.targetNode;
+    }, true) === info.targetNode;
   },
   // 另一节点上一个节点可放置
-  'targetNode prev is droppable': function targetNodePrevIsDroppable(input) {
-    return input.targetPrev._droppable;
+  'targetNode prev is droppable': function targetNodePrevIsDroppable(info) {
+    return info.targetPrev._droppable;
   },
   // 当前位置在另一节点inner垂直中线上
-  'on targetNode middle': function onTargetNodeMiddle(input) {
-    return input.offset.y <= input.tiMiddleY;
+  'on targetNode middle': function onTargetNodeMiddle(info) {
+    return info.offset.y <= info.tiMiddleY;
   },
   // 当前位置在另一节点inner左边
-  'at left': function atLeft(input) {
-    return input.offset.x < input.tiOffset.x;
+  'at left': function atLeft(info) {
+    return info.offset.x < info.tiOffset.x;
   },
   // 当前位置在另一节点innner indent位置右边
-  'at indent right': function atIndentRight(input) {
-    return input.offset.x > input.tiOffset.x + input.currentTree.indent;
+  'at indent right': function atIndentRight(info) {
+    return info.offset.x > info.tiOffset.x + info.currentTree.indent;
   } // convert rule output to Boolean
 
 };
@@ -575,8 +575,8 @@ var prevTree; // context is vm
 // dhStore: draggable helper store
 
 function autoMoveDragPlaceHolder (e, opt, dhStore, trees) {
-  // make input // todo change input to info
-  var input = {
+  // make info
+  var info = {
     event: e,
     el: dhStore.el,
     vm: this,
@@ -589,7 +589,7 @@ function autoMoveDragPlaceHolder (e, opt, dhStore, trees) {
     } //
 
   };
-  attachCache(input, new Cache(), {
+  attachCache(info, new Cache(), {
     // dragging node coordinate
     // 拖动中的节点相关坐标
     nodeInnerEl: function nodeInnerEl() {
@@ -639,7 +639,7 @@ function autoMoveDragPlaceHolder (e, opt, dhStore, trees) {
         if (treeChanged) {
           // when move start or drag move into another tree
           // resolve _droppable
-          resolveBranchDroppable(input, currentTree.rootData);
+          resolveBranchDroppable(info, currentTree.rootData);
         }
 
         return currentTree;
@@ -725,6 +725,7 @@ function autoMoveDragPlaceHolder (e, opt, dhStore, trees) {
 
         if (!currentNode) {
           currentNode = children[0];
+          break;
         }
 
         if (!currentNode) {
@@ -779,7 +780,7 @@ function autoMoveDragPlaceHolder (e, opt, dhStore, trees) {
       var r;
 
       try {
-        r = rules[ruleId](input);
+        r = rules[ruleId](info);
       } catch (e) {
         r = e;
         console.warn("failed to execute rule '".concat(ruleId, "'"), e);
@@ -802,35 +803,35 @@ function autoMoveDragPlaceHolder (e, opt, dhStore, trees) {
                   if (exec('at left') === false) {
                     if (exec('targetNode is 1st child') === true) {
                       if (exec('at indent right') === true) {
-                        targets['append'](input);
+                        targets['append'](info);
                       } else if (exec('at indent right') === false) {
-                        targets['after'](input);
+                        targets['after'](info);
                       }
                     } else if (exec('targetNode is 1st child') === false) {
-                      targets['append'](input);
+                      targets['append'](info);
                     }
                   } else if (exec('at left') === true) {
-                    targets['after'](input);
+                    targets['after'](info);
                   }
                 } else if (exec('targetNode is droppable') === false) {
-                  targets['after'](input);
+                  targets['after'](info);
                 }
               } else if (exec('targetNode has children excluding placeholder') === true) {
                 if (exec('targetNode is droppable') === true) {
-                  targets['prepend'](input);
+                  targets['prepend'](info);
                 } else if (exec('targetNode is droppable') === false) {
-                  targets['after'](input);
+                  targets['after'](info);
                 }
               }
             } else if (exec('targetNode is open') === false) {
               if (exec('targetNode is droppable') === true) {
                 if (exec('at indent right') === false) {
-                  targets['after'](input);
+                  targets['after'](info);
                 } else if (exec('at indent right') === true) {
-                  targets['prepend'](input);
+                  targets['prepend'](info);
                 }
               } else if (exec('targetNode is droppable') === false) {
-                targets['after'](input);
+                targets['after'](info);
               }
             }
           } else if (exec('targetNode parent is root') === true) {
@@ -839,48 +840,48 @@ function autoMoveDragPlaceHolder (e, opt, dhStore, trees) {
                 if (exec('targetNode is droppable') === true) {
                   if (exec('targetNode is 1st child') === false) {
                     if (exec('targetNode prev is droppable') === false) {
-                      targets['append'](input);
+                      targets['append'](info);
                     } else if (exec('targetNode prev is droppable') === true) {
                       if (exec('on targetNode middle') === false) {
                         if (exec('at indent right') === false) {
-                          targets['after'](input);
+                          targets['after'](info);
                         } else if (exec('at indent right') === true) {
-                          targets['append'](input);
+                          targets['append'](info);
                         }
                       } else if (exec('on targetNode middle') === true) {
-                        targets['append'](input);
+                        targets['append'](info);
                       }
                     }
                   } else if (exec('targetNode is 1st child') === true) {
                     if (exec('on targetNode middle') === true) {
-                      targets['before'](input);
+                      targets['before'](info);
                     } else if (exec('on targetNode middle') === false) {
                       if (exec('at indent right') === true) {
-                        targets['append'](input);
+                        targets['append'](info);
                       } else if (exec('at indent right') === false) {
-                        targets['after'](input);
+                        targets['after'](info);
                       }
                     }
                   }
                 } else if (exec('targetNode is droppable') === false) {
                   if (exec('targetNode is 1st child') === false) {
-                    targets['after'](input);
+                    targets['after'](info);
                   } else if (exec('targetNode is 1st child') === true) {
                     if (exec('on targetNode middle') === true) {
-                      targets['before'](input);
+                      targets['before'](info);
                     } else if (exec('on targetNode middle') === false) {
-                      targets['after'](input);
+                      targets['after'](info);
                     }
                   }
                 }
               } else if (exec('targetNode has children excluding placeholder') === true) {
                 if (exec('targetNode is 1st child') === false) {
-                  targets['prepend'](input);
+                  targets['prepend'](info);
                 } else if (exec('targetNode is 1st child') === true) {
                   if (exec('on targetNode middle') === true) {
-                    targets['before'](input);
+                    targets['before'](info);
                   } else if (exec('on targetNode middle') === false) {
-                    targets['prepend'](input);
+                    targets['prepend'](info);
                   }
                 }
               }
@@ -888,72 +889,72 @@ function autoMoveDragPlaceHolder (e, opt, dhStore, trees) {
               if (exec('targetNode is 1st child') === true) {
                 if (exec('on targetNode middle') === false) {
                   if (exec('at indent right') === false) {
-                    targets['after'](input);
+                    targets['after'](info);
                   } else if (exec('at indent right') === true) {
-                    targets['prepend'](input);
+                    targets['prepend'](info);
                   }
                 } else if (exec('on targetNode middle') === true) {
-                  targets['before'](input);
+                  targets['before'](info);
                 }
               } else if (exec('targetNode is 1st child') === false) {
                 if (exec('at indent right') === true) {
-                  targets['prepend'](input);
+                  targets['prepend'](info);
                 } else if (exec('at indent right') === false) {
-                  targets['after'](input);
+                  targets['after'](info);
                 }
               }
             }
           }
         } else if (exec('placeholder in currentTree') === false) {
-          targets['append'](input);
+          targets['append'](info);
         }
       } else if (exec('placeholder existed') === false) {
-        targets['nothing'](input);
+        targets['nothing'](info);
       }
     } else if (exec('targetNode is placeholder') === true) {
       if (exec('targetNode parent is root') === false) {
         if (exec('targetNode is 1st child') === true) {
           if (exec('targetNode is last child') === true) {
             if (exec('at left') === false) {
-              targets['nothing'](input);
+              targets['nothing'](info);
             } else if (exec('at left') === true) {
-              targets['after target parent'](input);
+              targets['after target parent'](info);
             }
           } else if (exec('targetNode is last child') === false) {
-            targets['nothing'](input);
+            targets['nothing'](info);
           }
         } else if (exec('targetNode is 1st child') === false) {
           if (exec('targetNode is last child') === true) {
             if (exec('targetNode prev is droppable') === true) {
               if (exec('at left') === true) {
-                targets['after target parent'](input);
+                targets['after target parent'](info);
               } else if (exec('at left') === false) {
                 if (exec('at indent right') === true) {
-                  targets['append prev'](input);
+                  targets['append prev'](info);
                 } else if (exec('at indent right') === false) {
-                  targets['nothing'](input);
+                  targets['nothing'](info);
                 }
               }
             } else if (exec('targetNode prev is droppable') === false) {
               if (exec('at left') === false) {
-                targets['nothing'](input);
+                targets['nothing'](info);
               } else if (exec('at left') === true) {
-                targets['after target parent'](input);
+                targets['after target parent'](info);
               }
             }
           } else if (exec('targetNode is last child') === false) {
             if (exec('targetNode prev is droppable') === true) {
               if (exec('at left') === true) {
-                targets['nothing'](input);
+                targets['nothing'](info);
               } else if (exec('at left') === false) {
                 if (exec('at indent right') === true) {
-                  targets['append prev'](input);
+                  targets['append prev'](info);
                 } else if (exec('at indent right') === false) {
-                  targets['nothing'](input);
+                  targets['nothing'](info);
                 }
               }
             } else if (exec('targetNode prev is droppable') === false) {
-              targets['nothing'](input);
+              targets['nothing'](info);
             }
           }
         }
@@ -961,25 +962,26 @@ function autoMoveDragPlaceHolder (e, opt, dhStore, trees) {
         if (exec('targetNode is 1st child') === false) {
           if (exec('targetNode prev is droppable') === true) {
             if (exec('at left') === true) {
-              targets['nothing'](input);
+              targets['nothing'](info);
             } else if (exec('at left') === false) {
               if (exec('at indent right') === true) {
-                targets['append prev'](input);
+                targets['append prev'](info);
               } else if (exec('at indent right') === false) {
-                targets['nothing'](input);
+                targets['nothing'](info);
               }
             }
           } else if (exec('targetNode prev is droppable') === false) {
-            targets['nothing'](input);
+            targets['nothing'](info);
           }
         } else if (exec('targetNode is 1st child') === true) {
-          targets['nothing'](input);
+          targets['nothing'](info);
         }
       }
     }
   } else if (exec('currentTree existed') === false) {
-    targets['nothing'](input);
+    targets['nothing'](info);
   } // decision end =================================
+  //
 
 }
 
@@ -991,7 +993,7 @@ function getOf4(el, space) {
 } // branch is a node
 
 
-function resolveBranchDroppable(input, branch) {
+function resolveBranchDroppable(info, branch) {
   if (branch.hasOwnProperty('droppable')) {
     branch._droppable = branch.droppable;
   } else if (!branch.hasOwnProperty('_droppable')) {
@@ -1003,7 +1005,7 @@ function resolveBranchDroppable(input, branch) {
       return;
     }
 
-    if (item.isDragPlaceHolder || item === input.node) {
+    if (item.isDragPlaceHolder || item === info.node) {
       return 'skip children';
     }
 
@@ -1015,23 +1017,7 @@ function resolveBranchDroppable(input, branch) {
   });
 }
 
-window.dh = draggableHelper;
-var trees = []; // for multiple trees
-// DragPlaceHolder, unique
-
-var dplh = {
-  _id: 'draggable_tree_drag_placeHolder',
-  droppable: false,
-  isDragPlaceHolder: true,
-  class: 'draggable-placeholder',
-  style: {},
-  innerStyle: {},
-  innerClass: 'draggable-placeholder-inner',
-  innerBackStyle: {},
-  innerBackClass: 'draggable-placeholder-inner-back' // children: [],
-
-};
-var DraggableNode = {
+var DraggableTreeNode = {
   extends: TreeNode,
   name: 'TreeNode',
   mounted: function mounted() {
@@ -1063,7 +1049,7 @@ var DraggableNode = {
             console.log('drag start');
           },
           moving: function moving(e, opt, store) {
-            return autoMoveDragPlaceHolder.call(_this, e, opt, store, trees);
+            return autoMoveDragPlaceHolder.call(_this, e, opt, store, _this.store.trees);
           },
           drop: function drop(e, opt, store) {
             if (_this.store.ondragend && _this.store.ondragend(_this.data, _this, e, opt, store) === false) {// can't drop
@@ -1088,6 +1074,22 @@ var DraggableNode = {
     });
   }
 };
+
+var trees = []; // for multiple trees
+// DragPlaceHolder, unique
+
+var dplh = {
+  _id: 'draggable_tree_drag_placeHolder',
+  droppable: false,
+  isDragPlaceHolder: true,
+  class: 'draggable-placeholder',
+  style: {},
+  innerStyle: {},
+  innerClass: 'draggable-placeholder-inner',
+  innerBackStyle: {},
+  innerBackClass: 'draggable-placeholder-inner-back' // children: [],
+
+};
 var DraggableTree = {
   extends: Tree,
   props: {
@@ -1099,16 +1101,22 @@ var DraggableTree = {
     crossTree: {},
     isNodeDroppable: {
       type: Function
-    } // todo hooks
-
+    },
+    ondragstart: {
+      type: Function
+    },
+    ondragend: {
+      type: Function
+    }
   },
   components: {
-    TreeNode: DraggableNode
+    TreeNode: DraggableTreeNode
   },
   data: function data() {
     return {
       // DragPlaceHolder
-      dplh: dplh
+      dplh: dplh,
+      trees: trees
     };
   },
   // computed: {},
@@ -1133,3 +1141,4 @@ var DraggableTree = {
 exports.Tree = Tree;
 exports.TreeNode = TreeNode;
 exports.DraggableTree = DraggableTree;
+exports.DraggableTreeNode = DraggableTreeNode;
