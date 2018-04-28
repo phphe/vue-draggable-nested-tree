@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v1.0.1
+ * vue-draggable-nested-tree v1.0.2
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -1103,15 +1103,14 @@ var dplh = {
 var DraggableTree = {
   extends: Tree,
   props: {
-    getTriggerEl: {},
+    getTriggerEl: {
+      type: Function
+    },
     draggable: {},
     droppable: {
       default: true
     },
     crossTree: {},
-    isNodeDroppable: {
-      type: Function
-    },
     ondragstart: {
       type: Function
     },

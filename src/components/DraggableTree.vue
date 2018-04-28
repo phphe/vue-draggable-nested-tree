@@ -23,11 +23,10 @@ const dplh = {
 export default {
   extends: Tree,
   props: {
-    getTriggerEl: {},
+    getTriggerEl: {type: Function},
     draggable: {},
     droppable: {default: true},
     crossTree: {},
-    isNodeDroppable: {type: Function},
     ondragstart: {type: Function},
     ondragend: {type: Function},
   },
