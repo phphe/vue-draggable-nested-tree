@@ -53,8 +53,9 @@ data: [
 ```pug
 Tree(:data="data" draggable crossTree)
   div(slot-scope="{data, level, store}")
-    b(v-if="data.children && data.children.length" @click="store.toggleOpen(data)") {{data.open ? '-' : '+'}}&nbsp;
-    span {{data.text}}
+    template(v-if="!data.isDragPlaceHolder")
+      b(v-if="data.children && data.children.length" @click="store.toggleOpen(data)") {{data.open ? '-' : '+'}}&nbsp;
+      span {{data.text}}
 ```
 # api
 ### Tree props
