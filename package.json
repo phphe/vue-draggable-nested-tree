@@ -1,6 +1,6 @@
 {
   "name": "vue-draggable-nested-tree",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A Vue.js project",
   "main": "dist/vue-draggable-nested-tree.cjs.js",
   "module": "dist/vue-draggable-nested-tree.es.js",

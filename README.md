@@ -133,3 +133,8 @@ droppable // default true
   align-items: center;
 }
 ```
+# other
+### Traverse tree
+Recommend to use my other library [tree-helper](https://github.com/phphe/tree-helper). It has 2 traverse methods: depthFirstSearch, breadthFirstSearch.
+### draggable library
+[draggable-helper](https://github.com/phphe/draggable-helper) is my another library for drag. And it also is using by this component. You can use it to help you drag functions.
