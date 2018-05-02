@@ -373,13 +373,9 @@ export default function(e, opt, dhStore, trees) {
                     if (exec('targetNode prev is droppable') === false) {
                       targets['append'](info)
                     } else if (exec('targetNode prev is droppable') === true) {
-                      if (exec('on targetNode middle') === false) {
-                        if (exec('at indent right') === false) {
-                          targets['after'](info)
-                        } else if (exec('at indent right') === true) {
-                          targets['append'](info)
-                        }
-                      } else if (exec('on targetNode middle') === true) {
+                      if (exec('at indent right') === false) {
+                        targets['after'](info)
+                      } else if (exec('at indent right') === true) {
                         targets['append'](info)
                       }
                     }
@@ -513,6 +509,7 @@ export default function(e, opt, dhStore, trees) {
     targets['nothing'](info)
   }
   // decision end =================================
+
   //
 }
 

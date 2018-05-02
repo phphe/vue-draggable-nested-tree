@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v1.0.3
+ * vue-draggable-nested-tree v1.0.5
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -842,13 +842,9 @@ function autoMoveDragPlaceHolder (e, opt, dhStore, trees) {
                     if (exec('targetNode prev is droppable') === false) {
                       targets['append'](info);
                     } else if (exec('targetNode prev is droppable') === true) {
-                      if (exec('on targetNode middle') === false) {
-                        if (exec('at indent right') === false) {
-                          targets['after'](info);
-                        } else if (exec('at indent right') === true) {
-                          targets['append'](info);
-                        }
-                      } else if (exec('on targetNode middle') === true) {
+                      if (exec('at indent right') === false) {
+                        targets['after'](info);
+                      } else if (exec('at indent right') === true) {
                         targets['append'](info);
                       }
                     }
