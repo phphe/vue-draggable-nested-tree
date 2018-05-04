@@ -32,7 +32,7 @@ export default {
             dplh.innerStyle.height = store.el.offsetHeight + 'px'
             th.insertAfter(dplh, this.data)
             this.data.class += ' dragging'
-            console.log('drag start');
+            // console.log('drag start');
           },
           moving: (e, opt, store) => {
             return autoMoveDragPlaceHolder.call(this, e, opt, store, this.store.trees)
@@ -45,7 +45,7 @@ export default {
             }
             hp.arrayRemove(dplh.parent.children, dplh)
             this.data.class = this.data.class.replace(/(^| )dragging( |$)/g, ' ')
-            console.log('drag end');
+            // console.log('drag end');
           },
         })
       } else {
