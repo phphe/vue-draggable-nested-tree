@@ -42,6 +42,14 @@ export default {
     },
   },
   watch: {
+    data: {
+      immediate: true,
+      handler(data) {
+        if (data) {
+          data._vm = this
+        }
+      }
+    },
     'data.parent': {
       immediate: true,
       handler(parent, old) {

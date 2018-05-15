@@ -30,6 +30,8 @@ export default {
     crossTree: {},
     ondragstart: {type: Function},
     ondragend: {type: Function},
+    isNodeDraggable: {type: Function},
+    isNodeDroppable: {type: Function},
   },
   components: {
     TreeNode: DraggableTreeNode,

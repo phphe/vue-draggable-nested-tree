@@ -74,6 +74,8 @@ droppable: {default: true}, // is the tree droppable, default true
 crossTree: {}, // can a node of the tree be dragged into other tree, or receive other tree node
 ondragstart: {type: Function}, // hook. return false to prevent drag. arguments(node, nodeVm, store, event, draggable helper option, draggable helper store)
 ondragend: {type: Function}, // hook. return false to prevent drop. arguments(node, nodeVm, store, event, draggable helper option, draggable helper store)
+isNodeDraggable: {type: Function}, // hook. arguments(node, nodeVm, store). Please check 'draggable & droppable' below
+isNodeDroppable: {type: Function}, // hook. arguments(node, nodeVm, store). Please check 'draggable & droppable' below
 ```
 ### Tree properties
 ```js
@@ -90,7 +92,7 @@ change(node, nodeVm, store), // after drop, only when the node position changed
 ```
 ### Tree methods
 ```js
-pure(node, withChildren) // return a node data without runtime properties.
+pure(node, withChildren) // return a node data without runtime properties.(!: property which starts with '_' will be removed)
 activeNode(node, inactiveOld)
 toggleActive(node, inactiveOld)
 openNode(node, closeOld)
@@ -100,6 +102,7 @@ toggleOpen(node, closeOld)
 ```js
 // base
 _id
+_vm
 parent
 children: [],
 open,
@@ -112,8 +115,8 @@ innerClass: '',
 innerBackStyle: {},
 innerBackClass: {},
 // draggable
-draggable // default true
-droppable // default true
+draggable // default true. Please check 'draggable & droppable' below
+droppable // default true. Please check 'draggable & droppable' below
 ```
 ### demo css
 ```css
@@ -143,6 +146,8 @@ droppable // default true
 }
 ```
 # other
+### draggable & droppable <a name="draggable_droppable"></a>
+A node is default draggable and droppable. You can set draggable and droppable property of a node. The another way is use hooks: isNodeDraggable and isNodeDroppable. The hook will override draggable or droppable property.
 ### Traverse tree
 Recommend to use my other library [tree-helper](https://github.com/phphe/tree-helper). It has 2 traverse methods: depthFirstSearch, breadthFirstSearch.
 ### draggable library

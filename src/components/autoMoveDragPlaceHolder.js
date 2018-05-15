@@ -522,11 +522,19 @@ function getOf4(el, space) {
 
 // branch is a node
 function resolveBranchDroppable(info, branch) {
-  if (branch.hasOwnProperty('droppable')) {
-    branch._droppable = branch.droppable
-  } else if (!branch.hasOwnProperty('_droppable')) {
-    branch._droppable = true
+  let isNodeDroppable
+  if (info.store.isNodeDroppable) {
+    isNodeDroppable = info.store.isNodeDroppable
+  } else {
+    isNodeDroppable = (node, nodeVm, store) => {
+      if (node.hasOwnProperty('droppable')) {
+        return node.droppable
+      } else {
+        return true
+      }
+    }
   }
+  branch._droppable = isNodeDroppable(branch, branch._vm, branch._vm.store)
   th.depthFirstSearch(branch, (item, i, parent) => {
     if (item === branch) {
       return
@@ -534,7 +542,7 @@ function resolveBranchDroppable(info, branch) {
     if (item.isDragPlaceHolder || item === info.node) {
       return 'skip children'
     }
-    item._droppable = item.hasOwnProperty('droppable') ? item.droppable : parent._droppable
+    item._droppable = isNodeDroppable(item, item._vm, item._vm.store)
     if (!item.open) {
       return 'skip children'
     }

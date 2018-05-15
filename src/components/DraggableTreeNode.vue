@@ -26,7 +26,7 @@ export default {
             if (this.store.ondragstart && this.store.ondragstart(this.data, this, this.store, e, opt, store) === false) {
               return false
             }
-            if (!isNodeDraggable(this.data)) {
+            if (!isNodeDraggable(this.data, this)) {
               return false
             }
             // record start positon
@@ -71,14 +71,15 @@ export default {
   },
 }
 
-function isNodeDraggable(node) {
-  while (!node.hasOwnProperty('draggable') && node.parent) {
-    node = node.parent
-  }
-  if (node.hasOwnProperty('draggable')) {
+function isNodeDraggable(node, nodeVm) {
+  const {store} = nodeVm
+  if (store.isNodeDraggable) {
+    return store.isNodeDraggable(node, nodeVm, store)
+  } else if (node.hasOwnProperty('draggable')) {
     return node.draggable
   } else {
     return true
   }
 }
+
 </script>

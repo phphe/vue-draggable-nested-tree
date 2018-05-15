@@ -1,7 +1,7 @@
 <!-- this is an example -->
 <template lang="pug">
 #app(style="height:10000px")
-  Tree(:data="data" draggable crossTree)
+  Tree(:data="data" draggable crossTree :isNodeDroppable="isNodeDroppable")
     div(slot-scope="{data, store}")
       b(v-if="data.children && data.children.length" @click="store.toggleOpen(data)") {{data.open ? '-' : '+'}}&nbsp;
       span {{data.text}}-level:{{data.level}}
@@ -57,7 +57,11 @@ export default {
   },
   // computed: {},
   // watch: {},
-  // methods: {},
+  methods: {
+    isNodeDroppable(node, nodeVm, store) {
+      return node.level < 3
+    },
+  },
   // created() {},
   // mounted() {},
 }
