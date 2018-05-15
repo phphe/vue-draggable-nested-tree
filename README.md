@@ -58,6 +58,7 @@ Tree(:data="data" draggable crossTree)
       span {{data.text}}
 ```
 # api
+**The 'store' is the tree vm**
 ### Tree props
 ```js
 // base tree
@@ -71,8 +72,8 @@ getTriggerEl: {type: Function}, // get the el trigger drag, default is node self
 draggable: {}, // is the tree draggable, default false
 droppable: {default: true}, // is the tree droppable, default true
 crossTree: {}, // can a node of the tree be dragged into other tree, or receive other tree node
-ondragstart: {type: Function}, // hook. return false to prevent drag. arguments(node, nodeVm, this, event, draggable helper option, draggable helper store)
-ondragend: {type: Function}, // hook. return false to prevent drop. arguments(node, nodeVm, this, event, draggable helper option, draggable helper store)
+ondragstart: {type: Function}, // hook. return false to prevent drag. arguments(node, nodeVm, store, event, draggable helper option, draggable helper store)
+ondragend: {type: Function}, // hook. return false to prevent drop. arguments(node, nodeVm, store, event, draggable helper option, draggable helper store)
 ```
 ### Tree properties
 ```js
@@ -84,8 +85,8 @@ idMapping: {}, // key: node id, value: node
 ### Tree events
 ```js
 // store is the tree vm
-drop(node, store), // after drop. It is a bit like ondragend. It is after ondragend.
-change(node, store), // after drop, only when the node position changed
+drop(node, nodeVm, store), // after drop. It is a bit like ondragend. It is after ondragend.
+change(node, nodeVm, store), // after drop, only when the node position changed
 ```
 ### Tree methods
 ```js

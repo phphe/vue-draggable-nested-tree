@@ -23,7 +23,7 @@ export default {
           minTranslate: 10,
           drag: (e, opt, store) => {
             // this store is not tree
-            if (this.store.ondragstart && this.store.ondragstart(this.data, this, e, opt, store) === false) {
+            if (this.store.ondragstart && this.store.ondragstart(this.data, this, this.store, e, opt, store) === false) {
               return false
             }
             if (!isNodeDraggable(this.data)) {
@@ -42,7 +42,7 @@ export default {
             return autoMoveDragPlaceHolder.call(this, e, opt, store, this.store.trees)
           },
           drop: (e, opt, store) => {
-            if (this.store.ondragend && this.store.ondragend(this.data, this, e, opt, store) === false) {
+            if (this.store.ondragend && this.store.ondragend(this.data, this, this.store, e, opt, store) === false) {
               // can't drop, no change
             } else {
               th.insertAfter(this.data, dplh)
@@ -53,11 +53,11 @@ export default {
               if (siblings === this.startPosition.siblings && siblings.indexOf(this.data) === this.startPosition.index) {
                 // not moved
               } else {
-                this.store.$emit('change', this.data, this)
+                this.store.$emit('change', this.data, this, this.store)
               }
               delete this.startPosition
             }
-            this.store.$emit('drop', this.data, this)
+            this.store.$emit('drop', this.data, this, this.store)
             // console.log('drag end');
           },
         })
