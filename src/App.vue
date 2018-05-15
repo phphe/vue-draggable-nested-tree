@@ -2,13 +2,13 @@
 <template lang="pug">
 #app(style="height:10000px")
   Tree(:data="data" draggable crossTree)
-    div(slot-scope="{data, level, store}")
+    div(slot-scope="{data, store}")
       b(v-if="data.children && data.children.length" @click="store.toggleOpen(data)") {{data.open ? '-' : '+'}}&nbsp;
-      span {{data.text}}
+      span {{data.text}}-level:{{data.level}}
   Tree(:data="data2" draggable crossTree)
-    div(slot-scope="{data, level, store}")
+    div(slot-scope="{data, store}")
       b(v-if="data.children && data.children.length" @click="store.toggleOpen(data)") {{data.open ? '-' : '+'}}&nbsp;
-      span {{data.text}}
+      span {{data.text}}-level:{{data.level}}
 </template>
 
 <script>

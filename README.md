@@ -52,7 +52,7 @@ data: [
 ### template
 ```pug
 Tree(:data="data" draggable crossTree)
-  div(slot-scope="{data, level, store}")
+  div(slot-scope="{data, store}")
     template(v-if="!data.isDragPlaceHolder")
       b(v-if="data.children && data.children.length" @click="store.toggleOpen(data)") {{data.open ? '-' : '+'}}&nbsp;
       span {{data.text}}
@@ -102,6 +102,7 @@ _id
 parent
 children: [],
 open,
+level,
 active: false,
 style: {},
 class: '',

@@ -1,8 +1,8 @@
 <template lang="pug">
 .he-tree.tree
-  TreeNode(:data="rootData" :level="0" :store="store")
+  TreeNode(:data="rootData" :store="store")
     template(slot-scope="props")
-      slot(:data="props.data" :level="props.level" :store="store")
+      slot(:data="props.data" :store="store")
 </template>
 
 <script>
@@ -35,12 +35,12 @@ export default {
       immediate: true,
       handler(data, old) {
         // make rootData always use a same object
-        this.rootData = this.rootData || {isRoot: true, _id: `tree_${this._uid}_node_root`}
+        this.rootData = this.rootData || {isRoot: true, _id: `tree_${this._uid}_node_root`, level: 0}
         this.rootData.children = data
         const activated = []
         const opened = []
         const idMapping = {}
-        th.forIn(data, (item, k, parent) => {
+        th.breadthFirstSearch(data, (item, k, parent) => {
           const compeletedData = {
             open: true,
             children: [],
@@ -58,6 +58,7 @@ export default {
             }
           }
           this.$set(item, 'parent', parent || this.rootData)
+          this.$set(item, 'level', item.parent.level + 1)
           if (!item.hasOwnProperty('_id')) {
             item._id = `tree_${this._uid}_node_${hp.strRand(this.idLength)}`
           }
@@ -76,6 +77,14 @@ export default {
     }
   },
   methods: {
+    updateBranchLevel(branch, startLevel = branch.parent.level + 1) {
+      branch.level = startLevel
+      if (branch.children && branch.children.length > 0) {
+        th.breadthFirstSearch(branch.children, (node, i, p) => {
+          node.level = node.parent.level + 1
+        })
+      }
+    },
     // pure node self
     pure(node, withChildren) {
       const t = Object.assign({}, node)
@@ -83,6 +92,7 @@ export default {
       delete t.parent
       delete t.children
       delete t.open
+      delete t.level
       delete t.active
       delete t.style
       delete t.class

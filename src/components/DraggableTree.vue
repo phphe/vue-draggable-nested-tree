@@ -9,6 +9,7 @@ const trees = [] // for multiple trees
 // DragPlaceHolder, unique
 const dplh = {
   _id: 'draggable_tree_drag_placeHolder',
+  level: null,
   droppable: false,
   isDragPlaceHolder: true,
   class: 'draggable-placeholder',
