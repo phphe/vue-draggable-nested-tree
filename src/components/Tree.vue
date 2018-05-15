@@ -77,8 +77,8 @@ export default {
   },
   methods: {
     // pure node self
-    pure(data, withChildren) {
-      const t = Object.assign({}, data)
+    pure(node, withChildren) {
+      const t = Object.assign({}, node)
       delete t._id
       delete t.parent
       delete t.children
@@ -95,8 +95,8 @@ export default {
           delete t[key]
         }
       }
-      if (withChildren && data.children) {
-        t.children = data.children.slice()
+      if (withChildren && node.children) {
+        t.children = node.children.slice()
         t.children.forEach((v, k) => {
           t.children[k] = this.pure(v, withChildren)
         })

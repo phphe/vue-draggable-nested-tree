@@ -29,6 +29,10 @@ export default {
             if (!isNodeDraggable(this.data)) {
               return false
             }
+            // record start positon
+            const siblings = this.data.parent.children
+            this.startPosition = {siblings, index: siblings.indexOf(this.data)}
+            //
             dplh.innerStyle.height = store.el.offsetHeight + 'px'
             th.insertAfter(dplh, this.data)
             this.data.class += ' dragging'
@@ -39,12 +43,21 @@ export default {
           },
           drop: (e, opt, store) => {
             if (this.store.ondragend && this.store.ondragend(this.data, this, e, opt, store) === false) {
-              // can't drop
+              // can't drop, no change
             } else {
               th.insertAfter(this.data, dplh)
+              hp.arrayRemove(dplh.parent.children, dplh)
+              this.data.class = this.data.class.replace(/(^| )dragging( |$)/g, ' ')
+              // emit change event if changed
+              const siblings = this.data.parent.children
+              if (siblings === this.startPosition.siblings && siblings.indexOf(this.data) === this.startPosition.index) {
+                // not moved
+              } else {
+                this.store.$emit('change', this.data, this)
+              }
+              delete this.startPosition
             }
-            hp.arrayRemove(dplh.parent.children, dplh)
-            this.data.class = this.data.class.replace(/(^| )dragging( |$)/g, ' ')
+            this.store.$emit('drop', this.data, this)
             // console.log('drag end');
           },
         })

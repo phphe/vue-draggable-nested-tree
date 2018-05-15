@@ -81,9 +81,15 @@ activated: [], // activated nodes
 opened: [], // opened nodes
 idMapping: {}, // key: node id, value: node
 ```
+### Tree events
+```js
+// store is the tree vm
+drop(node, store), // after drop. It is a bit like ondragend. It is after ondragend.
+change(node, store), // after drop, only when the node position changed
+```
 ### Tree methods
 ```js
-pure(data, withChildren) // return a node data without runtime properties.
+pure(node, withChildren) // return a node data without runtime properties.
 activeNode(node, inactiveOld)
 toggleActive(node, inactiveOld)
 openNode(node, closeOld)
