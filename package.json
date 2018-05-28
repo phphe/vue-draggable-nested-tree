@@ -6,6 +6,10 @@
   "module": "dist/vue-draggable-nested-tree.es.js",
   "author": "phphe <phphe@outlook.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/phphe/vue-draggable-nested-tree.git"
+  },
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
