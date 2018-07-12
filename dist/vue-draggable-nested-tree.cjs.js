@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v2.0.0
+ * vue-draggable-nested-tree v2.0.2
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -265,7 +265,7 @@ var Tree = {
       for (var _i = 0; _i < _arr.length; _i++) {
         var key = _arr[_i];
 
-        if (key.startsWidth('_')) {
+        if (key[0] === '_') {
           delete t[key];
         }
       }

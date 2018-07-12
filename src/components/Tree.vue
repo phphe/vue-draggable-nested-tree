@@ -101,7 +101,7 @@ export default {
       delete t.innerBackStyle
       delete t.innerBackClass
       for (const key of Object.keys(t)) {
-        if (key.startsWidth('_')) {
+        if (key[0] === '_') {
           delete t[key]
         }
       }
