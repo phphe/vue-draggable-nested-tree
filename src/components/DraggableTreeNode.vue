@@ -23,10 +23,11 @@ export default {
           minTranslate: 10,
           drag: (e, opt, store) => {
             // this store is not tree
-            if (this.store.ondragstart && this.store.ondragstart(this.data, this, this.store, e, opt, store) === false) {
+            const draggableHelperInfo = {event: e, options: opt, store}
+            if (this.store.ondragstart && this.store.ondragstart(this.data, draggableHelperInfo) === false) {
               return false
             }
-            if (!isNodeDraggable(this.data, this)) {
+            if (!isNodeDraggable(this.data)) {
               return false
             }
             // record start positon
@@ -36,35 +37,43 @@ export default {
             dplh.innerStyle.height = store.el.offsetHeight + 'px'
             th.insertAfter(dplh, this.data)
             this.data.class += ' dragging'
+            this.store.$emit('drag', this.data)
             // console.log('drag start');
           },
           moving: (e, opt, store) => {
-            return autoMoveDragPlaceHolder.call(this, e, opt, store, this.store.trees)
+            const draggableHelperInfo = {event: e, options: opt, store}
+            return autoMoveDragPlaceHolder.call(this, draggableHelperInfo)
           },
           drop: (e, opt, store) => {
-            if (this.store.ondragend && this.store.ondragend(this.data, this, this.store, e, opt, store) === false) {
+            const draggableHelperInfo = {event: e, options: opt, store}
+            if (this.store.ondragend && this.store.ondragend(this.data, draggableHelperInfo) === false) {
               // can't drop, no change
             } else {
+              const targetTree = dplh._vm.store
+              const crossTree = targetTree !== this.store
+              const oldTree = crossTree ? this.store : null
               th.insertAfter(this.data, dplh)
               hp.arrayRemove(dplh.parent.children, dplh)
               this.data.class = this.data.class.replace(/(^| )dragging( |$)/g, ' ')
+              targetTree.$emit('drop', this.data, targetTree, oldTree)
+              oldTree && oldTree.$emit('drop', this.data, targetTree, oldTree)
               // emit change event if changed
               const siblings = this.data.parent.children
               if (siblings === this.startPosition.siblings && siblings.indexOf(this.data) === this.startPosition.index) {
                 // not moved
               } else {
-                this.store.$emit('change', this.data, this, this.store)
+                this.store.$emit('change', this.data, targetTree, oldTree)
+                oldTree && oldTree.$emit('change', this.data, targetTree, oldTree)
               }
-              delete this.startPosition
+              this.startPosition = null
             }
-            this.store.$emit('drop', this.data, this, this.store)
             // console.log('drag end');
           },
         })
       } else {
         if (this._draggableDestroy) {
           this._draggableDestroy()
-          delete this._draggableDestroy
+          this._draggableDestroy = null
         }
       }
     }, {immediate: true})
@@ -72,10 +81,7 @@ export default {
 }
 
 function isNodeDraggable(node, nodeVm) {
-  const {store} = nodeVm
-  if (store.isNodeDraggable) {
-    return store.isNodeDraggable(node, nodeVm, store)
-  } else if (node.hasOwnProperty('draggable')) {
+  if (node.hasOwnProperty('draggable')) {
     return node.draggable
   } else {
     return true

@@ -20,10 +20,10 @@ export default {
     data: {},
     store: {},
   },
-  data() {
-    return {
-    }
-  },
+  // data() {
+  //   return {
+  //   }
+  // },
   computed: {
     isRoot() {return this.data.level === 0},
     childrenVisible() {
@@ -47,6 +47,9 @@ export default {
       handler(data) {
         if (data) {
           data._vm = this
+          if (!data._treeNodePropertiesCompleted && !data.isRoot) {
+            this.store.compeleteNode(data, this.$parent.data)
+          }
         }
       }
     },

@@ -8,7 +8,9 @@
 <script>
 import * as hp from 'helper-js'
 import * as th from 'tree-helper'
+import * as ut from '../utils.js'
 import TreeNode from './TreeNode.vue'
+
 export default {
   props: {
     data: {},
@@ -23,60 +25,50 @@ export default {
     return {
       store: this,
       rootData: null,
-      activated: [],
-      opened: [],
-      idMapping: {},
     }
   },
-  computed: {
-  },
+  // computed: {},
   watch: {
     data: {
       immediate: true,
       handler(data, old) {
+        if (data === old) {
+          return
+        }
         // make rootData always use a same object
         this.rootData = this.rootData || {isRoot: true, _id: `tree_${this._uid}_node_root`, level: 0}
-        this.rootData.children = data
-        const activated = []
-        const opened = []
-        const idMapping = {}
-        th.breadthFirstSearch(data, (item, k, parent) => {
-          const compeletedData = {
-            open: true,
-            children: [],
-            active: false,
-            style: {},
-            class: '',
-            innerStyle: {},
-            innerClass: '',
-            innerBackStyle: {},
-            innerBackClass: {},
-          }
-          for (const key in compeletedData) {
-            if (!item.hasOwnProperty(key)) {
-              this.$set(item, key, compeletedData[key])
-            }
-          }
-          this.$set(item, 'parent', parent || this.rootData)
-          this.$set(item, 'level', item.parent.level + 1)
-          if (!item.hasOwnProperty('_id')) {
-            item._id = `tree_${this._uid}_node_${hp.strRand(this.idLength)}`
-          }
-          idMapping[item._id] = item
-          if (item.active) {
-            activated.push(item)
-          }
-          if (item.open) {
-            opened.push(item)
-          }
+        th.breadthFirstSearch(data, (node, k, parent) => {
+          this.compeleteNode(node, parent)
         })
-        this.activated = activated
-        this.opened = opened
-        this.idMapping = idMapping
+        this.rootData.children = data
       }
     }
   },
   methods: {
+    compeleteNode(node, parent) {
+      const compeletedData = {
+        open: true,
+        children: [],
+        active: false,
+        style: {},
+        class: '',
+        innerStyle: {},
+        innerClass: '',
+        innerBackStyle: {},
+        innerBackClass: {},
+      }
+      for (const key in compeletedData) {
+        if (!node.hasOwnProperty(key)) {
+          this.$set(node, key, compeletedData[key])
+        }
+      }
+      this.$set(node, 'parent', parent || this.rootData)
+      this.$set(node, 'level', node.parent.level + 1)
+      if (!node.hasOwnProperty('_id')) {
+        node._id = `tree_${this._uid}_node_${hp.strRand(this.idLength)}`
+      }
+      node._treeNodePropertiesCompleted = true
+    },
     updateBranchLevel(branch, startLevel = branch.parent.level + 1) {
       branch.level = startLevel
       if (branch.children && branch.children.length > 0) {
@@ -113,14 +105,41 @@ export default {
       }
       return t
     },
+    getNodeById(id) {
+      let r
+      th.breadthFirstSearch(this.rootData.children, (node) => {
+        if (node._id === id) {
+          r = node
+          return false
+        }
+      })
+      return r
+    },
+    getActivated() {
+      const r = []
+      th.breadthFirstSearch(this.rootData.children, (node) => {
+        if (node.active) {
+          r.push(node)
+        }
+      })
+      return r
+    },
+    getOpened() {
+      const r = []
+      th.breadthFirstSearch(this.rootData.children, (node) => {
+        if (node.open) {
+          r.push(node)
+        }
+      })
+      return r
+    },
     activeNode(node, inactiveOld) {
+      let {activated} = this
       if (inactiveOld) {
-        this.activated.forEach(item => {
-          item.active = false
+        this.getActivated().forEach(node2 => {
+          node2.active = false
         })
-        this.activated = []
       }
-      this.activated.push(node)
       node.active = true
     },
     toggleActive(node, inactiveOld) {
@@ -131,13 +150,12 @@ export default {
       }
     },
     openNode(node, closeOld) {
+      let {opened} = this
       if (closeOld) {
-        this.opened.forEach(item => {
-          item.open = false
+        this.getOpened().forEach(node2 => {
+          node2.open = false
         })
-        this.opened = []
       }
-      this.opened.push(node)
       node.open = true
     },
     toggleOpen(node, closeOld) {
@@ -146,6 +164,12 @@ export default {
       } else {
         this.openNode(node, closeOld)
       }
+    },
+    getPureData() {
+      return this.pure(this.rootData, true).children
+    },
+    deleteNode(node) {
+      return hp.arrayRemove(node.parent.children, node)
     },
   },
   // created() {},

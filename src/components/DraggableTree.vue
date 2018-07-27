@@ -30,8 +30,6 @@ export default {
     crossTree: {},
     ondragstart: {type: Function},
     ondragend: {type: Function},
-    isNodeDraggable: {type: Function},
-    isNodeDroppable: {type: Function},
   },
   components: {
     TreeNode: DraggableTreeNode,
@@ -44,14 +42,7 @@ export default {
     }
   },
   // computed: {},
-  watch: {
-    idMapping: {
-      immediate: true,
-      handler(idMapping) {
-        idMapping[this.dplh._id] = this.dplh
-      }
-    }
-  },
+  // watch: {},
   // methods: {},
   created() {
     trees.push(this)

@@ -133,19 +133,20 @@ for (const key of Object.keys(rules)) {
 
 let prevTree
 // context is vm
-// dhStore: draggable helper store
-export default function(e, opt, dhStore, trees) {
+export default function(draggableHelperInfo) {
+  const trees = this.store.trees
+  const dhStore = draggableHelperInfo.store
   // make info
   const info = {
-    event: e,
+    event: draggableHelperInfo.event,
     el: dhStore.el,
     vm: this,
     node: this.data,
     store: this.store,
     dplh: this.store.dplh,
     draggableHelperData: {
-      opt,
-      store: dhStore
+      opt: draggableHelperInfo.options,
+      store: dhStore,
     }
   }
   //
@@ -302,7 +303,7 @@ export default function(e, opt, dhStore, trees) {
     },
     targetPrev() {
       const id = this.targetPrevEl.getAttribute('id')
-      return this.currentTree.idMapping[id]
+      return this.currentTree.getNodeById(id)
     },
   })
   // attachCache end
@@ -317,7 +318,10 @@ export default function(e, opt, dhStore, trees) {
         r = rules[ruleId](info)
       } catch (e) {
         r = e
-        console.warn(`failed to execute rule '${ruleId}'`, e);
+        if (process.env.DEVELOPE_SELF) {
+          // only visible when develop its self
+          console.warn(`failed to execute rule '${ruleId}'`, e);
+        }
       }
       executedRuleCache[ruleId] = r
     }
@@ -522,19 +526,14 @@ function getOf4(el, space) {
 
 // branch is a node
 function resolveBranchDroppable(info, branch) {
-  let isNodeDroppable
-  if (info.store.isNodeDroppable) {
-    isNodeDroppable = info.store.isNodeDroppable
-  } else {
-    isNodeDroppable = (node, nodeVm, store) => {
-      if (node.hasOwnProperty('droppable')) {
-        return node.droppable
-      } else {
-        return true
-      }
+  const isNodeDroppable = (node) => {
+    if (node.hasOwnProperty('droppable')) {
+      return node.droppable
+    } else {
+      return true
     }
   }
-  branch._droppable = isNodeDroppable(branch, branch._vm, branch._vm.store)
+  branch._droppable = isNodeDroppable(branch)
   th.depthFirstSearch(branch, (item, i, parent) => {
     if (item === branch) {
       return
@@ -542,7 +541,7 @@ function resolveBranchDroppable(info, branch) {
     if (item.isDragPlaceHolder || item === info.node) {
       return 'skip children'
     }
-    item._droppable = isNodeDroppable(item, item._vm, item._vm.store)
+    item._droppable = isNodeDroppable(item)
     if (!item.open) {
       return 'skip children'
     }
