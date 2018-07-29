@@ -61,13 +61,13 @@ export default {
         }
       })
       nodeLevels = nodeLevels - node.level + 1
-      const childNodeMaxLevel = maxLevel - nodeLevels + 1
+      const childNodeMaxLevel = maxLevel - nodeLevels
       //
       th.depthFirstSearch(this.originalData, (childNode) => {
         if (childNode === node) {
           return 'skip children'
         }
-        childNode.droppable = childNode.level < childNodeMaxLevel
+        this.$set(childNode, 'droppable', childNode.level <= childNodeMaxLevel)
       })
     },
   },
