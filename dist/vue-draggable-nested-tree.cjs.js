@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v2.0.2
+ * vue-draggable-nested-tree v2.1.0
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -66,9 +66,10 @@ var TreeNode = {
     data: {},
     store: {}
   },
-  data: function data() {
-    return {};
-  },
+  // data() {
+  //   return {
+  //   }
+  // },
   computed: {
     isRoot: function isRoot() {
       return this.data.level === 0;
@@ -96,6 +97,10 @@ var TreeNode = {
       handler: function handler(data) {
         if (data) {
           data._vm = this;
+
+          if (!data._treeNodePropertiesCompleted && !data.isRoot) {
+            this.store.compeleteNode(data, this.$parent.data);
+          }
         }
       }
     },
@@ -165,73 +170,62 @@ var Tree = {
   data: function data() {
     return {
       store: this,
-      rootData: null,
-      activated: [],
-      opened: [],
-      idMapping: {}
+      rootData: null
     };
   },
-  computed: {},
+  // computed: {},
   watch: {
     data: {
       immediate: true,
       handler: function handler(data, old) {
         var _this = this;
 
-        // make rootData always use a same object
+        if (data === old) {
+          return;
+        } // make rootData always use a same object
+
+
         this.rootData = this.rootData || {
           isRoot: true,
           _id: "tree_".concat(this._uid, "_node_root"),
           level: 0
         };
-        this.rootData.children = data;
-        var activated = [];
-        var opened = [];
-        var idMapping = {};
-        th.breadthFirstSearch(data, function (item, k, parent) {
-          var compeletedData = {
-            open: true,
-            children: [],
-            active: false,
-            style: {},
-            class: '',
-            innerStyle: {},
-            innerClass: '',
-            innerBackStyle: {},
-            innerBackClass: {}
-          };
-
-          for (var key in compeletedData) {
-            if (!item.hasOwnProperty(key)) {
-              _this.$set(item, key, compeletedData[key]);
-            }
-          }
-
-          _this.$set(item, 'parent', parent || _this.rootData);
-
-          _this.$set(item, 'level', item.parent.level + 1);
-
-          if (!item.hasOwnProperty('_id')) {
-            item._id = "tree_".concat(_this._uid, "_node_").concat(hp.strRand(_this.idLength));
-          }
-
-          idMapping[item._id] = item;
-
-          if (item.active) {
-            activated.push(item);
-          }
-
-          if (item.open) {
-            opened.push(item);
-          }
+        th.breadthFirstSearch(data, function (node, k, parent) {
+          _this.compeleteNode(node, parent);
         });
-        this.activated = activated;
-        this.opened = opened;
-        this.idMapping = idMapping;
+        this.rootData.children = data;
       }
     }
   },
   methods: {
+    compeleteNode: function compeleteNode(node, parent) {
+      var compeletedData = {
+        open: true,
+        children: [],
+        active: false,
+        style: {},
+        class: '',
+        innerStyle: {},
+        innerClass: '',
+        innerBackStyle: {},
+        innerBackClass: {}
+      };
+
+      for (var key in compeletedData) {
+        if (!node.hasOwnProperty(key)) {
+          this.$set(node, key, compeletedData[key]);
+        }
+      }
+
+      this.$set(node, 'parent', parent || this.rootData);
+      this.$set(node, 'level', node.parent.level + 1);
+
+      if (!node.hasOwnProperty('_id')) {
+        node._id = "tree_".concat(this._uid, "_node_").concat(hp.strRand(this.idLength));
+      }
+
+      node._treeNodePropertiesCompleted = true;
+    },
     updateBranchLevel: function updateBranchLevel(branch) {
       var startLevel = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : branch.parent.level + 1;
       branch.level = startLevel;
@@ -279,15 +273,43 @@ var Tree = {
 
       return t;
     },
+    getNodeById: function getNodeById(id) {
+      var r;
+      th.breadthFirstSearch(this.rootData.children, function (node) {
+        if (node._id === id) {
+          r = node;
+          return false;
+        }
+      });
+      return r;
+    },
+    getActivated: function getActivated() {
+      var r = [];
+      th.breadthFirstSearch(this.rootData.children, function (node) {
+        if (node.active) {
+          r.push(node);
+        }
+      });
+      return r;
+    },
+    getOpened: function getOpened() {
+      var r = [];
+      th.breadthFirstSearch(this.rootData.children, function (node) {
+        if (node.open) {
+          r.push(node);
+        }
+      });
+      return r;
+    },
     activeNode: function activeNode(node, inactiveOld) {
+      var activated = this.activated;
+
       if (inactiveOld) {
-        this.activated.forEach(function (item) {
-          item.active = false;
+        this.getActivated().forEach(function (node2) {
+          node2.active = false;
         });
-        this.activated = [];
       }
 
-      this.activated.push(node);
       node.active = true;
     },
     toggleActive: function toggleActive(node, inactiveOld) {
@@ -298,14 +320,14 @@ var Tree = {
       }
     },
     openNode: function openNode(node, closeOld) {
+      var opened = this.opened;
+
       if (closeOld) {
-        this.opened.forEach(function (item) {
-          item.open = false;
+        this.getOpened().forEach(function (node2) {
+          node2.open = false;
         });
-        this.opened = [];
       }
 
-      this.opened.push(node);
       node.open = true;
     },
     toggleOpen: function toggleOpen(node, closeOld) {
@@ -314,6 +336,12 @@ var Tree = {
       } else {
         this.openNode(node, closeOld);
       }
+    },
+    getPureData: function getPureData() {
+      return this.pure(this.rootData, true).children;
+    },
+    deleteNode: function deleteNode(node) {
+      return hp.arrayRemove(node.parent.children, node);
     }
   } // created() {},
   // mounted() {},
@@ -471,6 +499,14 @@ var targets = {
         targetPrev = _ref5.targetPrev;
     th.appendTo(dplh, targetPrev);
     targetPrev.open = true;
+  },
+  // append to root
+  'append root': function appendRoot(_ref6) {
+    var dplh = _ref6.dplh,
+        targetNode = _ref6.targetNode,
+        node = _ref6.node,
+        targetPrev = _ref6.targetPrev;
+    th.appendTo(dplh, targetNode._vm.store.rootData);
   }
 };
 
@@ -594,19 +630,20 @@ for (var _i2 = 0; _i2 < _arr.length; _i2++) {
 }
 
 var prevTree; // context is vm
-// dhStore: draggable helper store
 
-function autoMoveDragPlaceHolder (e, opt, dhStore, trees) {
-  // make info
+function autoMoveDragPlaceHolder (draggableHelperInfo) {
+  var trees = this.store.trees;
+  var dhStore = draggableHelperInfo.store; // make info
+
   var info = {
-    event: e,
+    event: draggableHelperInfo.event,
     el: dhStore.el,
     vm: this,
     node: this.data,
     store: this.store,
     dplh: this.store.dplh,
     draggableHelperData: {
-      opt: opt,
+      opt: draggableHelperInfo.options,
       store: dhStore
     } //
 
@@ -790,7 +827,7 @@ function autoMoveDragPlaceHolder (e, opt, dhStore, trees) {
     },
     targetPrev: function targetPrev() {
       var id = this.targetPrevEl.getAttribute('id');
-      return this.currentTree.idMapping[id];
+      return this.currentTree.getNodeById(id);
     }
   }); // attachCache end
   // decision start =================================
@@ -805,7 +842,11 @@ function autoMoveDragPlaceHolder (e, opt, dhStore, trees) {
         r = rules[ruleId](info);
       } catch (e) {
         r = e;
-        console.warn("failed to execute rule '".concat(ruleId, "'"), e);
+
+        if (process.env.DEVELOPE_SELF) {
+          // only visible when develop its self
+          console.warn("failed to execute rule '".concat(ruleId, "'"), e);
+        }
       }
 
       executedRuleCache[ruleId] = r;
@@ -815,8 +856,8 @@ function autoMoveDragPlaceHolder (e, opt, dhStore, trees) {
   };
 
   if (exec('currentTree existed') === true) {
-    if (exec('targetNode is placeholder') === false) {
-      if (exec('placeholder existed') === true) {
+    if (exec('placeholder existed') === true) {
+      if (exec('targetNode is placeholder') === false) {
         if (exec('placeholder in currentTree') === true) {
           if (exec('targetNode parent is root') === false) {
             if (exec('targetNode is open') === true) {
@@ -836,13 +877,29 @@ function autoMoveDragPlaceHolder (e, opt, dhStore, trees) {
                     targets['after'](info);
                   }
                 } else if (exec('targetNode is droppable') === false) {
-                  targets['after'](info);
+                  if (exec('targetNode is 1st child') === true) {
+                    targets['nothing'](info);
+                  } else if (exec('targetNode is 1st child') === false) {
+                    if (exec('targetNode is last child') === true) {
+                      if (exec('on targetNode middle') === false) {
+                        targets['append root'](info);
+                      } else if (exec('on targetNode middle') === true) {
+                        targets['nothing'](info);
+                      }
+                    } else if (exec('targetNode is last child') === false) {
+                      targets['nothing'](info);
+                    }
+                  }
                 }
               } else if (exec('targetNode has children excluding placeholder') === true) {
                 if (exec('targetNode is droppable') === true) {
                   targets['prepend'](info);
                 } else if (exec('targetNode is droppable') === false) {
-                  targets['after'](info);
+                  if (exec('targetNode prev is droppable') === true) {
+                    targets['after'](info);
+                  } else if (exec('targetNode prev is droppable') === false) {
+                    targets['nothing'](info);
+                  }
                 }
               }
             } else if (exec('targetNode is open') === false) {
@@ -883,24 +940,28 @@ function autoMoveDragPlaceHolder (e, opt, dhStore, trees) {
                   }
                 } else if (exec('targetNode is droppable') === false) {
                   if (exec('targetNode is 1st child') === false) {
-                    targets['after'](info);
+                    if (exec('targetNode prev is droppable') === true) {
+                      targets['after'](info);
+                    } else if (exec('targetNode prev is droppable') === false) {
+                      targets['nothing'](info);
+                    }
+                  } else if (exec('targetNode is 1st child') === true) {
+                    targets['nothing'](info);
+                  }
+                }
+              } else if (exec('targetNode has children excluding placeholder') === true) {
+                if (exec('targetNode is droppable') === true) {
+                  if (exec('targetNode is 1st child') === false) {
+                    targets['prepend'](info);
                   } else if (exec('targetNode is 1st child') === true) {
                     if (exec('on targetNode middle') === true) {
                       targets['before'](info);
                     } else if (exec('on targetNode middle') === false) {
-                      targets['after'](info);
+                      targets['prepend'](info);
                     }
                   }
-                }
-              } else if (exec('targetNode has children excluding placeholder') === true) {
-                if (exec('targetNode is 1st child') === false) {
-                  targets['prepend'](info);
-                } else if (exec('targetNode is 1st child') === true) {
-                  if (exec('on targetNode middle') === true) {
-                    targets['before'](info);
-                  } else if (exec('on targetNode middle') === false) {
-                    targets['prepend'](info);
-                  }
+                } else if (exec('targetNode is droppable') === false) {
+                  targets['nothing'](info);
                 }
               }
             } else if (exec('targetNode is open') === false) {
@@ -926,75 +987,79 @@ function autoMoveDragPlaceHolder (e, opt, dhStore, trees) {
         } else if (exec('placeholder in currentTree') === false) {
           targets['append'](info);
         }
-      } else if (exec('placeholder existed') === false) {
-        targets['nothing'](info);
-      }
-    } else if (exec('targetNode is placeholder') === true) {
-      if (exec('targetNode parent is root') === false) {
-        if (exec('targetNode is 1st child') === true) {
-          if (exec('targetNode is last child') === true) {
-            if (exec('at left') === false) {
-              targets['nothing'](info);
-            } else if (exec('at left') === true) {
-              targets['after target parent'](info);
-            }
-          } else if (exec('targetNode is last child') === false) {
-            targets['nothing'](info);
-          }
-        } else if (exec('targetNode is 1st child') === false) {
-          if (exec('targetNode is last child') === true) {
-            if (exec('targetNode prev is droppable') === true) {
-              if (exec('at left') === true) {
-                targets['after target parent'](info);
-              } else if (exec('at left') === false) {
-                if (exec('at indent right') === true) {
-                  targets['append prev'](info);
-                } else if (exec('at indent right') === false) {
-                  targets['nothing'](info);
-                }
-              }
-            } else if (exec('targetNode prev is droppable') === false) {
+      } else if (exec('targetNode is placeholder') === true) {
+        if (exec('targetNode parent is root') === false) {
+          if (exec('targetNode is 1st child') === true) {
+            if (exec('targetNode is last child') === true) {
               if (exec('at left') === false) {
                 targets['nothing'](info);
               } else if (exec('at left') === true) {
                 targets['after target parent'](info);
               }
+            } else if (exec('targetNode is last child') === false) {
+              targets['nothing'](info);
             }
-          } else if (exec('targetNode is last child') === false) {
-            if (exec('targetNode prev is droppable') === true) {
-              if (exec('at left') === true) {
-                targets['nothing'](info);
-              } else if (exec('at left') === false) {
-                if (exec('at indent right') === true) {
-                  targets['append prev'](info);
-                } else if (exec('at indent right') === false) {
+          } else if (exec('targetNode is 1st child') === false) {
+            if (exec('targetNode is last child') === true) {
+              if (exec('targetNode prev is droppable') === true) {
+                if (exec('at left') === true) {
+                  targets['after target parent'](info);
+                } else if (exec('at left') === false) {
+                  if (exec('at indent right') === true) {
+                    targets['append prev'](info);
+                  } else if (exec('at indent right') === false) {
+                    targets['nothing'](info);
+                  }
+                }
+              } else if (exec('targetNode prev is droppable') === false) {
+                if (exec('at left') === false) {
                   targets['nothing'](info);
+                } else if (exec('at left') === true) {
+                  targets['after target parent'](info);
                 }
               }
-            } else if (exec('targetNode prev is droppable') === false) {
-              targets['nothing'](info);
-            }
-          }
-        }
-      } else if (exec('targetNode parent is root') === true) {
-        if (exec('targetNode is 1st child') === false) {
-          if (exec('targetNode prev is droppable') === true) {
-            if (exec('at left') === true) {
-              targets['nothing'](info);
-            } else if (exec('at left') === false) {
-              if (exec('at indent right') === true) {
-                targets['append prev'](info);
-              } else if (exec('at indent right') === false) {
+            } else if (exec('targetNode is last child') === false) {
+              if (exec('targetNode prev is droppable') === true) {
+                if (exec('at left') === true) {
+                  targets['nothing'](info);
+                } else if (exec('at left') === false) {
+                  if (exec('at indent right') === true) {
+                    targets['append prev'](info);
+                  } else if (exec('at indent right') === false) {
+                    targets['nothing'](info);
+                  }
+                }
+              } else if (exec('targetNode prev is droppable') === false) {
                 targets['nothing'](info);
               }
             }
-          } else if (exec('targetNode prev is droppable') === false) {
+          }
+        } else if (exec('targetNode parent is root') === true) {
+          if (exec('targetNode is 1st child') === false) {
+            if (exec('targetNode is last child') === false) {
+              if (exec('targetNode prev is droppable') === true) {
+                if (exec('at left') === true) {
+                  targets['nothing'](info);
+                } else if (exec('at left') === false) {
+                  if (exec('at indent right') === true) {
+                    targets['append prev'](info);
+                  } else if (exec('at indent right') === false) {
+                    targets['nothing'](info);
+                  }
+                }
+              } else if (exec('targetNode prev is droppable') === false) {
+                targets['nothing'](info);
+              }
+            } else if (exec('targetNode is last child') === true) {
+              targets['nothing'](info);
+            }
+          } else if (exec('targetNode is 1st child') === true) {
             targets['nothing'](info);
           }
-        } else if (exec('targetNode is 1st child') === true) {
-          targets['nothing'](info);
         }
       }
+    } else if (exec('placeholder existed') === false) {
+      targets['nothing'](info);
     }
   } else if (exec('currentTree existed') === false) {
     targets['nothing'](info);
@@ -1012,21 +1077,15 @@ function getOf4(el, space) {
 
 
 function resolveBranchDroppable(info, branch) {
-  var isNodeDroppable;
+  var isNodeDroppable = function isNodeDroppable(node) {
+    if (node.hasOwnProperty('droppable')) {
+      return node.droppable;
+    } else {
+      return true;
+    }
+  };
 
-  if (info.store.isNodeDroppable) {
-    isNodeDroppable = info.store.isNodeDroppable;
-  } else {
-    isNodeDroppable = function isNodeDroppable(node, nodeVm, store) {
-      if (node.hasOwnProperty('droppable')) {
-        return node.droppable;
-      } else {
-        return true;
-      }
-    };
-  }
-
-  branch._droppable = isNodeDroppable(branch, branch._vm, branch._vm.store);
+  branch._droppable = isNodeDroppable(branch);
   th.depthFirstSearch(branch, function (item, i, parent) {
     if (item === branch) {
       return;
@@ -1036,7 +1095,7 @@ function resolveBranchDroppable(info, branch) {
       return 'skip children';
     }
 
-    item._droppable = isNodeDroppable(item, item._vm, item._vm.store);
+    item._droppable = isNodeDroppable(item);
 
     if (!item.open) {
       return 'skip children';
@@ -1066,11 +1125,17 @@ var DraggableTreeNode = {
           minTranslate: 10,
           drag: function drag(e, opt, store) {
             // this store is not tree
-            if (_this.store.ondragstart && _this.store.ondragstart(_this.data, _this, _this.store, e, opt, store) === false) {
+            var draggableHelperInfo = {
+              event: e,
+              options: opt,
+              store: store
+            };
+
+            if (_this.store.ondragstart && _this.store.ondragstart(_this.data, draggableHelperInfo) === false) {
               return false;
             }
 
-            if (!isNodeDraggable(_this.data, _this)) {
+            if (!isNodeDraggable(_this.data)) {
               return false;
             } // record start positon
 
@@ -1083,29 +1148,48 @@ var DraggableTreeNode = {
             };
             dplh.innerStyle.height = store.el.offsetHeight + 'px';
             th.insertAfter(dplh, _this.data);
-            _this.data.class += ' dragging'; // console.log('drag start');
+            _this.data.class += ' dragging';
+
+            _this.store.$emit('drag', _this.data); // console.log('drag start');
+
           },
           moving: function moving(e, opt, store) {
-            return autoMoveDragPlaceHolder.call(_this, e, opt, store, _this.store.trees);
+            var draggableHelperInfo = {
+              event: e,
+              options: opt,
+              store: store
+            };
+            return autoMoveDragPlaceHolder.call(_this, draggableHelperInfo);
           },
           drop: function drop(e, opt, store) {
-            if (_this.store.ondragend && _this.store.ondragend(_this.data, _this, _this.store, e, opt, store) === false) {// can't drop, no change
+            var draggableHelperInfo = {
+              event: e,
+              options: opt,
+              store: store
+            };
+
+            if (_this.store.ondragend && _this.store.ondragend(_this.data, draggableHelperInfo) === false) {// can't drop, no change
             } else {
+              var targetTree = dplh._vm.store;
+              var crossTree = targetTree !== _this.store;
+              var oldTree = crossTree ? _this.store : null;
               th.insertAfter(_this.data, dplh);
               hp.arrayRemove(dplh.parent.children, dplh);
-              _this.data.class = _this.data.class.replace(/(^| )dragging( |$)/g, ' '); // emit change event if changed
+              _this.data.class = _this.data.class.replace(/(^| )dragging( |$)/g, ' ');
+              targetTree.$emit('drop', _this.data, targetTree, oldTree);
+              oldTree && oldTree.$emit('drop', _this.data, targetTree, oldTree); // emit change event if changed
 
               var siblings = _this.data.parent.children;
 
               if (siblings === _this.startPosition.siblings && siblings.indexOf(_this.data) === _this.startPosition.index) {// not moved
               } else {
-                _this.store.$emit('change', _this.data, _this, _this.store);
+                _this.store.$emit('change', _this.data, targetTree, oldTree);
+
+                oldTree && oldTree.$emit('change', _this.data, targetTree, oldTree);
               }
 
-              delete _this.startPosition;
-            }
-
-            _this.store.$emit('drop', _this.data, _this, _this.store); // console.log('drag end');
+              _this.startPosition = null;
+            } // console.log('drag end');
 
           }
         });
@@ -1113,7 +1197,7 @@ var DraggableTreeNode = {
         if (_this._draggableDestroy) {
           _this._draggableDestroy();
 
-          delete _this._draggableDestroy;
+          _this._draggableDestroy = null;
         }
       }
     }, {
@@ -1123,11 +1207,7 @@ var DraggableTreeNode = {
 };
 
 function isNodeDraggable(node, nodeVm) {
-  var store = nodeVm.store;
-
-  if (store.isNodeDraggable) {
-    return store.isNodeDraggable(node, nodeVm, store);
-  } else if (node.hasOwnProperty('draggable')) {
+  if (node.hasOwnProperty('draggable')) {
     return node.draggable;
   } else {
     return true;
@@ -1166,12 +1246,6 @@ var DraggableTree = {
     },
     ondragend: {
       type: Function
-    },
-    isNodeDraggable: {
-      type: Function
-    },
-    isNodeDroppable: {
-      type: Function
     }
   },
   components: {
@@ -1185,14 +1259,7 @@ var DraggableTree = {
     };
   },
   // computed: {},
-  watch: {
-    idMapping: {
-      immediate: true,
-      handler: function handler(idMapping) {
-        idMapping[this.dplh._id] = this.dplh;
-      }
-    }
-  },
+  // watch: {},
   // methods: {},
   created: function created() {
     trees.push(this);

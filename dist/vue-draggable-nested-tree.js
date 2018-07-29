@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v2.0.2
+ * vue-draggable-nested-tree v2.1.0
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -10,7 +10,7 @@
 }(this, (function (exports) { 'use strict';
 
   /*!
-   * helper-js v1.0.53
+   * helper-js v1.1.1
    * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
    * Released under the MIT License.
    */
@@ -456,8 +456,8 @@
           }
         }
 
-        for (var _i4 = 0; _i4 < indexes.length; _i4++) {
-          var index = indexes[_i4];
+        for (var _i8 = 0; _i8 < indexes.length; _i8++) {
+          var index = indexes[_i8];
           this.eventStore.splice(index, 1);
         }
       }
@@ -466,39 +466,39 @@
       value: function emit(name) {
         // 重要: 先找到要执行的项放在新数组里, 因为执行项会改变事件项存储数组
         var items = [];
-        var _iteratorNormalCompletion3 = true;
-        var _didIteratorError3 = false;
-        var _iteratorError3 = undefined;
+        var _iteratorNormalCompletion4 = true;
+        var _didIteratorError4 = false;
+        var _iteratorError4 = undefined;
 
         try {
-          for (var _iterator3 = this.eventStore[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-            var item = _step3.value;
+          for (var _iterator4 = this.eventStore[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+            var item = _step4.value;
 
             if (item.name === name) {
               items.push(item);
             }
           }
         } catch (err) {
-          _didIteratorError3 = true;
-          _iteratorError3 = err;
+          _didIteratorError4 = true;
+          _iteratorError4 = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
-              _iterator3.return();
+            if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
+              _iterator4.return();
             }
           } finally {
-            if (_didIteratorError3) {
-              throw _iteratorError3;
+            if (_didIteratorError4) {
+              throw _iteratorError4;
             }
           }
         }
 
-        for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-          args[_key3 - 1] = arguments[_key3];
+        for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key4 = 1; _key4 < _len3; _key4++) {
+          args[_key4 - 1] = arguments[_key4];
         }
 
-        for (var _i5 = 0; _i5 < items.length; _i5++) {
-          var _item = items[_i5];
+        for (var _i9 = 0; _i9 < items.length; _i9++) {
+          var _item = items[_i9];
 
           _item.handler.apply(_item, args);
         }
@@ -547,8 +547,8 @@
       value: function emit(name) {
         var _get3;
 
-        for (var _len4 = arguments.length, args = new Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
-          args[_key4 - 1] = arguments[_key4];
+        for (var _len4 = arguments.length, args = new Array(_len4 > 1 ? _len4 - 1 : 0), _key5 = 1; _key5 < _len4; _key5++) {
+          args[_key5 - 1] = arguments[_key5];
         }
 
         (_get3 = _get(CrossWindow.prototype.__proto__ || Object.getPrototypeOf(CrossWindow.prototype), "emit", this)).call.apply(_get3, [this, name].concat(args));
@@ -808,9 +808,10 @@
       data: {},
       store: {}
     },
-    data: function data() {
-      return {};
-    },
+    // data() {
+    //   return {
+    //   }
+    // },
     computed: {
       isRoot: function isRoot() {
         return this.data.level === 0;
@@ -838,6 +839,10 @@
         handler: function handler(data) {
           if (data) {
             data._vm = this;
+
+            if (!data._treeNodePropertiesCompleted && !data.isRoot) {
+              this.store.compeleteNode(data, this.$parent.data);
+            }
           }
         }
       },
@@ -907,73 +912,62 @@
     data: function data() {
       return {
         store: this,
-        rootData: null,
-        activated: [],
-        opened: [],
-        idMapping: {}
+        rootData: null
       };
     },
-    computed: {},
+    // computed: {},
     watch: {
       data: {
         immediate: true,
         handler: function handler(data, old) {
           var _this = this;
 
-          // make rootData always use a same object
+          if (data === old) {
+            return;
+          } // make rootData always use a same object
+
+
           this.rootData = this.rootData || {
             isRoot: true,
             _id: "tree_".concat(this._uid, "_node_root"),
             level: 0
           };
-          this.rootData.children = data;
-          var activated = [];
-          var opened = [];
-          var idMapping = {};
-          breadthFirstSearch(data, function (item, k, parent) {
-            var compeletedData = {
-              open: true,
-              children: [],
-              active: false,
-              style: {},
-              class: '',
-              innerStyle: {},
-              innerClass: '',
-              innerBackStyle: {},
-              innerBackClass: {}
-            };
-
-            for (var key in compeletedData) {
-              if (!item.hasOwnProperty(key)) {
-                _this.$set(item, key, compeletedData[key]);
-              }
-            }
-
-            _this.$set(item, 'parent', parent || _this.rootData);
-
-            _this.$set(item, 'level', item.parent.level + 1);
-
-            if (!item.hasOwnProperty('_id')) {
-              item._id = "tree_".concat(_this._uid, "_node_").concat(strRand(_this.idLength));
-            }
-
-            idMapping[item._id] = item;
-
-            if (item.active) {
-              activated.push(item);
-            }
-
-            if (item.open) {
-              opened.push(item);
-            }
+          breadthFirstSearch(data, function (node, k, parent) {
+            _this.compeleteNode(node, parent);
           });
-          this.activated = activated;
-          this.opened = opened;
-          this.idMapping = idMapping;
+          this.rootData.children = data;
         }
       }
     },
     methods: {
+      compeleteNode: function compeleteNode(node, parent) {
+        var compeletedData = {
+          open: true,
+          children: [],
+          active: false,
+          style: {},
+          class: '',
+          innerStyle: {},
+          innerClass: '',
+          innerBackStyle: {},
+          innerBackClass: {}
+        };
+
+        for (var key in compeletedData) {
+          if (!node.hasOwnProperty(key)) {
+            this.$set(node, key, compeletedData[key]);
+          }
+        }
+
+        this.$set(node, 'parent', parent || this.rootData);
+        this.$set(node, 'level', node.parent.level + 1);
+
+        if (!node.hasOwnProperty('_id')) {
+          node._id = "tree_".concat(this._uid, "_node_").concat(strRand(this.idLength));
+        }
+
+        node._treeNodePropertiesCompleted = true;
+      },
       updateBranchLevel: function updateBranchLevel(branch) {
         var startLevel = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : branch.parent.level + 1;
         branch.level = startLevel;
@@ -1021,15 +1015,43 @@
 
         return t;
       },
+      getNodeById: function getNodeById(id) {
+        var r;
+        breadthFirstSearch(this.rootData.children, function (node) {
+          if (node._id === id) {
+            r = node;
+            return false;
+          }
+        });
+        return r;
+      },
+      getActivated: function getActivated() {
+        var r = [];
+        breadthFirstSearch(this.rootData.children, function (node) {
+          if (node.active) {
+            r.push(node);
+          }
+        });
+        return r;
+      },
+      getOpened: function getOpened() {
+        var r = [];
+        breadthFirstSearch(this.rootData.children, function (node) {
+          if (node.open) {
+            r.push(node);
+          }
+        });
+        return r;
+      },
       activeNode: function activeNode(node, inactiveOld) {
+        var activated = this.activated;
+
         if (inactiveOld) {
-          this.activated.forEach(function (item) {
-            item.active = false;
+          this.getActivated().forEach(function (node2) {
+            node2.active = false;
           });
-          this.activated = [];
         }
 
-        this.activated.push(node);
         node.active = true;
       },
       toggleActive: function toggleActive(node, inactiveOld) {
@@ -1040,14 +1062,14 @@
         }
       },
       openNode: function openNode(node, closeOld) {
+        var opened = this.opened;
+
         if (closeOld) {
-          this.opened.forEach(function (item) {
-            item.open = false;
+          this.getOpened().forEach(function (node2) {
+            node2.open = false;
           });
-          this.opened = [];
         }
 
-        this.opened.push(node);
         node.open = true;
       },
       toggleOpen: function toggleOpen(node, closeOld) {
@@ -1056,6 +1078,12 @@
         } else {
           this.openNode(node, closeOld);
         }
+      },
+      getPureData: function getPureData() {
+        return this.pure(this.rootData, true).children;
+      },
+      deleteNode: function deleteNode(node) {
+        return arrayRemove(node.parent.children, node);
       }
     } // created() {},
     // mounted() {},
@@ -1063,7 +1091,7 @@
   };
 
   /*!
-   * drag-event-service v0.0.2
+   * drag-event-service v0.0.3
    * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
    * Released under the MIT License.
    */
@@ -1127,10 +1155,10 @@
 
       for (var i = store$$1.length - 1; i >= 0; i--) {
         var _store$i = store$$1[i],
-            _handler = _store$i.handler,
+            handler2 = _store$i.handler,
             wrapper = _store$i.wrapper;
 
-        if (_handler === _handler) {
+        if (handler === handler2) {
           offDOM(el, eventName, wrapper);
           store$$1.splice(i, 1);
         }
@@ -1139,7 +1167,7 @@
   };
 
   /*!
-   * draggable-helper v1.0.11
+   * draggable-helper v1.0.12
    * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
    * Released under the MIT License.
    */
@@ -1510,6 +1538,14 @@
           targetPrev = _ref5.targetPrev;
       appendTo(dplh, targetPrev);
       targetPrev.open = true;
+    },
+    // append to root
+    'append root': function appendRoot(_ref6) {
+      var dplh = _ref6.dplh,
+          targetNode = _ref6.targetNode,
+          node = _ref6.node,
+          targetPrev = _ref6.targetPrev;
+      appendTo(dplh, targetNode._vm.store.rootData);
     }
   };
 
@@ -1633,19 +1669,20 @@
   }
 
   var prevTree; // context is vm
-  // dhStore: draggable helper store
 
-  function autoMoveDragPlaceHolder (e, opt, dhStore, trees) {
-    // make info
+  function autoMoveDragPlaceHolder (draggableHelperInfo) {
+    var trees = this.store.trees;
+    var dhStore = draggableHelperInfo.store; // make info
+
     var info = {
-      event: e,
+      event: draggableHelperInfo.event,
       el: dhStore.el,
       vm: this,
       node: this.data,
       store: this.store,
       dplh: this.store.dplh,
       draggableHelperData: {
-        opt: opt,
+        opt: draggableHelperInfo.options,
         store: dhStore
       } //
 
@@ -1829,7 +1866,7 @@
       },
       targetPrev: function targetPrev() {
         var id = this.targetPrevEl.getAttribute('id');
-        return this.currentTree.idMapping[id];
+        return this.currentTree.getNodeById(id);
       }
     }); // attachCache end
     // decision start =================================
@@ -1844,7 +1881,11 @@
           r = rules[ruleId](info);
         } catch (e) {
           r = e;
-          console.warn("failed to execute rule '".concat(ruleId, "'"), e);
+
+          if (process.env.DEVELOPE_SELF) {
+            // only visible when develop its self
+            console.warn("failed to execute rule '".concat(ruleId, "'"), e);
+          }
         }
 
         executedRuleCache[ruleId] = r;
@@ -1854,8 +1895,8 @@
     };
 
     if (exec('currentTree existed') === true) {
-      if (exec('targetNode is placeholder') === false) {
-        if (exec('placeholder existed') === true) {
+      if (exec('placeholder existed') === true) {
+        if (exec('targetNode is placeholder') === false) {
           if (exec('placeholder in currentTree') === true) {
             if (exec('targetNode parent is root') === false) {
               if (exec('targetNode is open') === true) {
@@ -1875,13 +1916,29 @@
                       targets['after'](info);
                     }
                   } else if (exec('targetNode is droppable') === false) {
-                    targets['after'](info);
+                    if (exec('targetNode is 1st child') === true) {
+                      targets['nothing'](info);
+                    } else if (exec('targetNode is 1st child') === false) {
+                      if (exec('targetNode is last child') === true) {
+                        if (exec('on targetNode middle') === false) {
+                          targets['append root'](info);
+                        } else if (exec('on targetNode middle') === true) {
+                          targets['nothing'](info);
+                        }
+                      } else if (exec('targetNode is last child') === false) {
+                        targets['nothing'](info);
+                      }
+                    }
                   }
                 } else if (exec('targetNode has children excluding placeholder') === true) {
                   if (exec('targetNode is droppable') === true) {
                     targets['prepend'](info);
                   } else if (exec('targetNode is droppable') === false) {
-                    targets['after'](info);
+                    if (exec('targetNode prev is droppable') === true) {
+                      targets['after'](info);
+                    } else if (exec('targetNode prev is droppable') === false) {
+                      targets['nothing'](info);
+                    }
                   }
                 }
               } else if (exec('targetNode is open') === false) {
@@ -1922,24 +1979,28 @@
                     }
                   } else if (exec('targetNode is droppable') === false) {
                     if (exec('targetNode is 1st child') === false) {
-                      targets['after'](info);
+                      if (exec('targetNode prev is droppable') === true) {
+                        targets['after'](info);
+                      } else if (exec('targetNode prev is droppable') === false) {
+                        targets['nothing'](info);
+                      }
+                    } else if (exec('targetNode is 1st child') === true) {
+                      targets['nothing'](info);
+                    }
+                  }
+                } else if (exec('targetNode has children excluding placeholder') === true) {
+                  if (exec('targetNode is droppable') === true) {
+                    if (exec('targetNode is 1st child') === false) {
+                      targets['prepend'](info);
                     } else if (exec('targetNode is 1st child') === true) {
                       if (exec('on targetNode middle') === true) {
                         targets['before'](info);
                       } else if (exec('on targetNode middle') === false) {
-                        targets['after'](info);
+                        targets['prepend'](info);
                       }
                     }
-                  }
-                } else if (exec('targetNode has children excluding placeholder') === true) {
-                  if (exec('targetNode is 1st child') === false) {
-                    targets['prepend'](info);
-                  } else if (exec('targetNode is 1st child') === true) {
-                    if (exec('on targetNode middle') === true) {
-                      targets['before'](info);
-                    } else if (exec('on targetNode middle') === false) {
-                      targets['prepend'](info);
-                    }
+                  } else if (exec('targetNode is droppable') === false) {
+                    targets['nothing'](info);
                   }
                 }
               } else if (exec('targetNode is open') === false) {
@@ -1965,75 +2026,79 @@
           } else if (exec('placeholder in currentTree') === false) {
             targets['append'](info);
           }
-        } else if (exec('placeholder existed') === false) {
-          targets['nothing'](info);
-        }
-      } else if (exec('targetNode is placeholder') === true) {
-        if (exec('targetNode parent is root') === false) {
-          if (exec('targetNode is 1st child') === true) {
-            if (exec('targetNode is last child') === true) {
-              if (exec('at left') === false) {
-                targets['nothing'](info);
-              } else if (exec('at left') === true) {
-                targets['after target parent'](info);
-              }
-            } else if (exec('targetNode is last child') === false) {
-              targets['nothing'](info);
-            }
-          } else if (exec('targetNode is 1st child') === false) {
-            if (exec('targetNode is last child') === true) {
-              if (exec('targetNode prev is droppable') === true) {
-                if (exec('at left') === true) {
-                  targets['after target parent'](info);
-                } else if (exec('at left') === false) {
-                  if (exec('at indent right') === true) {
-                    targets['append prev'](info);
-                  } else if (exec('at indent right') === false) {
-                    targets['nothing'](info);
-                  }
-                }
-              } else if (exec('targetNode prev is droppable') === false) {
+        } else if (exec('targetNode is placeholder') === true) {
+          if (exec('targetNode parent is root') === false) {
+            if (exec('targetNode is 1st child') === true) {
+              if (exec('targetNode is last child') === true) {
                 if (exec('at left') === false) {
                   targets['nothing'](info);
                 } else if (exec('at left') === true) {
                   targets['after target parent'](info);
                 }
+              } else if (exec('targetNode is last child') === false) {
+                targets['nothing'](info);
               }
-            } else if (exec('targetNode is last child') === false) {
-              if (exec('targetNode prev is droppable') === true) {
-                if (exec('at left') === true) {
-                  targets['nothing'](info);
-                } else if (exec('at left') === false) {
-                  if (exec('at indent right') === true) {
-                    targets['append prev'](info);
-                  } else if (exec('at indent right') === false) {
+            } else if (exec('targetNode is 1st child') === false) {
+              if (exec('targetNode is last child') === true) {
+                if (exec('targetNode prev is droppable') === true) {
+                  if (exec('at left') === true) {
+                    targets['after target parent'](info);
+                  } else if (exec('at left') === false) {
+                    if (exec('at indent right') === true) {
+                      targets['append prev'](info);
+                    } else if (exec('at indent right') === false) {
+                      targets['nothing'](info);
+                    }
+                  }
+                } else if (exec('targetNode prev is droppable') === false) {
+                  if (exec('at left') === false) {
                     targets['nothing'](info);
+                  } else if (exec('at left') === true) {
+                    targets['after target parent'](info);
                   }
                 }
-              } else if (exec('targetNode prev is droppable') === false) {
-                targets['nothing'](info);
-              }
-            }
-          }
-        } else if (exec('targetNode parent is root') === true) {
-          if (exec('targetNode is 1st child') === false) {
-            if (exec('targetNode prev is droppable') === true) {
-              if (exec('at left') === true) {
-                targets['nothing'](info);
-              } else if (exec('at left') === false) {
-                if (exec('at indent right') === true) {
-                  targets['append prev'](info);
-                } else if (exec('at indent right') === false) {
+              } else if (exec('targetNode is last child') === false) {
+                if (exec('targetNode prev is droppable') === true) {
+                  if (exec('at left') === true) {
+                    targets['nothing'](info);
+                  } else if (exec('at left') === false) {
+                    if (exec('at indent right') === true) {
+                      targets['append prev'](info);
+                    } else if (exec('at indent right') === false) {
+                      targets['nothing'](info);
+                    }
+                  }
+                } else if (exec('targetNode prev is droppable') === false) {
                   targets['nothing'](info);
                 }
               }
-            } else if (exec('targetNode prev is droppable') === false) {
+            }
+          } else if (exec('targetNode parent is root') === true) {
+            if (exec('targetNode is 1st child') === false) {
+              if (exec('targetNode is last child') === false) {
+                if (exec('targetNode prev is droppable') === true) {
+                  if (exec('at left') === true) {
+                    targets['nothing'](info);
+                  } else if (exec('at left') === false) {
+                    if (exec('at indent right') === true) {
+                      targets['append prev'](info);
+                    } else if (exec('at indent right') === false) {
+                      targets['nothing'](info);
+                    }
+                  }
+                } else if (exec('targetNode prev is droppable') === false) {
+                  targets['nothing'](info);
+                }
+              } else if (exec('targetNode is last child') === true) {
+                targets['nothing'](info);
+              }
+            } else if (exec('targetNode is 1st child') === true) {
               targets['nothing'](info);
             }
-          } else if (exec('targetNode is 1st child') === true) {
-            targets['nothing'](info);
           }
         }
+      } else if (exec('placeholder existed') === false) {
+        targets['nothing'](info);
       }
     } else if (exec('currentTree existed') === false) {
       targets['nothing'](info);
@@ -2051,21 +2116,15 @@
 
 
   function resolveBranchDroppable(info, branch) {
-    var isNodeDroppable;
+    var isNodeDroppable = function isNodeDroppable(node) {
+      if (node.hasOwnProperty('droppable')) {
+        return node.droppable;
+      } else {
+        return true;
+      }
+    };
 
-    if (info.store.isNodeDroppable) {
-      isNodeDroppable = info.store.isNodeDroppable;
-    } else {
-      isNodeDroppable = function isNodeDroppable(node, nodeVm, store$$1) {
-        if (node.hasOwnProperty('droppable')) {
-          return node.droppable;
-        } else {
-          return true;
-        }
-      };
-    }
-
-    branch._droppable = isNodeDroppable(branch, branch._vm, branch._vm.store);
+    branch._droppable = isNodeDroppable(branch);
     depthFirstSearch(branch, function (item, i, parent) {
       if (item === branch) {
         return;
@@ -2075,7 +2134,7 @@
         return 'skip children';
       }
 
-      item._droppable = isNodeDroppable(item, item._vm, item._vm.store);
+      item._droppable = isNodeDroppable(item);
 
       if (!item.open) {
         return 'skip children';
@@ -2105,11 +2164,17 @@
             minTranslate: 10,
             drag: function drag(e, opt, store$$1) {
               // this store is not tree
-              if (_this.store.ondragstart && _this.store.ondragstart(_this.data, _this, _this.store, e, opt, store$$1) === false) {
+              var draggableHelperInfo = {
+                event: e,
+                options: opt,
+                store: store$$1
+              };
+
+              if (_this.store.ondragstart && _this.store.ondragstart(_this.data, draggableHelperInfo) === false) {
                 return false;
               }
 
-              if (!isNodeDraggable(_this.data, _this)) {
+              if (!isNodeDraggable(_this.data)) {
                 return false;
               } // record start positon
 
@@ -2122,29 +2187,48 @@
               };
               dplh.innerStyle.height = store$$1.el.offsetHeight + 'px';
               insertAfter(dplh, _this.data);
-              _this.data.class += ' dragging'; // console.log('drag start');
+              _this.data.class += ' dragging';
+
+              _this.store.$emit('drag', _this.data); // console.log('drag start');
+
             },
             moving: function moving(e, opt, store$$1) {
-              return autoMoveDragPlaceHolder.call(_this, e, opt, store$$1, _this.store.trees);
+              var draggableHelperInfo = {
+                event: e,
+                options: opt,
+                store: store$$1
+              };
+              return autoMoveDragPlaceHolder.call(_this, draggableHelperInfo);
             },
             drop: function drop(e, opt, store$$1) {
-              if (_this.store.ondragend && _this.store.ondragend(_this.data, _this, _this.store, e, opt, store$$1) === false) {// can't drop, no change
+              var draggableHelperInfo = {
+                event: e,
+                options: opt,
+                store: store$$1
+              };
+
+              if (_this.store.ondragend && _this.store.ondragend(_this.data, draggableHelperInfo) === false) {// can't drop, no change
               } else {
+                var targetTree = dplh._vm.store;
+                var crossTree = targetTree !== _this.store;
+                var oldTree = crossTree ? _this.store : null;
                 insertAfter(_this.data, dplh);
                 arrayRemove(dplh.parent.children, dplh);
-                _this.data.class = _this.data.class.replace(/(^| )dragging( |$)/g, ' '); // emit change event if changed
+                _this.data.class = _this.data.class.replace(/(^| )dragging( |$)/g, ' ');
+                targetTree.$emit('drop', _this.data, targetTree, oldTree);
+                oldTree && oldTree.$emit('drop', _this.data, targetTree, oldTree); // emit change event if changed
 
                 var siblings = _this.data.parent.children;
 
                 if (siblings === _this.startPosition.siblings && siblings.indexOf(_this.data) === _this.startPosition.index) {// not moved
                 } else {
-                  _this.store.$emit('change', _this.data, _this, _this.store);
+                  _this.store.$emit('change', _this.data, targetTree, oldTree);
+
+                  oldTree && oldTree.$emit('change', _this.data, targetTree, oldTree);
                 }
 
-                delete _this.startPosition;
-              }
-
-              _this.store.$emit('drop', _this.data, _this, _this.store); // console.log('drag end');
+                _this.startPosition = null;
+              } // console.log('drag end');
 
             }
           });
@@ -2152,7 +2236,7 @@
           if (_this._draggableDestroy) {
             _this._draggableDestroy();
 
-            delete _this._draggableDestroy;
+            _this._draggableDestroy = null;
           }
         }
       }, {
@@ -2162,11 +2246,7 @@
   };
 
   function isNodeDraggable(node, nodeVm) {
-    var store$$1 = nodeVm.store;
-
-    if (store$$1.isNodeDraggable) {
-      return store$$1.isNodeDraggable(node, nodeVm, store$$1);
-    } else if (node.hasOwnProperty('draggable')) {
+    if (node.hasOwnProperty('draggable')) {
       return node.draggable;
     } else {
       return true;
@@ -2205,12 +2285,6 @@
       },
       ondragend: {
         type: Function
-      },
-      isNodeDraggable: {
-        type: Function
-      },
-      isNodeDroppable: {
-        type: Function
       }
     },
     components: {
@@ -2224,14 +2298,7 @@
       };
     },
     // computed: {},
-    watch: {
-      idMapping: {
-        immediate: true,
-        handler: function handler(idMapping) {
-          idMapping[this.dplh._id] = this.dplh;
-        }
-      }
-    },
+    // watch: {},
     // methods: {},
     created: function created() {
       trees.push(this);
