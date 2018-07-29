@@ -63,6 +63,15 @@ const targets = {
     th.appendTo(dplh, targetPrev)
     targetPrev.open = true
   },
+  // append to root
+  'append root': ({
+    dplh,
+    targetNode,
+    node,
+    targetPrev
+  }) => {
+    th.appendTo(dplh, targetNode._vm.store.rootData)
+  },
 }
 
 function findChild(info, children, handler, reverse) {
@@ -328,8 +337,8 @@ export default function(draggableHelperInfo) {
     return executedRuleCache[ruleId]
   }
   if (exec('currentTree existed') === true) {
-    if (exec('targetNode is placeholder') === false) {
-      if (exec('placeholder existed') === true) {
+    if (exec('placeholder existed') === true) {
+      if (exec('targetNode is placeholder') === false) {
         if (exec('placeholder in currentTree') === true) {
           if (exec('targetNode parent is root') === false) {
             if (exec('targetNode is open') === true) {
@@ -349,13 +358,29 @@ export default function(draggableHelperInfo) {
                     targets['after'](info)
                   }
                 } else if (exec('targetNode is droppable') === false) {
-                  targets['after'](info)
+                  if (exec('targetNode is 1st child') === true) {
+                    targets['nothing'](info)
+                  } else if (exec('targetNode is 1st child') === false) {
+                    if (exec('targetNode is last child') === true) {
+                      if (exec('on targetNode middle') === false) {
+                        targets['append root'](info)
+                      } else if (exec('on targetNode middle') === true) {
+                        targets['nothing'](info)
+                      }
+                    } else if (exec('targetNode is last child') === false) {
+                      targets['nothing'](info)
+                    }
+                  }
                 }
               } else if (exec('targetNode has children excluding placeholder') === true) {
                 if (exec('targetNode is droppable') === true) {
                   targets['prepend'](info)
                 } else if (exec('targetNode is droppable') === false) {
-                  targets['after'](info)
+                  if (exec('targetNode prev is droppable') === true) {
+                    targets['after'](info)
+                  } else if (exec('targetNode prev is droppable') === false) {
+                    targets['nothing'](info)
+                  }
                 }
               }
             } else if (exec('targetNode is open') === false) {
@@ -396,24 +421,28 @@ export default function(draggableHelperInfo) {
                   }
                 } else if (exec('targetNode is droppable') === false) {
                   if (exec('targetNode is 1st child') === false) {
-                    targets['after'](info)
+                    if (exec('targetNode prev is droppable') === true) {
+                      targets['after'](info)
+                    } else if (exec('targetNode prev is droppable') === false) {
+                      targets['nothing'](info)
+                    }
+                  } else if (exec('targetNode is 1st child') === true) {
+                    targets['nothing'](info)
+                  }
+                }
+              } else if (exec('targetNode has children excluding placeholder') === true) {
+                if (exec('targetNode is droppable') === true) {
+                  if (exec('targetNode is 1st child') === false) {
+                    targets['prepend'](info)
                   } else if (exec('targetNode is 1st child') === true) {
                     if (exec('on targetNode middle') === true) {
                       targets['before'](info)
                     } else if (exec('on targetNode middle') === false) {
-                      targets['after'](info)
+                      targets['prepend'](info)
                     }
                   }
-                }
-              } else if (exec('targetNode has children excluding placeholder') === true) {
-                if (exec('targetNode is 1st child') === false) {
-                  targets['prepend'](info)
-                } else if (exec('targetNode is 1st child') === true) {
-                  if (exec('on targetNode middle') === true) {
-                    targets['before'](info)
-                  } else if (exec('on targetNode middle') === false) {
-                    targets['prepend'](info)
-                  }
+                } else if (exec('targetNode is droppable') === false) {
+                  targets['nothing'](info)
                 }
               }
             } else if (exec('targetNode is open') === false) {
@@ -439,75 +468,79 @@ export default function(draggableHelperInfo) {
         } else if (exec('placeholder in currentTree') === false) {
           targets['append'](info)
         }
-      } else if (exec('placeholder existed') === false) {
-        targets['nothing'](info)
-      }
-    } else if (exec('targetNode is placeholder') === true) {
-      if (exec('targetNode parent is root') === false) {
-        if (exec('targetNode is 1st child') === true) {
-          if (exec('targetNode is last child') === true) {
-            if (exec('at left') === false) {
-              targets['nothing'](info)
-            } else if (exec('at left') === true) {
-              targets['after target parent'](info)
-            }
-          } else if (exec('targetNode is last child') === false) {
-            targets['nothing'](info)
-          }
-        } else if (exec('targetNode is 1st child') === false) {
-          if (exec('targetNode is last child') === true) {
-            if (exec('targetNode prev is droppable') === true) {
-              if (exec('at left') === true) {
-                targets['after target parent'](info)
-              } else if (exec('at left') === false) {
-                if (exec('at indent right') === true) {
-                  targets['append prev'](info)
-                } else if (exec('at indent right') === false) {
-                  targets['nothing'](info)
-                }
-              }
-            } else if (exec('targetNode prev is droppable') === false) {
+      } else if (exec('targetNode is placeholder') === true) {
+        if (exec('targetNode parent is root') === false) {
+          if (exec('targetNode is 1st child') === true) {
+            if (exec('targetNode is last child') === true) {
               if (exec('at left') === false) {
                 targets['nothing'](info)
               } else if (exec('at left') === true) {
                 targets['after target parent'](info)
               }
+            } else if (exec('targetNode is last child') === false) {
+              targets['nothing'](info)
             }
-          } else if (exec('targetNode is last child') === false) {
-            if (exec('targetNode prev is droppable') === true) {
-              if (exec('at left') === true) {
-                targets['nothing'](info)
-              } else if (exec('at left') === false) {
-                if (exec('at indent right') === true) {
-                  targets['append prev'](info)
-                } else if (exec('at indent right') === false) {
+          } else if (exec('targetNode is 1st child') === false) {
+            if (exec('targetNode is last child') === true) {
+              if (exec('targetNode prev is droppable') === true) {
+                if (exec('at left') === true) {
+                  targets['after target parent'](info)
+                } else if (exec('at left') === false) {
+                  if (exec('at indent right') === true) {
+                    targets['append prev'](info)
+                  } else if (exec('at indent right') === false) {
+                    targets['nothing'](info)
+                  }
+                }
+              } else if (exec('targetNode prev is droppable') === false) {
+                if (exec('at left') === false) {
                   targets['nothing'](info)
+                } else if (exec('at left') === true) {
+                  targets['after target parent'](info)
                 }
               }
-            } else if (exec('targetNode prev is droppable') === false) {
-              targets['nothing'](info)
-            }
-          }
-        }
-      } else if (exec('targetNode parent is root') === true) {
-        if (exec('targetNode is 1st child') === false) {
-          if (exec('targetNode prev is droppable') === true) {
-            if (exec('at left') === true) {
-              targets['nothing'](info)
-            } else if (exec('at left') === false) {
-              if (exec('at indent right') === true) {
-                targets['append prev'](info)
-              } else if (exec('at indent right') === false) {
+            } else if (exec('targetNode is last child') === false) {
+              if (exec('targetNode prev is droppable') === true) {
+                if (exec('at left') === true) {
+                  targets['nothing'](info)
+                } else if (exec('at left') === false) {
+                  if (exec('at indent right') === true) {
+                    targets['append prev'](info)
+                  } else if (exec('at indent right') === false) {
+                    targets['nothing'](info)
+                  }
+                }
+              } else if (exec('targetNode prev is droppable') === false) {
                 targets['nothing'](info)
               }
             }
-          } else if (exec('targetNode prev is droppable') === false) {
+          }
+        } else if (exec('targetNode parent is root') === true) {
+          if (exec('targetNode is 1st child') === false) {
+            if (exec('targetNode is last child') === false) {
+              if (exec('targetNode prev is droppable') === true) {
+                if (exec('at left') === true) {
+                  targets['nothing'](info)
+                } else if (exec('at left') === false) {
+                  if (exec('at indent right') === true) {
+                    targets['append prev'](info)
+                  } else if (exec('at indent right') === false) {
+                    targets['nothing'](info)
+                  }
+                }
+              } else if (exec('targetNode prev is droppable') === false) {
+                targets['nothing'](info)
+              }
+            } else if (exec('targetNode is last child') === true) {
+              targets['nothing'](info)
+            }
+          } else if (exec('targetNode is 1st child') === true) {
             targets['nothing'](info)
           }
-        } else if (exec('targetNode is 1st child') === true) {
-          targets['nothing'](info)
         }
       }
+    } else if (exec('placeholder existed') === false) {
+      targets['nothing'](info)
     }
   } else if (exec('currentTree existed') === false) {
     targets['nothing'](info)
