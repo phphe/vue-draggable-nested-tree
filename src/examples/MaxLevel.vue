@@ -1,7 +1,7 @@
 <!-- this is an example -->
 <template lang="pug">
 div
-  h2 Max Level 2
+  h2 Max Level <input v-model="maxLevel" type="number" />
   Tree(:data="originalData" draggable crossTree ref="tree1" @drag="ondrag")
     div(slot-scope="{data, store}")
       b(v-if="data.children && data.children.length" @click="store.toggleOpen(data)") {{data.open ? '-' : '+'}}&nbsp;
@@ -47,13 +47,14 @@ export default {
         ]},
       ],
       data: null,
+      maxLevel: 2,
     }
   },
   // computed: {},
   // watch: {},
   methods: {
     ondrag(node) {
-      const maxLevel = 2
+      const {maxLevel} = this
       let nodeLevels = 1
       th.depthFirstSearch(node, (childNode) => {
         if (childNode.level > nodeLevels) {
