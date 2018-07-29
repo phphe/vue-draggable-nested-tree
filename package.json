@@ -20,12 +20,12 @@
     "build": "node build-lib.js"
   },
   "dependencies": {
-    "draggable-helper": "^1.0.10",
-    "helper-js": "^1.0.53",
-    "tree-helper": "^1.0.5",
-    "vue": "^2.5.2"
+    "draggable-helper": "^1.0.12",
+    "helper-js": "^1.1.1",
+    "tree-helper": "^1.0.5"
   },
   "devDependencies": {
+    "vue": "^2.5.2",
     "autoprefixer": "^7.1.2",
     "babel-core": "^6.22.1",
     "babel-helper-vue-jsx-merge-props": "^2.0.3",
