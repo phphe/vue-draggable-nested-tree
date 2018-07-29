@@ -1,67 +1,22 @@
 <!-- this is an example -->
 <template lang="pug">
-#app(style="height:10000px")
-  Tree(:data="data" draggable crossTree ref="tree1" @change="tree1Change")
-    div(slot-scope="{data, store}")
-      b(v-if="data.children && data.children.length" @click="store.toggleOpen(data)") {{data.open ? '-' : '+'}}&nbsp;
-      span {{data.text}}-level:{{data.level}}
-  Tree(:data="data2" draggable crossTree)
-    div(slot-scope="{data, store}")
-      b(v-if="data.children && data.children.length" @click="store.toggleOpen(data)") {{data.open ? '-' : '+'}}&nbsp;
-      span {{data.text}}-level:{{data.level}}
+#app
+  BaseTree.mr
+  MaxLevelTree.mr
 </template>
 
 <script>
-import Tree from '@/components/DraggableTree'
+import BaseTree from '@/examples/Base'
+import MaxLevelTree from '@/examples/MaxLevel'
 export default {
-  components: {Tree},
-  data() {
-    return {
-      data: [
-        {text: 'node 1'},
-        {text: 'node 2'},
-        {text: 'node 3'},
-        {text: 'node 4'},
-        {text: 'node 4 undroppable', droppable: false},
-        {text: 'node 5', children: [
-          {text: 'node 1'},
-          {text: 'node 2', children: [
-            {text: 'node 3'},
-            {text: 'node 4'},
-          ]},
-          {text: 'node 2 undroppable', droppable: false, children: [
-            {text: 'node 3'},
-            {text: 'node 4'},
-          ]},
-          {text: 'node 2', children: [
-            {text: 'node 3'},
-            {text: 'node 4 undroppable', droppable: false},
-          ]},
-          {text: 'node 3'},
-          {text: 'node 4'},
-          {text: 'node 3'},
-          {text: 'node 4'},
-          {text: 'node 3'},
-          {text: 'node 4'},
-          {text: 'node 3'},
-          {text: 'node 4'},
-        ]},
-      ],
-      data2: [
-        {text: 'node 1'},
-        {text: 'node 2'},
-        {text: 'node 3'},
-        {text: 'node 4'},
-      ],
-      data0: null,
-    }
-  },
+  components: {BaseTree, MaxLevelTree},
+  // data() {
+  //   return {
+  //   }
+  // },
   // computed: {},
   // watch: {},
-  methods: {
-    tree1Change(node) {
-    },
-  },
+  // methods: {},
   // created() {},
   // mounted() {},
 }
@@ -69,7 +24,12 @@ export default {
 
 <style lang="scss">
 #app{
+  display: flex;
 }
+.mr{
+  margin-right: 1em;
+}
+// ===============
 .he-tree{
   border: 1px solid #ccc;
   padding: 20px;
