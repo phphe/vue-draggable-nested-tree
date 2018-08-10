@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v2.1.1
+ * vue-draggable-nested-tree v2.1.2
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -10,7 +10,7 @@
 }(this, (function (exports) { 'use strict';
 
   /*!
-   * helper-js v1.1.1
+   * helper-js v1.1.2
    * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
    * Released under the MIT License.
    */
@@ -198,6 +198,30 @@
       x: of.x - (elOf.x - p.x),
       y: of.y - (elOf.y - p.y)
     };
+    var offsetParent = el.offsetParent;
+
+    if (!offsetParent || offsetParent === document.body && getComputedStyle(document.body).position === 'static') {
+      offsetParent = document.body.parentElement;
+    }
+
+    var ps = {
+      x: el.offsetLeft,
+      y: el.offsetTop
+    };
+    var parent = el;
+
+    while (true) {
+      parent = parent.parentElement;
+
+      if (parent === offsetParent || !parent) {
+        break;
+      }
+
+      ps.x -= parent.scrollLeft;
+      ps.y -= parent.scrollTop;
+    }
+
+    return ps;
   }
   function backupAttr(el, name) {
     var key = "original_".concat(name);
@@ -838,7 +862,7 @@
         immediate: true,
         handler: function handler(data) {
           if (data) {
-            data._vm = this;
+            data._vm = this; // the level of root is 0, no need to update root level
 
             if (!data._treeNodePropertiesCompleted && !data.isRoot) {
               this.store.compeleteNode(data, this.$parent.data);
@@ -1167,7 +1191,7 @@
   };
 
   /*!
-   * draggable-helper v1.0.12
+   * draggable-helper v1.0.13
    * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
    * Released under the MIT License.
    */

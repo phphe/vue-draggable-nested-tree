@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v2.1.1
+ * vue-draggable-nested-tree v2.1.2
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -90,7 +90,7 @@ var TreeNode = {
       immediate: true,
       handler: function handler(data) {
         if (data) {
-          data._vm = this;
+          data._vm = this; // the level of root is 0, no need to update root level
 
           if (!data._treeNodePropertiesCompleted && !data.isRoot) {
             this.store.compeleteNode(data, this.$parent.data);
