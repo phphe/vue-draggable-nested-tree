@@ -47,6 +47,7 @@ export default {
           drop: (e, opt, store) => {
             const draggableHelperInfo = {event: e, options: opt, store}
             if (this.store.ondragend && this.store.ondragend(this.data, draggableHelperInfo) === false) {
+              hp.arrayRemove(dplh.parent.children, dplh)
               // can't drop, no change
             } else {
               const targetTree = dplh._vm.store

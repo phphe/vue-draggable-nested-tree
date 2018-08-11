@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v2.1.3
+ * vue-draggable-nested-tree v2.1.4
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -2609,7 +2609,8 @@
                 store: store$$1
               };
 
-              if (_this.store.ondragend && _this.store.ondragend(_this.data, draggableHelperInfo) === false) {// can't drop, no change
+              if (_this.store.ondragend && _this.store.ondragend(_this.data, draggableHelperInfo) === false) {
+                arrayRemove(dplh.parent.children, dplh); // can't drop, no change
               } else {
                 var targetTree = dplh._vm.store;
                 var crossTree = targetTree !== _this.store;
