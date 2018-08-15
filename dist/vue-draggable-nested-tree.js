@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v2.1.4
+ * vue-draggable-nested-tree v2.1.5
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -1569,7 +1569,7 @@
   };
 
   /*!
-   * draggable-helper v1.0.14
+   * draggable-helper v1.0.15
    * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
    * Released under the MIT License.
    */
@@ -1621,6 +1621,7 @@
 
     var destroy = function destroy() {
       index.off(dragHandlerEl, 'end', dragHandlerEl._draggbleEventHandler);
+      offDOM(dragHandlerEl, 'selectstart', preventSelect);
       delete dragHandlerEl._draggbleEventHandler;
     };
 
@@ -1630,11 +1631,11 @@
 
     dragHandlerEl._draggbleEventHandler = start;
     index.on(dragHandlerEl, 'start', dragHandlerEl._draggbleEventHandler);
+    onDOM(dragHandlerEl, 'selectstart', preventSelect);
     return destroy;
 
     function start(e, mouse) {
-      e.stopPropagation();
-      onDOM(document.body, 'selectstart', preventSelect);
+      // e.stopPropagation()
       store$$1.mouse = {
         x: mouse.x,
         y: mouse.y
@@ -1654,7 +1655,6 @@
       var r = opt.drag && opt.drag(e, opt, store$$1);
 
       if (r === false) {
-        offDOM(document.body, 'selectstart', preventSelect);
         return false;
       } // dom actions
 
@@ -1677,18 +1677,7 @@
 
 
       backupAttr(el, 'class');
-      addClass(el, opt.draggingClass); //
-
-      var _document = document,
-          body = _document.body;
-      var bodyOldStyle = (body.getAttribute('style') || '').trim();
-
-      if (bodyOldStyle.length && !bodyOldStyle.endsWith(';')) {
-        bodyOldStyle += ';';
-      }
-
-      backupAttr(body, 'style');
-      body.style = bodyOldStyle + 'cursor: move;';
+      addClass(el, opt.draggingClass);
     }
 
     function moving(e, mouse) {
@@ -1754,8 +1743,6 @@
           restoreAttr(el, 'class');
         }
 
-        restoreAttr(document.body, 'style');
-        offDOM(document.body, 'selectstart', preventSelect);
         opt.drop && opt.drop(e, opt, store$$1);
       }
 
