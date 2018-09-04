@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v2.1.5
+ * vue-draggable-nested-tree v2.1.6
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -10,7 +10,7 @@
 }(this, (function (exports) { 'use strict';
 
   /*!
-   * helper-js v1.1.3
+   * helper-js v1.1.7
    * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
    * Released under the MIT License.
    */
@@ -114,14 +114,26 @@
     throw new TypeError("Invalid attempt to spread non-iterable instance");
   }
 
-  // resolve global
-  var glb;
+  // local store
+  var store = {}; // get global
 
-  try {
-    glb = global;
-  } catch (e) {
-    glb = window;
-  } // local store
+  function glb() {
+    if (store.glb) {
+      return store.glb;
+    } else {
+      // resolve global
+      var t;
+
+      try {
+        t = global;
+      } catch (e) {
+        t = window;
+      }
+
+      store.glb = t;
+      return t;
+    }
+  } // is 各种判断
 
   function numRand(min, max) {
     if (arguments.length === 1) {
@@ -259,21 +271,29 @@
   } // get border
 
   function onDOM(el, name, handler) {
+    for (var _len5 = arguments.length, args = new Array(_len5 > 3 ? _len5 - 3 : 0), _key6 = 3; _key6 < _len5; _key6++) {
+      args[_key6 - 3] = arguments[_key6];
+    }
+
     if (el.addEventListener) {
       // 所有主流浏览器，除了 IE 8 及更早 IE版本
-      el.addEventListener(name, handler);
+      el.addEventListener.apply(el, [name, handler].concat(args));
     } else if (el.attachEvent) {
       // IE 8 及更早 IE 版本
-      el.attachEvent("on".concat(name), handler);
+      el.attachEvent.apply(el, ["on".concat(name), handler].concat(args));
     }
   }
   function offDOM(el, name, handler) {
+    for (var _len6 = arguments.length, args = new Array(_len6 > 3 ? _len6 - 3 : 0), _key7 = 3; _key7 < _len6; _key7++) {
+      args[_key7 - 3] = arguments[_key7];
+    }
+
     if (el.removeEventListener) {
       // 所有主流浏览器，除了 IE 8 及更早 IE版本
-      el.removeEventListener(name, handler);
+      el.removeEventListener.apply(el, [name, handler].concat(args));
     } else if (el.detachEvent) {
       // IE 8 及更早 IE 版本
-      el.detachEvent("on".concat(name), handler);
+      el.detachEvent.apply(el, ["on".concat(name), handler].concat(args));
     }
   } // advance
   // binarySearch 二分查找
@@ -329,7 +349,7 @@
   function () {
     // protocol, hostname, port, pastname
     function URLHelper(baseUrl) {
-      var _this = this;
+      var _this2 = this;
 
       _classCallCheck(this, URLHelper);
 
@@ -351,7 +371,7 @@
       if (t[1]) {
         t[1].split('&').forEach(function (v) {
           var t2 = v.split('=');
-          _this.search[t2[0]] = t2[1] == null ? '' : decodeURIComponent(t2[1]);
+          _this2.search[t2[0]] = t2[1] == null ? '' : decodeURIComponent(t2[1]);
         });
       }
     }
@@ -359,11 +379,11 @@
     _createClass(URLHelper, [{
       key: "getHref",
       value: function getHref() {
-        var _this2 = this;
+        var _this3 = this;
 
         var t = [this.baseUrl];
         var searchStr = Object.keys(this.search).map(function (k) {
-          return "".concat(k, "=").concat(encodeURIComponent(_this2.search[k]));
+          return "".concat(k, "=").concat(encodeURIComponent(_this3.search[k]));
         }).join('&');
 
         if (searchStr) {
@@ -376,42 +396,6 @@
 
     return URLHelper;
   }(); // 解析函数参数, 帮助重载
-
-  function makeStorageHelper(storage) {
-    return {
-      storage: storage,
-      set: function set(name, value, minutes) {
-        if (value == null) {
-          this.storage.removeItem(name);
-        } else {
-          this.storage.setItem(name, JSON.stringify({
-            value: value,
-            expired_at: minutes && new Date().getTime() / 1000 + minutes * 60
-          }));
-        }
-      },
-      get: function get$$1(name) {
-        var t = this.storage.getItem(name);
-
-        if (t) {
-          t = JSON.parse(t);
-
-          if (!t.expired_at || t.expired_at > new Date().getTime()) {
-            return t.value;
-          } else {
-            this.storage.removeItem(name);
-          }
-        }
-
-        return null;
-      },
-      clear: function clear() {
-        this.storage.clear();
-      }
-    };
-  }
-  var localStorage2 = makeStorageHelper(glb.localStorage);
-  var sessionStorage2 = makeStorageHelper(glb.sessionStorage); // 事件处理
 
   var EventProcessor =
   /*#__PURE__*/
@@ -438,10 +422,10 @@
     }, {
       key: "once",
       value: function once(name, handler) {
-        var _this3 = this;
+        var _this4 = this;
 
         var off = function off() {
-          _this3.off(name, wrappedHandler);
+          _this4.off(name, wrappedHandler);
         };
 
         var wrappedHandler = function wrappedHandler() {
@@ -477,35 +461,35 @@
       value: function emit(name) {
         // 重要: 先找到要执行的项放在新数组里, 因为执行项会改变事件项存储数组
         var items = [];
-        var _iteratorNormalCompletion4 = true;
-        var _didIteratorError4 = false;
-        var _iteratorError4 = undefined;
+        var _iteratorNormalCompletion5 = true;
+        var _didIteratorError5 = false;
+        var _iteratorError5 = undefined;
 
         try {
-          for (var _iterator4 = this.eventStore[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-            var item = _step4.value;
+          for (var _iterator5 = this.eventStore[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+            var item = _step5.value;
 
             if (item.name === name) {
               items.push(item);
             }
           }
         } catch (err) {
-          _didIteratorError4 = true;
-          _iteratorError4 = err;
+          _didIteratorError5 = true;
+          _iteratorError5 = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
-              _iterator4.return();
+            if (!_iteratorNormalCompletion5 && _iterator5.return != null) {
+              _iterator5.return();
             }
           } finally {
-            if (_didIteratorError4) {
-              throw _iteratorError4;
+            if (_didIteratorError5) {
+              throw _iteratorError5;
             }
           }
         }
 
-        for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key4 = 1; _key4 < _len3; _key4++) {
-          args[_key4 - 1] = arguments[_key4];
+        for (var _len7 = arguments.length, args = new Array(_len7 > 1 ? _len7 - 1 : 0), _key8 = 1; _key8 < _len7; _key8++) {
+          args[_key8 - 1] = arguments[_key8];
         }
 
         for (var _i9 = 0; _i9 < items.length; _i9++) {
@@ -524,12 +508,12 @@
     _inherits(CrossWindow, _EventProcessor);
 
     function CrossWindow() {
-      var _this4;
+      var _this5;
 
       _classCallCheck(this, CrossWindow);
 
-      _this4 = _possibleConstructorReturn(this, (CrossWindow.__proto__ || Object.getPrototypeOf(CrossWindow)).call(this));
-      Object.defineProperty(_assertThisInitialized(_this4), "storageName", {
+      _this5 = _possibleConstructorReturn(this, (CrossWindow.__proto__ || Object.getPrototypeOf(CrossWindow)).call(this));
+      Object.defineProperty(_assertThisInitialized(_this5), "storageName", {
         configurable: true,
         enumerable: true,
         writable: true,
@@ -540,17 +524,17 @@
       if (!cls._listen) {
         cls._listen = true;
         onDOM(window, 'storage', function (ev) {
-          if (ev.key === _this4.storageName) {
+          if (ev.key === _this5.storageName) {
             var _get2;
 
             var event = JSON.parse(ev.newValue);
 
-            (_get2 = _get(CrossWindow.prototype.__proto__ || Object.getPrototypeOf(CrossWindow.prototype), "emit", _assertThisInitialized(_this4))).call.apply(_get2, [_this4, event.name].concat(_toConsumableArray(event.args)));
+            (_get2 = _get(CrossWindow.prototype.__proto__ || Object.getPrototypeOf(CrossWindow.prototype), "emit", _assertThisInitialized(_this5))).call.apply(_get2, [_this5, event.name].concat(_toConsumableArray(event.args)));
           }
         });
       }
 
-      return _this4;
+      return _this5;
     }
 
     _createClass(CrossWindow, [{
@@ -558,13 +542,13 @@
       value: function emit(name) {
         var _get3;
 
-        for (var _len4 = arguments.length, args = new Array(_len4 > 1 ? _len4 - 1 : 0), _key5 = 1; _key5 < _len4; _key5++) {
-          args[_key5 - 1] = arguments[_key5];
+        for (var _len8 = arguments.length, args = new Array(_len8 > 1 ? _len8 - 1 : 0), _key9 = 1; _key9 < _len8; _key9++) {
+          args[_key9 - 1] = arguments[_key9];
         }
 
         (_get3 = _get(CrossWindow.prototype.__proto__ || Object.getPrototypeOf(CrossWindow.prototype), "emit", this)).call.apply(_get3, [this, name].concat(args));
 
-        glb.localStorage.setItem(this.storageName, JSON.stringify({
+        glb().localStorage.setItem(this.storageName, JSON.stringify({
           name: name,
           args: args,
           // use random make storage event triggered every time
@@ -801,8 +785,8 @@
       }
     };
   }
-  var localStorage2$1 = makeStorageHelper$1(glb$1.localStorage);
-  var sessionStorage2$1 = makeStorageHelper$1(glb$1.sessionStorage); // 事件处理
+  var localStorage2 = makeStorageHelper$1(glb$1.localStorage);
+  var sessionStorage2 = makeStorageHelper$1(glb$1.sessionStorage); // 事件处理
 
   var EventProcessor$1 =
   /*#__PURE__*/
@@ -1493,7 +1477,7 @@
   };
 
   /*!
-   * drag-event-service v0.0.3
+   * drag-event-service v0.0.6
    * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
    * Released under the MIT License.
    */
@@ -1505,8 +1489,8 @@
     end: ['mouseup', 'touchend']
   };
   var index = {
-    canTouch: function canTouch() {
-      return 'ontouchstart' in document.documentElement;
+    isTouch: function isTouch(e) {
+      return e.type && e.type.startsWith('touch');
     },
     _getStore: function _getStore(el) {
       if (!el._wrapperStore) {
@@ -1516,28 +1500,33 @@
       return el._wrapperStore;
     },
     on: function on(el, name, handler) {
+      var _hp$onDOM, _hp$onDOM2;
+
       var store$$1 = this._getStore(el);
 
-      var canTouch = this.canTouch();
+      var ts = this;
 
       var wrapper = function wrapper(e) {
         var mouse;
+        var isTouch = ts.isTouch(e);
 
-        if (!canTouch) {
-          if (name === 'start' && e.which !== 1) {
-            // not left button
-            return;
-          }
-
-          mouse = {
-            x: e.pageX,
-            y: e.pageY
-          };
-        } else {
+        if (isTouch) {
+          // touch
           mouse = {
             x: e.changedTouches[0].pageX,
             y: e.changedTouches[0].pageY
           };
+        } else {
+          // mouse
+          mouse = {
+            x: e.pageX,
+            y: e.pageY
+          };
+
+          if (name === 'start' && e.which !== 1) {
+            // not left button mousedown
+            return;
+          }
         }
 
         return handler.call(this, e, mouse);
@@ -1546,14 +1535,24 @@
       store$$1.push({
         handler: handler,
         wrapper: wrapper
-      });
-      onDOM(el, events[name][canTouch ? 1 : 0], wrapper);
+      }); // follow format will cause big bundle size
+      // 以下写法将会使打包工具认为hp是上下文, 导致打包整个hp
+      // hp.onDOM(el, events[name][0], wrapper, ...args)
+
+      for (var _len = arguments.length, args = new Array(_len > 3 ? _len - 3 : 0), _key = 3; _key < _len; _key++) {
+        args[_key - 3] = arguments[_key];
+      }
+
+      (_hp$onDOM = onDOM).call.apply(_hp$onDOM, [null, el, events[name][0], wrapper].concat(args));
+
+      (_hp$onDOM2 = onDOM).call.apply(_hp$onDOM2, [null, el, events[name][1], wrapper].concat(args));
     },
     off: function off(el, name, handler) {
       var store$$1 = this._getStore(el);
 
-      var canTouch = this.canTouch();
-      var eventName = events[name][canTouch ? 1 : 0];
+      for (var _len2 = arguments.length, args = new Array(_len2 > 3 ? _len2 - 3 : 0), _key2 = 3; _key2 < _len2; _key2++) {
+        args[_key2 - 3] = arguments[_key2];
+      }
 
       for (var i = store$$1.length - 1; i >= 0; i--) {
         var _store$i = store$$1[i],
@@ -1561,7 +1560,12 @@
             wrapper = _store$i.wrapper;
 
         if (handler === handler2) {
-          offDOM(el, eventName, wrapper);
+          var _hp$offDOM, _hp$offDOM2;
+
+          (_hp$offDOM = offDOM).call.apply(_hp$offDOM, [null, el, events[name][0], wrapper].concat(args));
+
+          (_hp$offDOM2 = offDOM).call.apply(_hp$offDOM2, [null, el, events[name][1], wrapper].concat(args));
+
           store$$1.splice(i, 1);
         }
       }
@@ -1569,7 +1573,7 @@
   };
 
   /*!
-   * draggable-helper v1.0.15
+   * draggable-helper v1.0.17
    * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
    * Released under the MIT License.
    */
@@ -1641,7 +1645,10 @@
         y: mouse.y
       };
       store$$1.initialMouse = Object.assign({}, store$$1.mouse);
-      index.on(document, 'move', moving);
+      index.on(document, 'move', moving, {
+        passive: false
+      }); // passive: false is for touchmove event
+
       index.on(window, 'end', drop);
     }
 
@@ -1706,7 +1713,11 @@
         if (drag(e) === false) {
           canMove = false;
         }
-      }
+      } // move started
+      // e.preventDefault() to prevent text selection and page scrolling when touch
+
+
+      e.preventDefault();
 
       if (canMove && opt.moving) {
         if (opt.moving(e, opt, store$$1) === false) {

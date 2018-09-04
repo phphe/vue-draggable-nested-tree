@@ -1,6 +1,6 @@
 {
   "name": "vue-draggable-nested-tree",
-  "version": "2.1.5",
+  "version": "2.1.6",
   "description": "A draggable tree view component for vue2",
   "main": "dist/vue-draggable-nested-tree.cjs.js",
   "module": "dist/vue-draggable-nested-tree.es.js",
@@ -20,8 +20,8 @@
     "build": "node build-lib.js"
   },
   "dependencies": {
-    "draggable-helper": "^1.0.15",
-    "helper-js": "^1.1.3",
+    "draggable-helper": "^1.0.17",
+    "helper-js": "^1.2.0",
     "tree-helper": "^1.0.5"
   },
   "devDependencies": {
