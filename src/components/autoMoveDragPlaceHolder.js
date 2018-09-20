@@ -359,16 +359,16 @@ export default function(draggableHelperInfo) {
                   }
                 } else if (exec('targetNode is droppable') === false) {
                   if (exec('targetNode is 1st child') === true) {
-                    targets['nothing'](info)
+                    targets['after'](info);
                   } else if (exec('targetNode is 1st child') === false) {
                     if (exec('targetNode is last child') === true) {
                       if (exec('on targetNode middle') === false) {
                         targets['append root'](info)
                       } else if (exec('on targetNode middle') === true) {
-                        targets['nothing'](info)
+                        targets['after'](info);
                       }
                     } else if (exec('targetNode is last child') === false) {
-                      targets['nothing'](info)
+                      targets['after'](info);
                     }
                   }
                 }
