@@ -1,10 +1,13 @@
 <a name="vue_draggable_nested_tree"></a>
-# vue-draggable-nested-tree
+# vue-draggable-nested-tree vue可拖拽树, 可跨树拖拽
 这是可拖拽树组件. 此组件没有css, 您需要自己添加您喜欢的样式, 参考demo, 只有几个样式, 不难.
 此组件不负责节点的具体渲染, 暴露了一个节点渲染插槽, 请参考demo自行渲染.   
 This is a draggable tree component. This component does not have css, you need to add your style refer to demo. The demo style is less, not difficult.
 This component doesn't render node. It exposes a node rendering slot. Please refer to the demo for rendering.   
 [demo](https://codepen.io/phphe/pen/KRapQm)
+* [English Doc](https://github.com/phphe/vue-draggable-nested-tree/blob/master/README.MD)
+* [中文文档](https://github.com/phphe/vue-draggable-nested-tree/blob/master/README_CN.MD)
+
 # touch
 已支持简单触摸(单点).   
 Support touch(single point).
@@ -98,7 +101,7 @@ Tree(:data="data" draggable crossTree)
 ###### Noraml - Tree props
 ```js
 // base tree
-data: {},
+data: {}, // type Array
 indent: {default: 16},
 activatedClass: {default: 'active'},
 openedClass: {default: 'open'},
@@ -185,7 +188,7 @@ isDragPlaceHolder
 node._vm // vm
 node._vm.store // tree
 node.parent._vm // parent node vm
-node._vm.store.
+node._vm.store
 ```
 <a name="other"></a>
 # other

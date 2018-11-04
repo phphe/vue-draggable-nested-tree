@@ -9,69 +9,73 @@ import * as ut from '../plugins/utils'
 // 对 drag placeholder进行的操作
 const targets = {
   'nothing': info => {},
-  'after': ({
-    dplh,
-    targetNode,
-    currentTree
-  }) => {
-    // after targetNode or closest droppable parent
-    let node = targetNode
-    while (!node.parent._droppable) {
-      node = node.parent
+  'after': (info) => {
+    afterDplh(info.dplh, info.targetNode, info)
+  },
+  'before': (info) => {
+    if (isNodeDroppable(info.targetNode.parent, info)) {
+      th.insertBefore(info.dplh, info.targetNode)
+    } else {
+      afterDplh(info.dplh, info.targetNode.parent, info)
     }
-    th.insertAfter(dplh, node)
   },
-  'before': ({
-    dplh,
-    targetNode
-  }) => {
-    th.insertBefore(dplh, targetNode)
-  },
-  'append': ({
-    dplh,
-    targetNode
-  }) => {
-    th.appendTo(dplh, targetNode)
-    targetNode.open = true
+  'append': (info) => {
+    if (isNodeDroppable(info.targetNode, info)) {
+      th.appendTo(info.dplh, info.targetNode)
+      info.targetNode.open = true
+    } else {
+      afterDplh(info.dplh, info.targetNode, info)
+    }
   },
   'prepend': (info) => {
-    const {
-      dplh,
-      targetNode
-    } = info
-    th.prependTo(dplh, targetNode)
-    targetNode.open = true
-    // prepend may open a closed node which has children
-    if (!targetNode.open) {
-      targetNode.open = true
-      resolveBranchDroppable(info, targetNode)
+    if (isNodeDroppable(info.targetNode, info)) {
+      th.prependTo(info.dplh, info.targetNode)
+      info.targetNode.open = true
+    } else {
+      afterDplh(info.dplh, info.targetNode, info)
     }
   },
-  'after target parent': ({
-    dplh,
-    targetNode
-  }) => {
-    th.insertAfter(dplh, targetNode.parent)
+  'after target parent': (info) => {
+    afterDplh(info.dplh, info.targetNode.parent, info)
   },
   // append to prev sibling
-  'append prev': ({
-    dplh,
-    targetNode,
-    node,
-    targetPrev
-  }) => {
-    th.appendTo(dplh, targetPrev)
-    targetPrev.open = true
+  'append prev': (info) => {
+    if (isNodeDroppable(info.targetPrev, info)) {
+      th.appendTo(info.dplh, info.targetPrev)
+      info.targetPrev.open = true
+    } else {
+      afterDplh(info.dplh, info.targetPrev, info)
+    }
   },
-  // append to root
-  'append root': ({
-    dplh,
-    targetNode,
-    node,
-    targetPrev
-  }) => {
-    th.appendTo(dplh, targetNode._vm.store.rootData)
-  },
+}
+
+function afterDplh(dplh, targetNode, info) {
+  if (!targetNode) {
+    return false
+  } else {
+    const closest = findParent(targetNode, node => node.parent && isNodeDroppable(node.parent, info))
+    if (closest) {
+      th.insertAfter(dplh, closest)
+    } else {
+      return false
+    }
+  }
+  return true
+}
+
+function isNodeDroppable(node, info) {
+  if (!info.cacheOfDroppable.hasOwnProperty(node._id)) {
+    let r
+    if (node.hasOwnProperty('droppable')) {
+      r = node.droppable
+    } else if (node.parent) {
+      r = isNodeDroppable(node.parent, info)
+    } else {
+      r = true
+    }
+    info.cacheOfDroppable[node._id] = r
+  }
+  return info.cacheOfDroppable[node._id]
 }
 
 function findChild(info, children, handler, reverse) {
@@ -98,6 +102,16 @@ function findChild(info, children, handler, reverse) {
     }
   }
 }
+// start from node self
+function findParent(node, handle) {
+  let current = node
+  while (current) {
+    if (handle(current)) {
+      return current
+    }
+    current = current.parent
+  }
+}
 const rules = {
   // 另一节点存在
   'targetNode existed': info => info.targetNode,
@@ -119,14 +133,10 @@ const rules = {
   'targetNode is root': info => info.targetNode.isRoot,
   // 另一节点有子(不包括占位节点)
   'targetNode has children excluding placeholder': info => findChild(info, info.targetNode.children, v => v !== info.dplh),
-  // 另一节点可放置
-  'targetNode is droppable': info => info.targetNode._droppable,
   // 另一节点是第一个节点
   'targetNode is 1st child': info => findChild(info, info.targetNode.parent.children, v => v) === info.targetNode,
   // 另一节点是最后节点
   'targetNode is last child': info => findChild(info, info.targetNode.parent.children, v => v, true) === info.targetNode,
-  // 另一节点上一个节点可放置
-  'targetNode prev is droppable': info => info.targetPrev._droppable,
   // 当前位置在另一节点inner垂直中线上
   'on targetNode middle': info => info.offset.y <= info.tiMiddleY,
   // 当前位置在另一节点inner左边
@@ -156,7 +166,9 @@ export default function(draggableHelperInfo) {
     draggableHelperData: {
       opt: draggableHelperInfo.options,
       store: dhStore,
-    }
+    },
+    cacheOfDroppable: {},
+    cacheOfDraggable: {},
   }
   //
   attachCache(info, new Cache(), {
@@ -193,11 +205,6 @@ export default function(draggableHelperInfo) {
         }
         if (!ut.isPropTrue(currentTree.droppable)) {
           return
-        }
-        if (treeChanged) {
-          // when move start or drag move into another tree
-          // resolve _droppable
-          resolveBranchDroppable(info, currentTree.rootData)
         }
         return currentTree
       }
@@ -321,231 +328,154 @@ export default function(draggableHelperInfo) {
   const executedRuleCache = {}
   // exec rule
   const exec = (ruleId) => {
-    if (!executedRuleCache.hasOwnProperty(ruleId)) {
-      let r
-      try {
-        r = rules[ruleId](info)
-      } catch (e) {
-        r = e
-        if (process.env.DEVELOPE_SELF) {
-          // only visible when develop its self
-          console.warn(`failed to execute rule '${ruleId}'`, e);
-        }
+  if (!executedRuleCache.hasOwnProperty(ruleId)) {
+    let r
+    try {
+      r = rules[ruleId](info)
+    } catch (e) {
+      r = e
+      if (process.env.DEVELOPE_SELF) {
+        // only visible when develop its self
+        console.warn(`failed to execute rule '${ruleId}'`, e);
       }
-      executedRuleCache[ruleId] = r
     }
-    return executedRuleCache[ruleId]
+    executedRuleCache[ruleId] = r
   }
-  if (exec('currentTree existed') === true) {
-    if (exec('placeholder existed') === true) {
-      if (exec('targetNode is placeholder') === false) {
-        if (exec('placeholder in currentTree') === true) {
-          if (exec('targetNode parent is root') === false) {
-            if (exec('targetNode is open') === true) {
-              if (exec('targetNode has children excluding placeholder') === false) {
-                if (exec('targetNode is droppable') === true) {
-                  if (exec('at left') === false) {
-                    if (exec('targetNode is 1st child') === true) {
-                      if (exec('at indent right') === true) {
-                        targets['append'](info)
-                      } else if (exec('at indent right') === false) {
-                        targets['after'](info)
-                      }
-                    } else if (exec('targetNode is 1st child') === false) {
-                      targets['append'](info)
-                    }
-                  } else if (exec('at left') === true) {
-                    targets['after'](info)
-                  }
-                } else if (exec('targetNode is droppable') === false) {
-                  if (exec('targetNode is 1st child') === true) {
-                    targets['nothing'](info)
-                  } else if (exec('targetNode is 1st child') === false) {
-                    if (exec('targetNode is last child') === true) {
-                      if (exec('on targetNode middle') === false) {
-                        targets['append root'](info)
-                      } else if (exec('on targetNode middle') === true) {
-                        targets['nothing'](info)
-                      }
-                    } else if (exec('targetNode is last child') === false) {
-                      targets['nothing'](info)
-                    }
-                  }
-                }
-              } else if (exec('targetNode has children excluding placeholder') === true) {
-                if (exec('targetNode is droppable') === true) {
-                  targets['prepend'](info)
-                } else if (exec('targetNode is droppable') === false) {
-                  if (exec('targetNode prev is droppable') === true) {
-                    targets['after'](info)
-                  } else if (exec('targetNode prev is droppable') === false) {
-                    targets['nothing'](info)
-                  }
-                }
-              }
-            } else if (exec('targetNode is open') === false) {
-              if (exec('targetNode is droppable') === true) {
-                if (exec('at indent right') === false) {
-                  targets['after'](info)
-                } else if (exec('at indent right') === true) {
-                  targets['prepend'](info)
-                }
-              } else if (exec('targetNode is droppable') === false) {
-                targets['after'](info)
-              }
-            }
-          } else if (exec('targetNode parent is root') === true) {
-            if (exec('targetNode is open') === true) {
-              if (exec('targetNode has children excluding placeholder') === false) {
-                if (exec('targetNode is droppable') === true) {
-                  if (exec('targetNode is 1st child') === false) {
-                    if (exec('targetNode prev is droppable') === false) {
-                      targets['append'](info)
-                    } else if (exec('targetNode prev is droppable') === true) {
-                      if (exec('at indent right') === false) {
-                        targets['after'](info)
-                      } else if (exec('at indent right') === true) {
-                        targets['append'](info)
-                      }
-                    }
-                  } else if (exec('targetNode is 1st child') === true) {
-                    if (exec('on targetNode middle') === true) {
-                      targets['before'](info)
-                    } else if (exec('on targetNode middle') === false) {
-                      if (exec('at indent right') === true) {
-                        targets['append'](info)
-                      } else if (exec('at indent right') === false) {
-                        targets['after'](info)
-                      }
-                    }
-                  }
-                } else if (exec('targetNode is droppable') === false) {
-                  if (exec('targetNode is 1st child') === false) {
-                    if (exec('targetNode prev is droppable') === true) {
-                      targets['after'](info)
-                    } else if (exec('targetNode prev is droppable') === false) {
-                      targets['nothing'](info)
-                    }
-                  } else if (exec('targetNode is 1st child') === true) {
-                    targets['nothing'](info)
-                  }
-                }
-              } else if (exec('targetNode has children excluding placeholder') === true) {
-                if (exec('targetNode is droppable') === true) {
-                  if (exec('targetNode is 1st child') === false) {
-                    targets['prepend'](info)
-                  } else if (exec('targetNode is 1st child') === true) {
-                    if (exec('on targetNode middle') === true) {
-                      targets['before'](info)
-                    } else if (exec('on targetNode middle') === false) {
-                      targets['prepend'](info)
-                    }
-                  }
-                } else if (exec('targetNode is droppable') === false) {
-                  targets['nothing'](info)
-                }
-              }
-            } else if (exec('targetNode is open') === false) {
-              if (exec('targetNode is 1st child') === true) {
-                if (exec('on targetNode middle') === false) {
-                  if (exec('at indent right') === false) {
-                    targets['after'](info)
-                  } else if (exec('at indent right') === true) {
-                    targets['prepend'](info)
-                  }
-                } else if (exec('on targetNode middle') === true) {
+  return executedRuleCache[ruleId]
+  }
+  if (exec('placeholder existed') === false){
+    targets['nothing'](info)
+  }
+  else if (exec('placeholder existed') === true){
+    if (exec('currentTree existed') === true){
+      if (exec('at indent right') === true){
+        if (exec('on targetNode middle') === true){
+          if (exec('targetNode is placeholder') === false){
+            if (exec('targetNode parent is root') === true){
+              if (exec('targetNode has children excluding placeholder') === false){
+                if (exec('targetNode is 1st child') === true){
                   targets['before'](info)
                 }
-              } else if (exec('targetNode is 1st child') === false) {
-                if (exec('at indent right') === true) {
-                  targets['prepend'](info)
-                } else if (exec('at indent right') === false) {
+                else if (exec('targetNode is 1st child') === false){
+                  targets['append'](info)
+                }
+              }
+              else if (exec('targetNode has children excluding placeholder') === true){
+                targets['prepend'](info)
+              }
+            }
+            else if (exec('targetNode parent is root') === false){
+              if (exec('targetNode has children excluding placeholder') === false){
+                targets['append'](info)
+              }
+              else if (exec('targetNode has children excluding placeholder') === true){
+                targets['prepend'](info)
+              }
+            }
+          }
+          else if (exec('targetNode is placeholder') === true){
+            if (exec('targetNode parent is root') === false){
+              if (exec('targetNode is last child') === true){
+                targets['nothing'](info)
+              }
+              else if (exec('targetNode is last child') === false){
+                if (exec('targetNode is 1st child') === true){
+                  targets['nothing'](info)
+                }
+                else if (exec('targetNode is 1st child') === false){
+                  targets['append prev'](info)
+                }
+              }
+            }
+            else if (exec('targetNode parent is root') === true){
+              if (exec('targetNode is 1st child') === false){
+                targets['append prev'](info)
+              }
+              else if (exec('targetNode is 1st child') === true){
+                targets['nothing'](info)
+              }
+            }
+          }
+        }
+        else if (exec('on targetNode middle') === false){
+          if (exec('targetNode is last child') === false){
+            if (exec('targetNode is 1st child') === false){
+              if (exec('targetNode is placeholder') === false){
+                targets['append'](info)
+              }
+              else if (exec('targetNode is placeholder') === true){
+                targets['append prev'](info)
+              }
+            }
+            else if (exec('targetNode is 1st child') === true){
+              if (exec('targetNode is placeholder') === false){
+                if (exec('placeholder in currentTree') === true){
+                  targets['append'](info)
+                }
+                else if (exec('placeholder in currentTree') === false){
                   targets['after'](info)
                 }
               }
+              else if (exec('targetNode is placeholder') === true){
+                targets['nothing'](info)
+              }
             }
           }
-        } else if (exec('placeholder in currentTree') === false) {
-          targets['append'](info)
-        }
-      } else if (exec('targetNode is placeholder') === true) {
-        if (exec('targetNode parent is root') === false) {
-          if (exec('targetNode is 1st child') === true) {
-            if (exec('targetNode is last child') === true) {
-              if (exec('at left') === false) {
+          else if (exec('targetNode is last child') === true){
+            if (exec('targetNode parent is root') === false){
+              if (exec('targetNode is placeholder') === true){
                 targets['nothing'](info)
-              } else if (exec('at left') === true) {
+              }
+              else if (exec('targetNode is placeholder') === false){
+                targets['append'](info)
+              }
+            }
+            else if (exec('targetNode parent is root') === true){
+              targets['prepend'](info)
+            }
+          }
+        }
+      }
+      else if (exec('at indent right') === false){
+        if (exec('targetNode is placeholder') === false){
+          if (exec('targetNode has children excluding placeholder') === false){
+            targets['after'](info)
+          }
+          else if (exec('targetNode has children excluding placeholder') === true){
+            targets['prepend'](info)
+          }
+        }
+        else if (exec('targetNode is placeholder') === true){
+          if (exec('targetNode is last child') === true){
+            if (exec('on targetNode middle') === true){
+              if (exec('at left') === true){
                 targets['after target parent'](info)
               }
-            } else if (exec('targetNode is last child') === false) {
-              targets['nothing'](info)
-            }
-          } else if (exec('targetNode is 1st child') === false) {
-            if (exec('targetNode is last child') === true) {
-              if (exec('targetNode prev is droppable') === true) {
-                if (exec('at left') === true) {
-                  targets['after target parent'](info)
-                } else if (exec('at left') === false) {
-                  if (exec('at indent right') === true) {
-                    targets['append prev'](info)
-                  } else if (exec('at indent right') === false) {
-                    targets['nothing'](info)
-                  }
-                }
-              } else if (exec('targetNode prev is droppable') === false) {
-                if (exec('at left') === false) {
-                  targets['nothing'](info)
-                } else if (exec('at left') === true) {
-                  targets['after target parent'](info)
-                }
-              }
-            } else if (exec('targetNode is last child') === false) {
-              if (exec('targetNode prev is droppable') === true) {
-                if (exec('at left') === true) {
-                  targets['nothing'](info)
-                } else if (exec('at left') === false) {
-                  if (exec('at indent right') === true) {
-                    targets['append prev'](info)
-                  } else if (exec('at indent right') === false) {
-                    targets['nothing'](info)
-                  }
-                }
-              } else if (exec('targetNode prev is droppable') === false) {
+              else if (exec('at left') === false){
                 targets['nothing'](info)
+              }
+            }
+            else if (exec('on targetNode middle') === false){
+              if (exec('at left') === false){
+                targets['nothing'](info)
+              }
+              else if (exec('at left') === true){
+                targets['after target parent'](info)
               }
             }
           }
-        } else if (exec('targetNode parent is root') === true) {
-          if (exec('targetNode is 1st child') === false) {
-            if (exec('targetNode is last child') === false) {
-              if (exec('targetNode prev is droppable') === true) {
-                if (exec('at left') === true) {
-                  targets['nothing'](info)
-                } else if (exec('at left') === false) {
-                  if (exec('at indent right') === true) {
-                    targets['append prev'](info)
-                  } else if (exec('at indent right') === false) {
-                    targets['nothing'](info)
-                  }
-                }
-              } else if (exec('targetNode prev is droppable') === false) {
-                targets['nothing'](info)
-              }
-            } else if (exec('targetNode is last child') === true) {
-              targets['nothing'](info)
-            }
-          } else if (exec('targetNode is 1st child') === true) {
+          else if (exec('targetNode is last child') === false){
             targets['nothing'](info)
           }
         }
       }
-    } else if (exec('placeholder existed') === false) {
+    }
+    else if (exec('currentTree existed') === false){
       targets['nothing'](info)
     }
-  } else if (exec('currentTree existed') === false) {
-    targets['nothing'](info)
   }
   // decision end =================================
+
 
   //
 }
@@ -555,28 +485,4 @@ function getOf4(el, space) {
   r.x2 = r.x + el.offsetWidth
   r.y2 = r.y + el.offsetHeight + space
   return r
-}
-
-// branch is a node
-function resolveBranchDroppable(info, branch) {
-  const isNodeDroppable = (node) => {
-    if (node.hasOwnProperty('droppable')) {
-      return node.droppable
-    } else {
-      return true
-    }
-  }
-  branch._droppable = isNodeDroppable(branch)
-  th.depthFirstSearch(branch, (item, i, parent) => {
-    if (item === branch) {
-      return
-    }
-    if (item.isDragPlaceHolder || item === info.node) {
-      return 'skip children'
-    }
-    item._droppable = isNodeDroppable(item)
-    if (!item.open) {
-      return 'skip children'
-    }
-  })
 }
