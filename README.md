@@ -4,7 +4,7 @@
 此组件不负责节点的具体渲染, 暴露了一个节点渲染插槽, 请参考demo自行渲染.   
 This is a draggable tree component. This component does not have css, you need to add your style refer to demo. The demo style is less, not difficult.
 This component doesn't render node. It exposes a node rendering slot. Please refer to the demo for rendering.   
-[demo](https://codepen.io/phphe/pen/KRapQm)
+* [demo / 示例/演示](https://codepen.io/phphe/pen/KRapQm)
 * [English Doc](https://github.com/phphe/vue-draggable-nested-tree/blob/master/README.md)
 * [中文文档](https://github.com/phphe/vue-draggable-nested-tree/blob/master/README_CN.md)
 
