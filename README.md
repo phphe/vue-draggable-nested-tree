@@ -5,8 +5,8 @@
 This is a draggable tree component. This component does not have css, you need to add your style refer to demo. The demo style is less, not difficult.
 This component doesn't render node. It exposes a node rendering slot. Please refer to the demo for rendering.   
 [demo](https://codepen.io/phphe/pen/KRapQm)
-* [English Doc](https://github.com/phphe/vue-draggable-nested-tree/blob/master/README.MD)
-* [中文文档](https://github.com/phphe/vue-draggable-nested-tree/blob/master/README_CN.MD)
+* [English Doc](https://github.com/phphe/vue-draggable-nested-tree/blob/master/README.md)
+* [中文文档](https://github.com/phphe/vue-draggable-nested-tree/blob/master/README_CN.md)
 
 # touch
 已支持简单触摸(单点).   
