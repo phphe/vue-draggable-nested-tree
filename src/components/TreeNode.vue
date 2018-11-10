@@ -14,6 +14,8 @@
         slot(:data="props.data" :store="props.store")
 </template>
 <script>
+import * as th from 'tree-helper'
+
 export default {
   name: 'TreeNode',
   props: {
@@ -49,7 +51,8 @@ export default {
           data._vm = this
           // the level of root is 0, no need to update root level
           if (!data._treeNodePropertiesCompleted && !data.isRoot) {
-            this.store.compeleteNode(data, this.$parent.data)
+            // this.store.compeleteNode(data, this.$parent.data)
+            th.breadthFirstSearch(data, (node, k, parent) => { this.store.compeleteNode(node, parent) })
           }
         }
       }
