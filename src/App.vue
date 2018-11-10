@@ -3,13 +3,16 @@
 #app
   BaseTree.mr
   MaxLevelTree.mr
+  CollapsingAnimation.mr
 </template>
 
 <script>
 import BaseTree from '@/examples/Base'
 import MaxLevelTree from '@/examples/MaxLevel'
+import CollapsingAnimation from '@/examples/CollapsingAnimation'
+
 export default {
-  components: {BaseTree, MaxLevelTree},
+  components: {BaseTree, MaxLevelTree, CollapsingAnimation},
   // data() {
   //   return {
   //   }
