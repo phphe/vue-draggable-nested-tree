@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v2.1.7
+ * vue-draggable-nested-tree v2.1.8
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -1181,11 +1181,16 @@
       data: {
         immediate: true,
         handler: function handler(data) {
+          var _this = this;
+
           if (data) {
             data._vm = this; // the level of root is 0, no need to update root level
 
             if (!data._treeNodePropertiesCompleted && !data.isRoot) {
-              this.store.compeleteNode(data, this.$parent.data);
+              // this.store.compeleteNode(data, this.$parent.data)
+              breadthFirstSearch(data, function (node, k, parent) {
+                _this.store.compeleteNode(node, parent);
+              });
             }
           }
         }
@@ -1234,9 +1239,11 @@
     props: {
       data: {},
       idLength: {
+        type: Number,
         default: 5
       },
       indent: {
+        type: Number,
         default: 16
       },
       activatedClass: {
@@ -1246,6 +1253,7 @@
         default: 'open'
       },
       space: {
+        type: Number,
         default: 10
       } // space between node, unit px
 
@@ -1922,7 +1930,8 @@
     }
 
     return info.cacheOfDroppable[node._id];
-  }
+  } // find child, excluding dragging node default
+
 
   function findChild(info, children, handler, reverse) {
     var len = children.length;
@@ -1972,9 +1981,17 @@
     'targetNode is placeholder': function targetNodeIsPlaceholder(info) {
       return info.targetNode.isDragPlaceHolder;
     },
-    // 另一节点父级是根节点
-    'targetNode parent is root': function targetNodeParentIsRoot(info) {
-      return info.targetNode.parent.isRoot;
+    // 另一节点在最上面
+    'targetNode at top': function targetNodeAtTop(info) {
+      return info.targetAtTop;
+    },
+    // 另一节点在最下面
+    'targetNode at bottom': function targetNodeAtBottom(info) {
+      return info.targetAtBottom;
+    },
+    // 另一节点是根节点第二个子
+    'targetNode is the second child of root': function targetNodeIsTheSecondChildOfRoot(info) {
+      return info.currentTreeRootSecondChildExcludingDragging === info.targetNode;
     },
     // 拖动点坐标在任一树中, 同时, 起始树要可拖出, 当前树要可拖入
     'currentTree existed': function currentTreeExisted(info) {
@@ -1995,10 +2012,6 @@
     // 另一节点是打开的
     'targetNode is open': function targetNodeIsOpen(info) {
       return info.targetNode.open;
-    },
-    // 另一节点是根节点
-    'targetNode is root': function targetNodeIsRoot(info) {
-      return info.targetNode.isRoot;
     },
     // 另一节点有子(不包括占位节点)
     'targetNode has children excluding placeholder': function targetNodeHasChildrenExcludingPlaceholder(info) {
@@ -2050,7 +2063,7 @@
 
   var prevTree; // context is vm
 
-  function autoMoveDragPlaceHolder (draggableHelperInfo) {
+  function autoMoveDragPlaceHolder(draggableHelperInfo) {
     var trees = this.store.trees;
     var dhStore = draggableHelperInfo.store; // make info
 
@@ -2097,7 +2110,7 @@
         if (currentTree) {
           var dragStartTree = this.store;
 
-          if (dhStore.movedCount === 0) {
+          if (prevTree == null) {
             prevTree = dragStartTree;
           }
 
@@ -2122,6 +2135,14 @@
       currentTreeRootOf4: function currentTreeRootOf4() {
         return getOf4(this.currentTreeRootEl, this.currentTree.space);
       },
+      // the second child of currentTree root, excluding dragging node
+      currentTreeRootSecondChildExcludingDragging: function currentTreeRootSecondChildExcludingDragging() {
+        var _this2 = this;
+
+        return this.currentTree.rootData.children.slice(0, 3).filter(function (v) {
+          return v !== _this2.node;
+        })[1];
+      },
       // placeholder
       dplhEl: function dplhEl() {
         return document.getElementById(this.dplh._id);
@@ -2133,10 +2154,13 @@
         return getOf4(this.dplhEl, this.currentTree.space);
       },
       dplhAtTop: function dplhAtTop() {
-        return Math.abs(dplhOf4.y - this.currentTreeRootOf4.y) < 5;
+        return Math.abs(this.dplhOf4.y - this.currentTreeRootOf4.y) < 5;
       },
-      dplhAtBottom: function dplhAtBottom() {
-        return Math.abs(dplhOf4.y2 - this.currentTreeRootOf4.y2) < 5;
+      targetAtTop: function targetAtTop() {
+        return Math.abs(this.tiOf4.y - this.currentTreeRootOf4.y) < 5;
+      },
+      targetAtBottom: function targetAtBottom() {
+        return Math.abs(this.tiOf4.y2 - this.currentTreeRootOf4.y2) < 5;
       },
       // most related node
       // 最相关的另一个节点
@@ -2223,6 +2247,9 @@
       tiOffset: function tiOffset() {
         return getOffset(this.tiInnerEl);
       },
+      tiOf4: function tiOf4() {
+        return getOf4(this.tiInnerEl, this.currentTree.space);
+      },
       tiMiddleY: function tiMiddleY() {
         return this.tiOffset.y + this.tiInnerEl.offsetHeight / 2;
       },
@@ -2273,98 +2300,278 @@
       if (exec('currentTree existed') === true) {
         if (exec('at indent right') === true) {
           if (exec('on targetNode middle') === true) {
-            if (exec('targetNode is placeholder') === false) {
-              if (exec('targetNode parent is root') === true) {
-                if (exec('targetNode has children excluding placeholder') === false) {
-                  if (exec('targetNode is 1st child') === true) {
+            if (exec('targetNode is 1st child') === false) {
+              if (exec('targetNode is last child') === false) {
+                if (exec('targetNode is the second child of root') === true) {
+                  if (exec('placeholder at top') === true) {
                     targets['before'](info);
-                  } else if (exec('targetNode is 1st child') === false) {
-                    targets['append'](info);
+                  } else if (exec('placeholder at top') === false) {
+                    if (exec('targetNode is placeholder') === false) {
+                      if (exec('targetNode has children excluding placeholder') === false) {
+                        targets['append'](info);
+                      } else if (exec('targetNode has children excluding placeholder') === true) {
+                        targets['prepend'](info);
+                      }
+                    } else if (exec('targetNode is placeholder') === true) {
+                      targets['append prev'](info);
+                    }
                   }
-                } else if (exec('targetNode has children excluding placeholder') === true) {
-                  targets['prepend'](info);
-                }
-              } else if (exec('targetNode parent is root') === false) {
-                if (exec('targetNode has children excluding placeholder') === false) {
-                  targets['append'](info);
-                } else if (exec('targetNode has children excluding placeholder') === true) {
-                  targets['prepend'](info);
-                }
-              }
-            } else if (exec('targetNode is placeholder') === true) {
-              if (exec('targetNode parent is root') === false) {
-                if (exec('targetNode is last child') === true) {
-                  targets['nothing'](info);
-                } else if (exec('targetNode is last child') === false) {
-                  if (exec('targetNode is 1st child') === true) {
-                    targets['nothing'](info);
-                  } else if (exec('targetNode is 1st child') === false) {
+                } else if (exec('targetNode is the second child of root') === false) {
+                  if (exec('targetNode is placeholder') === false) {
+                    if (exec('targetNode has children excluding placeholder') === false) {
+                      targets['append'](info);
+                    } else if (exec('targetNode has children excluding placeholder') === true) {
+                      targets['prepend'](info);
+                    }
+                  } else if (exec('targetNode is placeholder') === true) {
                     targets['append prev'](info);
                   }
                 }
-              } else if (exec('targetNode parent is root') === true) {
-                if (exec('targetNode is 1st child') === false) {
-                  targets['append prev'](info);
-                } else if (exec('targetNode is 1st child') === true) {
+              } else if (exec('targetNode is last child') === true) {
+                if (exec('targetNode at bottom') === false) {
+                  if (exec('targetNode has children excluding placeholder') === true) {
+                    targets['prepend'](info);
+                  } else if (exec('targetNode has children excluding placeholder') === false) {
+                    if (exec('targetNode is placeholder') === true) {
+                      targets['append prev'](info);
+                    } else if (exec('targetNode is placeholder') === false) {
+                      targets['append'](info);
+                    }
+                  }
+                } else if (exec('targetNode at bottom') === true) {
+                  if (exec('targetNode is placeholder') === false) {
+                    targets['append'](info);
+                  } else if (exec('targetNode is placeholder') === true) {
+                    targets['append prev'](info);
+                  }
+                }
+              }
+            } else if (exec('targetNode is 1st child') === true) {
+              if (exec('targetNode at top') === true) {
+                if (exec('targetNode is placeholder') === true) {
                   targets['nothing'](info);
+                } else if (exec('targetNode is placeholder') === false) {
+                  targets['before'](info);
+                }
+              } else if (exec('targetNode at top') === false) {
+                if (exec('targetNode is placeholder') === true) {
+                  targets['nothing'](info);
+                } else if (exec('targetNode is placeholder') === false) {
+                  if (exec('targetNode has children excluding placeholder') === false) {
+                    targets['append'](info);
+                  } else if (exec('targetNode has children excluding placeholder') === true) {
+                    targets['prepend'](info);
+                  }
                 }
               }
             }
           } else if (exec('on targetNode middle') === false) {
-            if (exec('targetNode is last child') === false) {
-              if (exec('targetNode is 1st child') === false) {
-                if (exec('targetNode is placeholder') === false) {
-                  targets['append'](info);
-                } else if (exec('targetNode is placeholder') === true) {
-                  targets['append prev'](info);
-                }
-              } else if (exec('targetNode is 1st child') === true) {
-                if (exec('targetNode is placeholder') === false) {
-                  if (exec('placeholder in currentTree') === true) {
+            if (exec('targetNode is 1st child') === true) {
+              if (exec('targetNode at top') === true) {
+                if (exec('targetNode has children excluding placeholder') === false) {
+                  if (exec('targetNode is placeholder') === true) {
+                    targets['nothing'](info);
+                  } else if (exec('targetNode is placeholder') === false) {
                     targets['append'](info);
-                  } else if (exec('placeholder in currentTree') === false) {
-                    targets['after'](info);
                   }
-                } else if (exec('targetNode is placeholder') === true) {
-                  targets['nothing'](info);
+                } else if (exec('targetNode has children excluding placeholder') === true) {
+                  targets['prepend'](info);
                 }
-              }
-            } else if (exec('targetNode is last child') === true) {
-              if (exec('targetNode parent is root') === false) {
+              } else if (exec('targetNode at top') === false) {
                 if (exec('targetNode is placeholder') === true) {
                   targets['nothing'](info);
                 } else if (exec('targetNode is placeholder') === false) {
-                  targets['append'](info);
+                  if (exec('targetNode has children excluding placeholder') === false) {
+                    targets['append'](info);
+                  } else if (exec('targetNode has children excluding placeholder') === true) {
+                    targets['prepend'](info);
+                  }
                 }
-              } else if (exec('targetNode parent is root') === true) {
-                targets['prepend'](info);
+              }
+            } else if (exec('targetNode is 1st child') === false) {
+              if (exec('targetNode is the second child of root') === true) {
+                if (exec('placeholder at top') === true) {
+                  if (exec('targetNode has children excluding placeholder') === false) {
+                    targets['append'](info);
+                  } else if (exec('targetNode has children excluding placeholder') === true) {
+                    targets['prepend'](info);
+                  }
+                } else if (exec('placeholder at top') === false) {
+                  if (exec('targetNode has children excluding placeholder') === false) {
+                    if (exec('targetNode is placeholder') === false) {
+                      targets['append'](info);
+                    } else if (exec('targetNode is placeholder') === true) {
+                      targets['append prev'](info);
+                    }
+                  } else if (exec('targetNode has children excluding placeholder') === true) {
+                    targets['prepend'](info);
+                  }
+                }
+              } else if (exec('targetNode is the second child of root') === false) {
+                if (exec('targetNode is placeholder') === false) {
+                  if (exec('targetNode at bottom') === false) {
+                    if (exec('targetNode has children excluding placeholder') === true) {
+                      targets['prepend'](info);
+                    } else if (exec('targetNode has children excluding placeholder') === false) {
+                      targets['append'](info);
+                    }
+                  } else if (exec('targetNode at bottom') === true) {
+                    targets['append'](info);
+                  }
+                } else if (exec('targetNode is placeholder') === true) {
+                  targets['append prev'](info);
+                }
               }
             }
           }
         } else if (exec('at indent right') === false) {
           if (exec('targetNode is placeholder') === false) {
-            if (exec('targetNode has children excluding placeholder') === false) {
-              targets['after'](info);
-            } else if (exec('targetNode has children excluding placeholder') === true) {
-              targets['prepend'](info);
+            if (exec('on targetNode middle') === true) {
+              if (exec('targetNode is the second child of root') === true) {
+                if (exec('placeholder at top') === true) {
+                  targets['before'](info);
+                } else if (exec('placeholder at top') === false) {
+                  if (exec('targetNode has children excluding placeholder') === false) {
+                    targets['after'](info);
+                  } else if (exec('targetNode has children excluding placeholder') === true) {
+                    targets['prepend'](info);
+                  }
+                }
+              } else if (exec('targetNode is the second child of root') === false) {
+                if (exec('targetNode is 1st child') === true) {
+                  if (exec('targetNode at top') === true) {
+                    targets['before'](info);
+                  } else if (exec('targetNode at top') === false) {
+                    if (exec('targetNode has children excluding placeholder') === false) {
+                      targets['after'](info);
+                    } else if (exec('targetNode has children excluding placeholder') === true) {
+                      targets['prepend'](info);
+                    }
+                  }
+                } else if (exec('targetNode is 1st child') === false) {
+                  if (exec('targetNode is last child') === true) {
+                    if (exec('targetNode at bottom') === false) {
+                      if (exec('targetNode has children excluding placeholder') === true) {
+                        targets['prepend'](info);
+                      } else if (exec('targetNode has children excluding placeholder') === false) {
+                        targets['after'](info);
+                      }
+                    } else if (exec('targetNode at bottom') === true) {
+                      targets['after'](info);
+                    }
+                  } else if (exec('targetNode is last child') === false) {
+                    if (exec('targetNode has children excluding placeholder') === false) {
+                      targets['after'](info);
+                    } else if (exec('targetNode has children excluding placeholder') === true) {
+                      targets['prepend'](info);
+                    }
+                  }
+                }
+              }
+            } else if (exec('on targetNode middle') === false) {
+              if (exec('targetNode is 1st child') === true) {
+                if (exec('targetNode is last child') === false) {
+                  if (exec('targetNode at top') === true) {
+                    if (exec('targetNode has children excluding placeholder') === false) {
+                      targets['after'](info);
+                    } else if (exec('targetNode has children excluding placeholder') === true) {
+                      targets['prepend'](info);
+                    }
+                  } else if (exec('targetNode at top') === false) {
+                    if (exec('at left') === true) {
+                      if (exec('targetNode has children excluding placeholder') === true) {
+                        targets['prepend'](info);
+                      } else if (exec('targetNode has children excluding placeholder') === false) {
+                        targets['after'](info);
+                      }
+                    } else if (exec('at left') === false) {
+                      targets['after'](info);
+                    }
+                  }
+                } else if (exec('targetNode is last child') === true) {
+                  if (exec('targetNode has children excluding placeholder') === false) {
+                    targets['after'](info);
+                  } else if (exec('targetNode has children excluding placeholder') === true) {
+                    targets['prepend'](info);
+                  }
+                }
+              } else if (exec('targetNode is 1st child') === false) {
+                if (exec('targetNode is last child') === true) {
+                  if (exec('targetNode at bottom') === false) {
+                    if (exec('targetNode has children excluding placeholder') === true) {
+                      targets['prepend'](info);
+                    } else if (exec('targetNode has children excluding placeholder') === false) {
+                      targets['after'](info);
+                    }
+                  } else if (exec('targetNode at bottom') === true) {
+                    targets['after'](info);
+                  }
+                } else if (exec('targetNode is last child') === false) {
+                  if (exec('targetNode has children excluding placeholder') === false) {
+                    targets['after'](info);
+                  } else if (exec('targetNode has children excluding placeholder') === true) {
+                    targets['prepend'](info);
+                  }
+                }
+              }
             }
           } else if (exec('targetNode is placeholder') === true) {
-            if (exec('targetNode is last child') === true) {
-              if (exec('on targetNode middle') === true) {
+            if (exec('targetNode is 1st child') === true) {
+              if (exec('targetNode at bottom') === false) {
+                if (exec('targetNode is last child') === false) {
+                  targets['nothing'](info);
+                } else if (exec('targetNode is last child') === true) {
+                  if (exec('at left') === false) {
+                    targets['nothing'](info);
+                  } else if (exec('at left') === true) {
+                    targets['after target parent'](info);
+                  }
+                }
+              } else if (exec('targetNode at bottom') === true) {
+                if (exec('on targetNode middle') === false) {
+                  if (exec('at left') === true) {
+                    targets['after target parent'](info);
+                  } else if (exec('at left') === false) {
+                    targets['nothing'](info);
+                  }
+                } else if (exec('on targetNode middle') === true) {
+                  if (exec('at left') === true) {
+                    targets['after target parent'](info);
+                  } else if (exec('at left') === false) {
+                    targets['nothing'](info);
+                  }
+                }
+              }
+            } else if (exec('targetNode is 1st child') === false) {
+              if (exec('on targetNode middle') === false) {
+                if (exec('targetNode at bottom') === false) {
+                  if (exec('targetNode is last child') === true) {
+                    if (exec('at left') === true) {
+                      targets['after target parent'](info);
+                    } else if (exec('at left') === false) {
+                      targets['nothing'](info);
+                    }
+                  } else if (exec('targetNode is last child') === false) {
+                    targets['nothing'](info);
+                  }
+                } else if (exec('targetNode at bottom') === true) {
+                  if (exec('at left') === true) {
+                    targets['after target parent'](info);
+                  } else if (exec('at left') === false) {
+                    targets['nothing'](info);
+                  }
+                }
+              } else if (exec('on targetNode middle') === true) {
                 if (exec('at left') === true) {
-                  targets['after target parent'](info);
+                  if (exec('targetNode is last child') === true) {
+                    targets['after target parent'](info);
+                  } else if (exec('targetNode is last child') === false) {
+                    targets['nothing'](info);
+                  }
                 } else if (exec('at left') === false) {
                   targets['nothing'](info);
                 }
-              } else if (exec('on targetNode middle') === false) {
-                if (exec('at left') === false) {
-                  targets['nothing'](info);
-                } else if (exec('at left') === true) {
-                  targets['after target parent'](info);
-                }
               }
-            } else if (exec('targetNode is last child') === false) {
-              targets['nothing'](info);
             }
           }
         }
@@ -2382,6 +2589,10 @@
     r.y2 = r.y + el.offsetHeight + space;
     return r;
   }
+
+  autoMoveDragPlaceHolder.dragEnd = function dragEnd() {
+    prevTree = null;
+  };
 
   var DraggableTreeNode = {
     extends: TreeNode,
@@ -2442,6 +2653,7 @@
               return autoMoveDragPlaceHolder.call(_this, draggableHelperInfo);
             },
             drop: function drop(e, opt, store$$1) {
+              autoMoveDragPlaceHolder.dragEnd();
               var draggableHelperInfo = {
                 event: e,
                 options: opt,
