@@ -8,7 +8,6 @@
 <script>
 import * as hp from 'helper-js'
 import * as th from 'tree-helper'
-import * as ut from '../utils.js'
 import TreeNode from './TreeNode.vue'
 
 export default {

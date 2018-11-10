@@ -155,7 +155,7 @@ for (const key of Object.keys(rules)) {
 
 let prevTree
 // context is vm
-export default function(draggableHelperInfo) {
+export default function autoMoveDragPlaceHolder(draggableHelperInfo) {
   const trees = this.store.trees
   const dhStore = draggableHelperInfo.store
   // make info
@@ -195,7 +195,7 @@ export default function(draggableHelperInfo) {
       if (currentTree) {
         const dragStartTree = this.store
         let treeChanged
-        if (dhStore.movedCount === 0) {
+        if (prevTree == null) {
           prevTree = dragStartTree
           treeChanged = true
         }
@@ -336,7 +336,6 @@ export default function(draggableHelperInfo) {
     },
   })
   // attachCache end
-
 
   // decision start =================================
   const executedRuleCache = {}
@@ -723,4 +722,8 @@ function getOf4(el, space) {
   r.x2 = r.x + el.offsetWidth
   r.y2 = r.y + el.offsetHeight + space
   return r
+}
+
+autoMoveDragPlaceHolder.dragEnd = function dragEnd() {
+  prevTree = null
 }

@@ -45,6 +45,7 @@ export default {
             return autoMoveDragPlaceHolder.call(this, draggableHelperInfo)
           },
           drop: (e, opt, store) => {
+            autoMoveDragPlaceHolder.dragEnd()
             const draggableHelperInfo = {event: e, options: opt, store}
             if (this.store.ondragend && this.store.ondragend(this.data, draggableHelperInfo) === false) {
               hp.arrayRemove(dplh.parent.children, dplh)
