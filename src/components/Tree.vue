@@ -14,11 +14,11 @@ import TreeNode from './TreeNode.vue'
 export default {
   props: {
     data: {},
-    idLength: {default: 5},
-    indent: {default: 16},
+    idLength: {type: Number, default: 5},
+    indent: {type: Number, default: 16},
     activatedClass: {default: 'active'},
     openedClass: {default: 'open'},
-    space: {default: 10}, // space between node, unit px
+    space: {type: Number, default: 10}, // space between node, unit px
   },
   components: {TreeNode},
   data() {
