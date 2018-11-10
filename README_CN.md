@@ -11,6 +11,8 @@ This component doesn't render node. It exposes a node rendering slot. Please ref
 # touch
 已支持简单触摸(单点).   
 Support touch(single point).
+# Donation / 打赏
+[Paypal](https://www.paypal.me/phphe) | [Alipay/支付宝](https://github.com/phphe/my-alipay-wechat-qr-code/blob/master/alipay.jpg) | [Wechat/微信](https://github.com/phphe/my-alipay-wechat-qr-code/blob/master/wechat.png)
 # Indexes
 * [vue-draggable-nested-tree](#vue_draggable_nested_tree)
 * [安装](#install)
