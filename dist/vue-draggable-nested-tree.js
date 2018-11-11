@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v2.1.8
+ * vue-draggable-nested-tree v2.2.0
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -1110,9 +1110,9 @@
       return _c('div', {
         staticClass: "tree-node",
         class: [_vm.data.active ? _vm.store.activatedClass : '', _vm.data.open ? _vm.store.openedClass : '', _vm.data.class],
+        style: _vm.data.style,
         attrs: {
-          "id": _vm.data._id,
-          "data-level": _vm.data.level
+          "id": _vm.data._id
         }
       }, [!_vm.isRoot ? _c('div', {
         staticClass: "tree-node-inner-back",
@@ -1124,7 +1124,8 @@
         style: [_vm.data.innerStyle]
       }, [_vm._t("default", null, {
         data: _vm.data,
-        store: _vm.store
+        store: _vm.store,
+        vm: _vm.vm
       })], 2)]) : _vm._e(), _vm.childrenVisible ? _c('div', {
         staticClass: "tree-node-children"
       }, _vm._l(_vm.data.children, function (child) {
@@ -1132,14 +1133,16 @@
           key: child._id,
           attrs: {
             "data": child,
-            "store": _vm.store
+            "store": _vm.store,
+            "level": _vm.childrenLevel
           },
           scopedSlots: _vm._u([{
             key: "default",
             fn: function fn(props) {
               return [_vm._t("default", null, {
                 data: props.data,
-                store: props.store
+                store: props.store,
+                vm: props.vm
               })];
             }
           }])
@@ -1150,15 +1153,23 @@
     name: 'TreeNode',
     props: {
       data: {},
-      store: {}
+      store: {},
+      level: {
+        default: 0
+      } // readonly
+
     },
-    // data() {
-    //   return {
-    //   }
-    // },
+    data: function data() {
+      return {
+        vm: this
+      };
+    },
     computed: {
+      childrenLevel: function childrenLevel() {
+        return this.level + 1;
+      },
       isRoot: function isRoot() {
-        return this.data.level === 0;
+        return this.data.isRoot;
       },
       childrenVisible: function childrenVisible() {
         var data = this.data;
@@ -1169,9 +1180,8 @@
           marginBottom: this.store.space + 'px'
         };
 
-        if (!this.isRoot && this.data.level > 1) {
-          var indentType = this.store.indentType;
-          r.paddingLeft = (this.data.level - 1) * this.store.indent + 'px';
+        if (!this.isRoot && this.level > 1) {
+          r.paddingLeft = (this.level - 1) * this.store.indent + 'px';
         }
 
         return r;
@@ -1181,25 +1191,12 @@
       data: {
         immediate: true,
         handler: function handler(data) {
-          var _this = this;
-
           if (data) {
-            data._vm = this; // the level of root is 0, no need to update root level
+            data._vm = this;
 
             if (!data._treeNodePropertiesCompleted && !data.isRoot) {
-              // this.store.compeleteNode(data, this.$parent.data)
-              breadthFirstSearch(data, function (node, k, parent) {
-                _this.store.compeleteNode(node, parent);
-              });
+              this.store.compeleteNode(data, this.$parent.data);
             }
-          }
-        }
-      },
-      'data.parent': {
-        immediate: true,
-        handler: function handler(parent, old) {
-          if (parent !== old) {
-            this.store.updateBranchLevel(this.data);
           }
         }
       }
@@ -1229,7 +1226,8 @@
           fn: function fn(props) {
             return [_vm._t("default", null, {
               data: props.data,
-              store: _vm.store
+              store: _vm.store,
+              vm: props.vm
             })];
           }
         }])
@@ -1281,8 +1279,7 @@
 
           this.rootData = this.rootData || {
             isRoot: true,
-            _id: "tree_".concat(this._uid, "_node_root"),
-            level: 0
+            _id: "tree_".concat(this._uid, "_node_root")
           };
           breadthFirstSearch(data, function (node, k, parent) {
             _this.compeleteNode(node, parent);
@@ -1312,7 +1309,6 @@
         }
 
         this.$set(node, 'parent', parent || this.rootData);
-        this.$set(node, 'level', node.parent.level + 1);
 
         if (!node.hasOwnProperty('_id')) {
           node._id = "tree_".concat(this._uid, "_node_").concat(strRand(this.idLength));
@@ -1320,18 +1316,8 @@
 
         node._treeNodePropertiesCompleted = true;
       },
-      updateBranchLevel: function updateBranchLevel(branch) {
-        var startLevel = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : branch.parent.level + 1;
-        branch.level = startLevel;
-
-        if (branch.children && branch.children.length > 0) {
-          breadthFirstSearch(branch.children, function (node, i, p) {
-            node.level = node.parent.level + 1;
-          });
-        }
-      },
       // pure node self
-      pure: function pure(node, withChildren) {
+      pure: function pure(node, withChildren, after) {
         var _this2 = this;
 
         var t = Object.assign({}, node);
@@ -1339,7 +1325,6 @@
         delete t.parent;
         delete t.children;
         delete t.open;
-        delete t.level;
         delete t.active;
         delete t.style;
         delete t.class;
@@ -1363,6 +1348,10 @@
           t.children.forEach(function (v, k) {
             t.children[k] = _this2.pure(v, withChildren);
           });
+        }
+
+        if (after) {
+          return after(t, node) || t;
         }
 
         return t;
@@ -1431,8 +1420,8 @@
           this.openNode(node, closeOld);
         }
       },
-      getPureData: function getPureData() {
-        return this.pure(this.rootData, true).children;
+      getPureData: function getPureData(after) {
+        return this.pure(this.rootData, true, after).children;
       },
       deleteNode: function deleteNode(node) {
         return arrayRemove(node.parent.children, node);
@@ -1857,51 +1846,51 @@
   var targets = {
     'nothing': function nothing(info) {},
     'after': function after(info) {
-      afterDplh(info.dplh, info.targetNode, info);
+      insertDplhAfterTo(info.dplh, info.targetNode, info);
     },
     'before': function before(info) {
-      if (isNodeDroppable(info.targetNode.parent, info)) {
+      if (isNodeDroppable(info.targetNode.parent)) {
         insertBefore(info.dplh, info.targetNode);
       } else {
-        afterDplh(info.dplh, info.targetNode.parent, info);
+        insertDplhAfterTo(info.dplh, info.targetNode.parent, info);
       }
     },
     'append': function append(info) {
-      if (isNodeDroppable(info.targetNode, info)) {
+      if (isNodeDroppable(info.targetNode)) {
         appendTo(info.dplh, info.targetNode);
         info.targetNode.open = true;
       } else {
-        afterDplh(info.dplh, info.targetNode, info);
+        insertDplhAfterTo(info.dplh, info.targetNode, info);
       }
     },
     'prepend': function prepend(info) {
-      if (isNodeDroppable(info.targetNode, info)) {
+      if (isNodeDroppable(info.targetNode)) {
         prependTo(info.dplh, info.targetNode);
         info.targetNode.open = true;
       } else {
-        afterDplh(info.dplh, info.targetNode, info);
+        insertDplhAfterTo(info.dplh, info.targetNode, info);
       }
     },
     'after target parent': function afterTargetParent(info) {
-      afterDplh(info.dplh, info.targetNode.parent, info);
+      insertDplhAfterTo(info.dplh, info.targetNode.parent, info);
     },
     // append to prev sibling
     'append prev': function appendPrev(info) {
-      if (isNodeDroppable(info.targetPrev, info)) {
+      if (isNodeDroppable(info.targetPrev)) {
         appendTo(info.dplh, info.targetPrev);
         info.targetPrev.open = true;
       } else {
-        afterDplh(info.dplh, info.targetPrev, info);
+        insertDplhAfterTo(info.dplh, info.targetPrev, info);
       }
     }
   };
 
-  function afterDplh(dplh, targetNode, info) {
+  function insertDplhAfterTo(dplh, targetNode, info) {
     if (!targetNode) {
       return false;
     } else {
       var closest = findParent$2(targetNode, function (node) {
-        return node.parent && isNodeDroppable(node.parent, info);
+        return node.parent && isNodeDroppable(node.parent);
       });
 
       if (closest) {
@@ -1914,24 +1903,40 @@
     return true;
   }
 
-  function isNodeDroppable(node, info) {
-    if (!info.cacheOfDroppable.hasOwnProperty(node._id)) {
+  function isNodeDraggable(node) {
+    if (!draggableIds.hasOwnProperty(node._id)) {
+      var r;
+
+      if (node.hasOwnProperty('draggable')) {
+        r = node.draggable;
+      } else if (node.parent) {
+        r = isNodeDraggable(node.parent);
+      } else {
+        r = true;
+      }
+
+      draggableIds[node._id] = r;
+    }
+
+    return draggableIds[node._id];
+  }
+  function isNodeDroppable(node) {
+    if (!droppableIds.hasOwnProperty(node._id)) {
       var r;
 
       if (node.hasOwnProperty('droppable')) {
         r = node.droppable;
       } else if (node.parent) {
-        r = isNodeDroppable(node.parent, info);
+        r = isNodeDroppable(node.parent);
       } else {
         r = true;
       }
 
-      info.cacheOfDroppable[node._id] = r;
+      droppableIds[node._id] = r;
     }
 
-    return info.cacheOfDroppable[node._id];
+    return droppableIds[node._id];
   } // find child, excluding dragging node default
-
 
   function findChild(info, children, handler, reverse) {
     var len = children.length;
@@ -2061,7 +2066,9 @@
     _loop();
   }
 
-  var prevTree; // context is vm
+  var prevTree;
+  var droppableIds = {};
+  var draggableIds = {}; // context is vm
 
   function autoMoveDragPlaceHolder(draggableHelperInfo) {
     var trees = this.store.trees;
@@ -2077,9 +2084,7 @@
       draggableHelperData: {
         opt: draggableHelperInfo.options,
         store: dhStore
-      },
-      cacheOfDroppable: {},
-      cacheOfDraggable: {} //
+      } //
 
     };
     attachCache(info, new Cache(), {
@@ -2590,8 +2595,12 @@
     return r;
   }
 
+  autoMoveDragPlaceHolder.dragStart = function dragStart() {};
+
   autoMoveDragPlaceHolder.dragEnd = function dragEnd() {
     prevTree = null;
+    droppableIds = {};
+    draggableIds = {};
   };
 
   var DraggableTreeNode = {
@@ -2599,6 +2608,9 @@
     name: 'TreeNode',
     mounted: function mounted() {
       var _this = this;
+
+      this.store.isNodeDraggable = isNodeDraggable;
+      this.store.isNodeDroppable = isNodeDroppable;
 
       if (this.isRoot || this.data.isDragPlaceHolder) {
         return;
@@ -2615,7 +2627,8 @@
             },
             minTranslate: 10,
             drag: function drag(e, opt, store$$1) {
-              // this store is not tree
+              autoMoveDragPlaceHolder.dragStart(); // this store is not tree
+
               var draggableHelperInfo = {
                 event: e,
                 options: opt,
@@ -2628,7 +2641,9 @@
 
               if (!isNodeDraggable(_this.data)) {
                 return false;
-              } // record start positon
+              }
+
+              _this.store.$emit('drag', _this.data); // record start positon
 
 
               var siblings = _this.data.parent.children;
@@ -2639,10 +2654,7 @@
               };
               dplh.innerStyle.height = store$$1.el.offsetHeight + 'px';
               insertAfter(dplh, _this.data);
-              _this.data.class += ' dragging';
-
-              _this.store.$emit('drag', _this.data); // console.log('drag start');
-
+              _this.data.class += ' dragging'; // console.log('drag start');
             },
             moving: function moving(e, opt, store$$1) {
               var draggableHelperInfo = {
@@ -2698,14 +2710,6 @@
       });
     }
   };
-
-  function isNodeDraggable(node, nodeVm) {
-    if (node.hasOwnProperty('draggable')) {
-      return node.draggable;
-    } else {
-      return true;
-    }
-  }
 
   var trees = []; // for multiple trees
   // DragPlaceHolder, unique
