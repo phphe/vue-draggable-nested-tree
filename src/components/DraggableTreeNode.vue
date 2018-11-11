@@ -3,13 +3,15 @@ import * as hp from 'helper-js'
 import * as th from 'tree-helper'
 import draggableHelper from 'draggable-helper'
 import TreeNode from './TreeNode.vue'
-import autoMoveDragPlaceHolder from './autoMoveDragPlaceHolder'
+import autoMoveDragPlaceHolder, {isNodeDraggable, isNodeDroppable} from './autoMoveDragPlaceHolder'
 import * as ut from '../plugins/utils'
 
 export default {
   extends: TreeNode,
   name: 'TreeNode',
   mounted() {
+    this.store.isNodeDraggable = isNodeDraggable
+    this.store.isNodeDroppable = isNodeDroppable
     if (this.isRoot || this.data.isDragPlaceHolder) {
       return
     }
@@ -22,6 +24,7 @@ export default {
           getEl: () => this.$el,
           minTranslate: 10,
           drag: (e, opt, store) => {
+            autoMoveDragPlaceHolder.dragStart()
             // this store is not tree
             const draggableHelperInfo = {event: e, options: opt, store}
             if (this.store.ondragstart && this.store.ondragstart(this.data, draggableHelperInfo) === false) {
@@ -30,6 +33,7 @@ export default {
             if (!isNodeDraggable(this.data)) {
               return false
             }
+            this.store.$emit('drag', this.data)
             // record start positon
             const siblings = this.data.parent.children
             this.startPosition = {siblings, index: siblings.indexOf(this.data)}
@@ -37,7 +41,6 @@ export default {
             dplh.innerStyle.height = store.el.offsetHeight + 'px'
             th.insertAfter(dplh, this.data)
             this.data.class += ' dragging'
-            this.store.$emit('drag', this.data)
             // console.log('drag start');
           },
           moving: (e, opt, store) => {
@@ -80,14 +83,6 @@ export default {
       }
     }, {immediate: true})
   },
-}
-
-function isNodeDraggable(node, nodeVm) {
-  if (node.hasOwnProperty('draggable')) {
-    return node.draggable
-  } else {
-    return true
-  }
 }
 
 </script>

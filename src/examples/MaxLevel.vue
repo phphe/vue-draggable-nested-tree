@@ -5,7 +5,7 @@ div
   Tree(:data="originalData" draggable crossTree ref="tree1" @drag="ondrag")
     div(slot-scope="{data, store}")
       b(v-if="data.children && data.children.length" @click="store.toggleOpen(data)") {{data.open ? '-' : '+'}}&nbsp;
-      span {{data.text}}-level:{{data.level}}-droppable:{{data.droppable}}
+      span {{data.text}}-droppable:{{data.droppable}}
 </template>
 
 <script>
@@ -57,18 +57,21 @@ export default {
       const {maxLevel} = this
       let nodeLevels = 1
       th.depthFirstSearch(node, (childNode) => {
-        if (childNode.level > nodeLevels) {
-          nodeLevels = childNode.level
+        if (childNode._vm.level > nodeLevels) {
+          nodeLevels = childNode._vm.level
         }
       })
-      nodeLevels = nodeLevels - node.level + 1
+      nodeLevels = nodeLevels - node._vm.level + 1
       const childNodeMaxLevel = maxLevel - nodeLevels
       //
       th.depthFirstSearch(this.originalData, (childNode) => {
         if (childNode === node) {
           return 'skip children'
         }
-        this.$set(childNode, 'droppable', childNode.level <= childNodeMaxLevel)
+        if (!childNode._vm) {
+          console.log(childNode);
+        }
+        this.$set(childNode, 'droppable', childNode._vm.level <= childNodeMaxLevel)
       })
     },
   },

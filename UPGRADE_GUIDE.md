@@ -15,3 +15,17 @@ Change to:
 Tree
   div(slot-scope="{data, store}") {{data.level}}
 ```
+### 2.1.8 -> 2.2.0
+
+#### `level` moved into node vm from node. `vm` add to slot props
+
+```pug
+Tree
+  div(slot-scope="{data, store}") {{data.level}}
+```
+Change to:
+
+```pug
+Tree
+  div(slot-scope="{data, store, vm}") {{vm.level}}
+```

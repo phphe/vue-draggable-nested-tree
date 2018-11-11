@@ -89,7 +89,10 @@ data: [
 ### template / 模板
 ```pug
 Tree(:data="data" draggable crossTree)
-  div(slot-scope="{data, store}")
+  div(slot-scope="{data, store, vm}")
+    //- data是节点数据
+    //- store是树的实例
+    //- vm是节点实例, vm.level是节点的层级
     template(v-if="!data.isDragPlaceHolder")
       b(v-if="data.children && data.children.length" @click="store.toggleOpen(data)") {{data.open ? '-' : '+'}}&nbsp;
       span {{data.text}}
@@ -149,7 +152,18 @@ change(node, targetTree, oldTree), // 拖动结束后并且有节点位置发生
 <a name="tree_methods"></a>
 ### Tree methods / 树的方法
 ```js
-pure(node, withChildren) // 获得干净数据(不含运行时的属性例如_id之类的), 下划线开头的属性会被删掉. withChildren为true的话则会把节点的子节点的数据也获取到.
+
+pure(node, withChildren, after)
+/*
+pure
+获得干净数据(不含运行时的属性例如_id之类的), 下划线开头的属性会被删掉. withChildren为true的话则会把节点的子节点的数据也获取到.
+withChildren: 可选. after: Function, 可选, after可以自定义返回数据
+关于after的源码(t是干净的节点数据):
+if (after) {
+  return after(t, node) || t
+}
+return t
+*/
 getNodeById(id)
 getActivated()
 getOpened()
@@ -158,10 +172,12 @@ toggleActive(node, inactiveOld)
 openNode(node, closeOld)
 toggleOpen(node, closeOld)
 // 下面的方法很简单, 所以附上源码.
-getPureData() { return this.pure(this.rootData, true).children } // 获取树的干净数据
+getPureData(after) { return this.pure(this.rootData, true, after).children } // 获取树的干净数据 after: Function, 可选
 deleteNode(node) { return hp.arrayRemove(node.parent.children, node) } // 删除节点
 // 增加节点, 像操作数组一样就可以了. 例子: node.children.push(newNodeData)
 // 更新节点, 直接修改节点属性就可以了
+isNodeDraggable(node) // 判断节点是否draggable
+isNodeDroppable(node) // 判断节点是否droppable
 ```
 <a name="node_properties"></a>
 ### node properties / 节点属性
@@ -172,7 +188,6 @@ _vm // 节点的实例
 parent // 父节点
 children: [], // 子节点
 open, // 是否打开
-level, // 节点层级, 根节点为0, 传入的data数组从1开始
 active: false,
 style: {}, // 可以控制节点的style
 class: '', // 可以控制节点的class
@@ -191,6 +206,7 @@ isDragPlaceHolder // 该节点是不是拖动占位节点
 在一些回调函数和事件里的参数可能只有node, 而想访问更多(例如节点实例, 节点的爸爸, 节点所在树)怎么办? 其实可以直接通过node访问, 因为他们都嵌套在里面了
 ```js
 node._vm // vm
+node._vm.level // node level, readonly
 node._vm.store // tree
 node.parent._vm // parent node vm
 node._vm.store

@@ -1,17 +1,18 @@
 <template lang="pug">
 .tree-node(
   :class="[data.active ? store.activatedClass : '', data.open ? store.openedClass : '', data.class]"
-  :id="data._id" :data-level="data.level"
+  :style="data.style"
+  :id="data._id"
 )
   .tree-node-inner-back(v-if="!isRoot" :style="[innerBackStyle, data.innerBackStyle]" :class="[data.innerBackClass]")
     .tree-node-inner(:style="[data.innerStyle]" :class="[data.innerClass]")
-      slot(:data="data" :store="store")
+      slot(:data="data" :store="store" :vm="vm")
   .tree-node-children(v-if="childrenVisible")
     TreeNode(v-for="child in data.children" :key="child._id"
-      :data="child" :store="store"
+      :data="child" :store="store" :level="childrenLevel"
     )
       template(slot-scope="props")
-        slot(:data="props.data" :store="props.store")
+        slot(:data="props.data" :store="props.store" :vm="props.vm")
 </template>
 <script>
 import * as th from 'tree-helper'
@@ -21,13 +22,18 @@ export default {
   props: {
     data: {},
     store: {},
+    level: {default: 0}, // readonly
   },
-  // data() {
-  //   return {
-  //   }
-  // },
+  data() {
+    return {
+      vm: this,
+    }
+  },
   computed: {
-    isRoot() {return this.data.level === 0},
+    childrenLevel() {
+      return this.level + 1
+    },
+    isRoot() {return this.data.isRoot},
     childrenVisible() {
       const {data} = this
       return this.isRoot || data.children && data.children.length && data.open
@@ -36,9 +42,8 @@ export default {
       const r = {
         marginBottom: this.store.space + 'px'
       }
-      if (!this.isRoot && this.data.level > 1) {
-        const {indentType} = this.store
-        r.paddingLeft = (this.data.level - 1) * this.store.indent + 'px'
+      if (!this.isRoot && this.level > 1) {
+        r.paddingLeft = (this.level - 1) * this.store.indent + 'px'
       }
       return r
     },
@@ -49,22 +54,12 @@ export default {
       handler(data) {
         if (data) {
           data._vm = this
-          // the level of root is 0, no need to update root level
           if (!data._treeNodePropertiesCompleted && !data.isRoot) {
-            // this.store.compeleteNode(data, this.$parent.data)
-            th.breadthFirstSearch(data, (node, k, parent) => { this.store.compeleteNode(node, parent) })
+            this.store.compeleteNode(data, this.$parent.data)
           }
         }
       }
     },
-    'data.parent': {
-      immediate: true,
-      handler(parent, old) {
-        if (parent !== old) {
-          this.store.updateBranchLevel(this.data)
-        }
-      }
-    }
   },
   // methods: {},
   // created() {},

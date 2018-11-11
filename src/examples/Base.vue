@@ -5,7 +5,7 @@ div
   Tree(:data="originalData" draggable crossTree ref="tree1" @change="tree1Change")
     div(slot-scope="{data, store}")
       b(v-if="data.children && data.children.length" @click="store.toggleOpen(data)") {{data.open ? '-' : '+'}}&nbsp;
-      span {{data.text}}-level:{{data.level}}
+      span {{data.text}}
 </template>
 
 <script>

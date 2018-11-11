@@ -10,50 +10,50 @@ import * as ut from '../plugins/utils'
 const targets = {
   'nothing': info => {},
   'after': (info) => {
-    afterDplh(info.dplh, info.targetNode, info)
+    insertDplhAfterTo(info.dplh, info.targetNode, info)
   },
   'before': (info) => {
-    if (isNodeDroppable(info.targetNode.parent, info)) {
+    if (isNodeDroppable(info.targetNode.parent)) {
       th.insertBefore(info.dplh, info.targetNode)
     } else {
-      afterDplh(info.dplh, info.targetNode.parent, info)
+      insertDplhAfterTo(info.dplh, info.targetNode.parent, info)
     }
   },
   'append': (info) => {
-    if (isNodeDroppable(info.targetNode, info)) {
+    if (isNodeDroppable(info.targetNode)) {
       th.appendTo(info.dplh, info.targetNode)
       info.targetNode.open = true
     } else {
-      afterDplh(info.dplh, info.targetNode, info)
+      insertDplhAfterTo(info.dplh, info.targetNode, info)
     }
   },
   'prepend': (info) => {
-    if (isNodeDroppable(info.targetNode, info)) {
+    if (isNodeDroppable(info.targetNode)) {
       th.prependTo(info.dplh, info.targetNode)
       info.targetNode.open = true
     } else {
-      afterDplh(info.dplh, info.targetNode, info)
+      insertDplhAfterTo(info.dplh, info.targetNode, info)
     }
   },
   'after target parent': (info) => {
-    afterDplh(info.dplh, info.targetNode.parent, info)
+    insertDplhAfterTo(info.dplh, info.targetNode.parent, info)
   },
   // append to prev sibling
   'append prev': (info) => {
-    if (isNodeDroppable(info.targetPrev, info)) {
+    if (isNodeDroppable(info.targetPrev)) {
       th.appendTo(info.dplh, info.targetPrev)
       info.targetPrev.open = true
     } else {
-      afterDplh(info.dplh, info.targetPrev, info)
+      insertDplhAfterTo(info.dplh, info.targetPrev, info)
     }
   },
 }
 
-function afterDplh(dplh, targetNode, info) {
+function insertDplhAfterTo(dplh, targetNode, info) {
   if (!targetNode) {
     return false
   } else {
-    const closest = findParent(targetNode, node => node.parent && isNodeDroppable(node.parent, info))
+    const closest = findParent(targetNode, node => node.parent && isNodeDroppable(node.parent))
     if (closest) {
       th.insertAfter(dplh, closest)
     } else {
@@ -63,19 +63,34 @@ function afterDplh(dplh, targetNode, info) {
   return true
 }
 
-function isNodeDroppable(node, info) {
-  if (!info.cacheOfDroppable.hasOwnProperty(node._id)) {
+export function isNodeDraggable(node) {
+  if (!draggableIds.hasOwnProperty(node._id)) {
+    let r
+    if (node.hasOwnProperty('draggable')) {
+      r = node.draggable
+    } else if (node.parent) {
+      r = isNodeDraggable(node.parent)
+    } else {
+      r = true
+    }
+    draggableIds[node._id] = r
+  }
+  return draggableIds[node._id]
+}
+
+export function isNodeDroppable(node) {
+  if (!droppableIds.hasOwnProperty(node._id)) {
     let r
     if (node.hasOwnProperty('droppable')) {
       r = node.droppable
     } else if (node.parent) {
-      r = isNodeDroppable(node.parent, info)
+      r = isNodeDroppable(node.parent)
     } else {
       r = true
     }
-    info.cacheOfDroppable[node._id] = r
+    droppableIds[node._id] = r
   }
-  return info.cacheOfDroppable[node._id]
+  return droppableIds[node._id]
 }
 
 // find child, excluding dragging node default
@@ -147,6 +162,7 @@ const rules = {
   // 当前位置在另一节点innner indent位置右边
   'at indent right': info => info.offset.x > info.tiOffset.x + info.currentTree.indent,
 }
+
 // convert rule output to Boolean
 for (const key of Object.keys(rules)) {
   const old = rules[key]
@@ -154,6 +170,8 @@ for (const key of Object.keys(rules)) {
 }
 
 let prevTree
+let droppableIds = {}
+let draggableIds = {}
 // context is vm
 export default function autoMoveDragPlaceHolder(draggableHelperInfo) {
   const trees = this.store.trees
@@ -170,8 +188,6 @@ export default function autoMoveDragPlaceHolder(draggableHelperInfo) {
       opt: draggableHelperInfo.options,
       store: dhStore,
     },
-    cacheOfDroppable: {},
-    cacheOfDraggable: {},
   }
   //
   attachCache(info, new Cache(), {
@@ -724,6 +740,9 @@ function getOf4(el, space) {
   return r
 }
 
+autoMoveDragPlaceHolder.dragStart = function dragStart() {}
 autoMoveDragPlaceHolder.dragEnd = function dragEnd() {
   prevTree = null
+  droppableIds = {}
+  draggableIds = {}
 }

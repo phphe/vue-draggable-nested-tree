@@ -2,7 +2,7 @@
 .he-tree.tree
   TreeNode(:data="rootData" :store="store")
     template(slot-scope="props")
-      slot(:data="props.data" :store="store")
+      slot(:data="props.data" :store="store" :vm="props.vm")
 </template>
 
 <script>
@@ -35,7 +35,7 @@ export default {
           return
         }
         // make rootData always use a same object
-        this.rootData = this.rootData || {isRoot: true, _id: `tree_${this._uid}_node_root`, level: 0}
+        this.rootData = this.rootData || {isRoot: true, _id: `tree_${this._uid}_node_root`}
         th.breadthFirstSearch(data, (node, k, parent) => {
           this.compeleteNode(node, parent)
         })
@@ -62,28 +62,18 @@ export default {
         }
       }
       this.$set(node, 'parent', parent || this.rootData)
-      this.$set(node, 'level', node.parent.level + 1)
       if (!node.hasOwnProperty('_id')) {
         node._id = `tree_${this._uid}_node_${hp.strRand(this.idLength)}`
       }
       node._treeNodePropertiesCompleted = true
     },
-    updateBranchLevel(branch, startLevel = branch.parent.level + 1) {
-      branch.level = startLevel
-      if (branch.children && branch.children.length > 0) {
-        th.breadthFirstSearch(branch.children, (node, i, p) => {
-          node.level = node.parent.level + 1
-        })
-      }
-    },
     // pure node self
-    pure(node, withChildren) {
+    pure(node, withChildren, after) {
       const t = Object.assign({}, node)
       delete t._id
       delete t.parent
       delete t.children
       delete t.open
-      delete t.level
       delete t.active
       delete t.style
       delete t.class
@@ -101,6 +91,9 @@ export default {
         t.children.forEach((v, k) => {
           t.children[k] = this.pure(v, withChildren)
         })
+      }
+      if (after) {
+        return after(t, node) || t
       }
       return t
     },
@@ -164,8 +157,8 @@ export default {
         this.openNode(node, closeOld)
       }
     },
-    getPureData() {
-      return this.pure(this.rootData, true).children
+    getPureData(after) {
+      return this.pure(this.rootData, true, after).children
     },
     deleteNode(node) {
       return hp.arrayRemove(node.parent.children, node)

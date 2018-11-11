@@ -89,7 +89,10 @@ data: [
 ### template
 ```pug
 Tree(:data="data" draggable crossTree)
-  div(slot-scope="{data, store}")
+  div(slot-scope="{data, store, vm}")
+    //- data is node
+    //- store is the tree
+    //- vm is node Vue instance, you can get node level by vm.level
     template(v-if="!data.isDragPlaceHolder")
       b(v-if="data.children && data.children.length" @click="store.toggleOpen(data)") {{data.open ? '-' : '+'}}&nbsp;
       span {{data.text}}
@@ -148,7 +151,17 @@ change(node, targetTree, oldTree), // after drop, only when the node position ch
 <a name="tree_methods"></a>
 ### Tree methods
 ```js
-pure(node, withChildren) // return a node data without runtime properties.(!: property which starts with '_' will be removed)
+pure(node, withChildren, after)
+/*
+pure
+return a node data without runtime properties.(!: property which starts with '_' will be removed)
+withChildren: optional. after: Function, optional
+the code about after(t is computed node data):
+if (after) {
+  return after(t, node) || t
+}
+return t
+*/
 getNodeById(id)
 getActivated()
 getOpened()
@@ -157,10 +170,12 @@ toggleActive(node, inactiveOld)
 openNode(node, closeOld)
 toggleOpen(node, closeOld)
 // follow methods are easy, so I paste their soure code
-getPureData() { return this.pure(this.rootData, true).children }
+getPureData(after) { return this.pure(this.rootData, true, after).children } // after: Function, optional
 deleteNode(node) { return hp.arrayRemove(node.parent.children, node) }
 // add node: like array. eg: node.children.push(newNodeData)
 // update node: just assign to the node properties directly
+isNodeDraggable(node)
+isNodeDroppable(node)
 ```
 <a name="node_properties"></a>
 ### node properties
@@ -171,7 +186,6 @@ _vm
 parent
 children: [],
 open,
-level,
 active: false,
 style: {},
 class: '',
@@ -188,6 +202,7 @@ isDragPlaceHolder
 #### node deep properties example
 ```js
 node._vm // vm
+node._vm.level // 节点层级, 只读
 node._vm.store // tree
 node.parent._vm // parent node vm
 node._vm.store
