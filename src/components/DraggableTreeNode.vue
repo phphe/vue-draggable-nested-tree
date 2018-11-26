@@ -44,6 +44,9 @@ export default {
             // console.log('drag start');
           },
           moving: (e, opt, store) => {
+            if (store.movedCount === 0) {
+              return
+            }
             const draggableHelperInfo = {event: e, options: opt, store}
             return autoMoveDragPlaceHolder.call(this, draggableHelperInfo)
           },
