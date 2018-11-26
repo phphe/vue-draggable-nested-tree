@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v2.2.0
+ * vue-draggable-nested-tree v2.2.1
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -2287,10 +2287,12 @@
         } catch (e) {
           r = e;
 
-          if (process.env.DEVELOPE_SELF) {
-            // only visible when develop its self
-            console.warn("failed to execute rule '".concat(ruleId, "'"), e);
-          }
+          try {
+            if (process.env.DEVELOPE_SELF) {
+              // only visible when develop its self
+              console.warn("failed to execute rule '".concat(ruleId, "'"), e);
+            }
+          } catch (e2) {}
         }
 
         executedRuleCache[ruleId] = r;

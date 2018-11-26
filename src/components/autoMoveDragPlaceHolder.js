@@ -363,10 +363,12 @@ export default function autoMoveDragPlaceHolder(draggableHelperInfo) {
       r = rules[ruleId](info)
     } catch (e) {
       r = e
-      if (process.env.DEVELOPE_SELF) {
-        // only visible when develop its self
-        console.warn(`failed to execute rule '${ruleId}'`, e);
-      }
+      try {
+        if (process.env.DEVELOPE_SELF) {
+          // only visible when develop its self
+          console.warn(`failed to execute rule '${ruleId}'`, e);
+        }
+      } catch (e2) {}
     }
     executedRuleCache[ruleId] = r
   }
