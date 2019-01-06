@@ -3,7 +3,7 @@ import * as th from 'tree-helper'
 import Cache, {
   attachCache
 } from '../plugins/Cache'
-import * as ut from '../plugins/utils'
+import * as vf from 'vue-functions'
 
 // actions for drag placeholder
 // 对 drag placeholder进行的操作
@@ -224,13 +224,13 @@ export default function autoMoveDragPlaceHolder(draggableHelperInfo) {
           treeChanged = true
         }
         if (prevTree !== currentTree) {
-          if (!ut.isPropTrue(dragStartTree.crossTree) || !ut.isPropTrue(currentTree.crossTree)) {
+          if (!vf.isPropTrue(dragStartTree.crossTree) || !vf.isPropTrue(currentTree.crossTree)) {
             return
           }
           prevTree = currentTree
           treeChanged = true
         }
-        if (!ut.isPropTrue(currentTree.droppable)) {
+        if (!vf.isPropTrue(currentTree.droppable)) {
           return
         }
         return currentTree

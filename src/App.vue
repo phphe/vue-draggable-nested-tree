@@ -26,7 +26,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style>
 #app{
   display: flex;
 }
