@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v2.2.2
+ * vue-draggable-nested-tree v2.2.3
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -317,19 +317,25 @@ var Tree = {
       }
     },
     openNode: function openNode(node, closeOld) {
+      var _this3 = this;
+
       var opened = this.opened;
 
       if (closeOld) {
         this.getOpened().forEach(function (node2) {
           node2.open = false;
+
+          _this3.$emit('nodeOpenChanged', node2);
         });
       }
 
       node.open = true;
+      this.$emit('nodeOpenChanged', node);
     },
     toggleOpen: function toggleOpen(node, closeOld) {
       if (node.open) {
         node.open = false;
+        this.$emit('nodeOpenChanged', node);
       } else {
         this.openNode(node, closeOld);
       }
@@ -461,7 +467,7 @@ var targets = {
   'append': function append(info) {
     if (isNodeDroppable(info.targetNode)) {
       th.appendTo(info.dplh, info.targetNode);
-      info.targetNode.open = true;
+      if (!info.targetNode.open) info.store.toggleOpen(info.targetNode);
     } else {
       insertDplhAfterTo(info.dplh, info.targetNode, info);
     }
@@ -469,7 +475,7 @@ var targets = {
   'prepend': function prepend(info) {
     if (isNodeDroppable(info.targetNode)) {
       th.prependTo(info.dplh, info.targetNode);
-      info.targetNode.open = true;
+      if (!info.targetNode.open) info.store.toggleOpen(info.targetNode);
     } else {
       insertDplhAfterTo(info.dplh, info.targetNode, info);
     }
@@ -481,7 +487,7 @@ var targets = {
   'append prev': function appendPrev(info) {
     if (isNodeDroppable(info.targetPrev)) {
       th.appendTo(info.dplh, info.targetPrev);
-      info.targetPrev.open = true;
+      if (!info.targetPrev.open) info.store.toggleOpen(info.targetPrev);
     } else {
       insertDplhAfterTo(info.dplh, info.targetPrev, info);
     }

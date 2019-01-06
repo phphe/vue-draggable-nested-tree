@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v2.2.2
+ * vue-draggable-nested-tree v2.2.3
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -10,7 +10,7 @@
 }(this, (function (exports) { 'use strict';
 
   /*!
-   * helper-js v1.1.7
+   * helper-js v1.3.0
    * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
    * Released under the MIT License.
    */
@@ -195,14 +195,22 @@
       x: rect.left + scroll.left,
       y: rect.top + scroll.top
     };
-  }
-  function offsetToPosition(el, of) {
+  } // there is some trap in el.offsetParent, so use this func to fix
+
+  function getOffsetParent(el) {
     var offsetParent = el.offsetParent;
 
     if (!offsetParent || offsetParent === document.body && getComputedStyle(document.body).position === 'static') {
       offsetParent = document.body.parentElement;
     }
 
+    return offsetParent;
+  } // get el current position. like jQuery.position
+  // the position is relative to offsetParent viewport left top. it is for set absolute position, absolute position is relative to offsetParent viewport left top.
+  // 相对于offsetParent可视区域左上角(el.offsetLeft或top包含父元素的滚动距离, 所以要减去). position一般用于设置绝对定位的情况, 而绝对定位就是以可视区域左上角为原点.
+
+  function getPosition(el) {
+    var offsetParent = getOffsetParent(el);
     var ps = {
       x: el.offsetLeft,
       y: el.offsetTop
@@ -221,7 +229,7 @@
     }
 
     return ps;
-  }
+  } // get position of a el if its offset is given. like jQuery.offset.
   function backupAttr(el, name) {
     var key = "original_".concat(name);
     el[key] = el.getAttribute(name);
@@ -1403,19 +1411,25 @@
         }
       },
       openNode: function openNode(node, closeOld) {
+        var _this3 = this;
+
         var opened = this.opened;
 
         if (closeOld) {
           this.getOpened().forEach(function (node2) {
             node2.open = false;
+
+            _this3.$emit('nodeOpenChanged', node2);
           });
         }
 
         node.open = true;
+        this.$emit('nodeOpenChanged', node);
       },
       toggleOpen: function toggleOpen(node, closeOld) {
         if (node.open) {
           node.open = false;
+          this.$emit('nodeOpenChanged', node);
         } else {
           this.openNode(node, closeOld);
         }
@@ -1528,7 +1542,7 @@
   };
 
   /*!
-   * draggable-helper v1.0.17
+   * draggable-helper v1.0.18
    * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
    * Released under the MIT License.
    */
@@ -1726,7 +1740,7 @@
       }
 
       return {
-        position: offsetToPosition(el, getOffset(el0)),
+        position: getPosition(el),
         el: el
       };
     }
@@ -1858,7 +1872,7 @@
     'append': function append(info) {
       if (isNodeDroppable(info.targetNode)) {
         appendTo(info.dplh, info.targetNode);
-        info.targetNode.open = true;
+        if (!info.targetNode.open) info.store.toggleOpen(info.targetNode);
       } else {
         insertDplhAfterTo(info.dplh, info.targetNode, info);
       }
@@ -1866,7 +1880,7 @@
     'prepend': function prepend(info) {
       if (isNodeDroppable(info.targetNode)) {
         prependTo(info.dplh, info.targetNode);
-        info.targetNode.open = true;
+        if (!info.targetNode.open) info.store.toggleOpen(info.targetNode);
       } else {
         insertDplhAfterTo(info.dplh, info.targetNode, info);
       }
@@ -1878,7 +1892,7 @@
     'append prev': function appendPrev(info) {
       if (isNodeDroppable(info.targetPrev)) {
         appendTo(info.dplh, info.targetPrev);
-        info.targetPrev.open = true;
+        if (!info.targetPrev.open) info.store.toggleOpen(info.targetPrev);
       } else {
         insertDplhAfterTo(info.dplh, info.targetPrev, info);
       }
@@ -2065,7 +2079,7 @@
 
   var _arr = Object.keys(rules);
 
-  var _loop = function _loop() {
+  var _loop$1 = function _loop() {
     var key = _arr[_i2];
     var old = rules[key];
 
@@ -2075,7 +2089,7 @@
   };
 
   for (var _i2 = 0; _i2 < _arr.length; _i2++) {
-    _loop();
+    _loop$1();
   }
 
   var prevTree;
