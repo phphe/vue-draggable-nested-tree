@@ -146,13 +146,16 @@ export default {
       if (closeOld) {
         this.getOpened().forEach(node2 => {
           node2.open = false
+          this.$emit('nodeOpenChanged', node2)
         })
       }
       node.open = true
+      this.$emit('nodeOpenChanged', node)
     },
     toggleOpen(node, closeOld) {
       if (node.open) {
         node.open = false
+        this.$emit('nodeOpenChanged', node)
       } else {
         this.openNode(node, closeOld)
       }

@@ -22,7 +22,7 @@ const targets = {
   'append': (info) => {
     if (isNodeDroppable(info.targetNode)) {
       th.appendTo(info.dplh, info.targetNode)
-      info.targetNode.open = true
+      if (!info.targetNode.open) info.store.toggleOpen(info.targetNode)
     } else {
       insertDplhAfterTo(info.dplh, info.targetNode, info)
     }
@@ -30,7 +30,7 @@ const targets = {
   'prepend': (info) => {
     if (isNodeDroppable(info.targetNode)) {
       th.prependTo(info.dplh, info.targetNode)
-      info.targetNode.open = true
+      if (!info.targetNode.open) info.store.toggleOpen(info.targetNode)
     } else {
       insertDplhAfterTo(info.dplh, info.targetNode, info)
     }
@@ -42,7 +42,7 @@ const targets = {
   'append prev': (info) => {
     if (isNodeDroppable(info.targetPrev)) {
       th.appendTo(info.dplh, info.targetPrev)
-      info.targetPrev.open = true
+      if (!info.targetPrev.open) info.store.toggleOpen(info.targetPrev)
     } else {
       insertDplhAfterTo(info.dplh, info.targetPrev, info)
     }
@@ -360,7 +360,7 @@ export default function autoMoveDragPlaceHolder(draggableHelperInfo) {
     },
   })
   // attachCache end
-  
+
   // decision start =================================
   const executedRuleCache = {}
   // exec rule

@@ -143,6 +143,7 @@ trees, // 数组, 所有树. 全局唯一.
 drag(node), // 拖动开始.
 drop(node, targetTree, oldTree), // 拖动结束后.
 change(node, targetTree, oldTree), // 拖动结束后并且有节点位置发生了改变
+nodeOpenChanged(node) // 当节点被展开或折叠时
 ```
 * targetTree: 目标树. oldTree: 旧树
 * targetTree 和 oldTree 都是树的实例.

@@ -142,11 +142,11 @@ trees, // array, all trees in the app. globally unique.
 drag(node), // on drag start.
 drop(node, targetTree, oldTree), // after drop.
 change(node, targetTree, oldTree), // after drop, only when the node position changed
+nodeOpenChanged(node) // on a node is closed or open
 ```
 * targetTree and oldTree are tree vm.
 * oldTree is available only when cross tree. Otherwise null.
-* if cross tree, both targetTree and oldTree will emit drop and change
- targetTree and oldTree.
+* if cross tree, both targetTree and oldTree will emit drop and change.
 
 <a name="tree_methods"></a>
 ### Tree methods
