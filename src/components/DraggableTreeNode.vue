@@ -20,6 +20,7 @@ export default {
       if (vf.isPropTrue(draggable)) {
         const triggerEl = this.store.getTriggerEl ? this.store.getTriggerEl(this) : this.$el.querySelector('.tree-node-inner')
         this._draggableDestroy = draggableHelper(triggerEl, {
+          preventSelect: vf.isPropTrue(this.store.preventSelect),
           // trigger el
           getEl: () => this.$el,
           minTranslate: 10,

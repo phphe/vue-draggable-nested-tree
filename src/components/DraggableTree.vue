@@ -30,6 +30,7 @@ export default {
     crossTree: {},
     ondragstart: {type: Function},
     ondragend: {type: Function},
+    preventSelect: {default: true},
   },
   components: {
     TreeNode: DraggableTreeNode,

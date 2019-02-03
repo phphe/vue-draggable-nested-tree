@@ -112,6 +112,7 @@ activatedClass: {default: 'active'},
 openedClass: {default: 'open'},
 space: {default: 10}, // 节点垂直方向的间距
 // draggable tree
+preventSelect: {default: true}, // 是否阻止拖拽时文字被选中, 不影响输入框(input, textarea)中文字的选择
 getTriggerEl: {type: Function}, // 用来指定触发拖拽的元素, 默认是节点自己, 比如你可以指定其中的一个按钮来触发拖拽. 参数(nodeVm)
 draggable: {}, // 树是否启用拖拽, 默认否
 droppable: {default: true}, // 树是否可被拖进, 默认是. 如果否, 则该树的节点不能在其内移动位置,其他树的节点也不能拖入其中

@@ -112,6 +112,7 @@ activatedClass: {default: 'active'},
 openedClass: {default: 'open'},
 space: {default: 10}, // space between node, unit px
 // draggable tree
+preventSelect: {default: true}, // if to prevent drag handler text be selected when drag, excluding input and textarea
 getTriggerEl: {type: Function}, // get the el trigger drag, default is node self. arguments(nodeVm)
 draggable: {}, // is the tree draggable, default false
 droppable: {default: true}, // is the tree droppable, default true
