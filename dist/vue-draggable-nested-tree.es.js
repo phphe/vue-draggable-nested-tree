@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v2.2.4
+ * vue-draggable-nested-tree v2.2.5
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -1205,6 +1205,7 @@ var script$2 = {
       if (isPropTrue(draggable)) {
         var triggerEl = _this.store.getTriggerEl ? _this.store.getTriggerEl(_this) : _this.$el.querySelector('.tree-node-inner');
         _this._draggableDestroy = draggableHelper(triggerEl, {
+          preventSelect: isPropTrue(_this.store.preventSelect),
           // trigger el
           getEl: function getEl() {
             return _this.$el;
@@ -1383,6 +1384,9 @@ var script$3 = {
     },
     ondragend: {
       type: Function
+    },
+    preventSelect: {
+      default: true
     }
   },
   components: {

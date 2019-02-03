@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v2.2.4
+ * vue-draggable-nested-tree v2.2.5
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -1158,7 +1158,7 @@
   }
 
   /*!
-   * helper-js v1.3.0
+   * helper-js v1.3.1
    * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
    * Released under the MIT License.
    */
@@ -2679,7 +2679,7 @@
   };
 
   /*!
-   * draggable-helper v1.0.18
+   * draggable-helper v1.0.19
    * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
    * Released under the MIT License.
    */
@@ -2689,6 +2689,7 @@
   opt.drag(e, opt, store)
   [Object] opt.style || opt.getStyle(opt) set style of moving el style
   [Boolean] opt.clone
+  [Boolean, default: true] opt.preventSelect, if to prevent text be selected, excluded input, textarea
   opt.draggingClass, default dragging
   opt.moving(e, opt, store) return false can prevent moving
   opt.drop(e, opt, store)
@@ -2722,6 +2723,10 @@
 
   function index$1 (dragHandlerEl) {
     var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var defaultOpt = {
+      preventSelect: true
+    };
+    opt = Object.assign(defaultOpt, opt);
 
     if (opt.minTranslate == null) {
       opt.minTranslate = 10;
@@ -2731,7 +2736,11 @@
 
     var destroy = function destroy() {
       index.off(dragHandlerEl, 'end', dragHandlerEl._draggbleEventHandler);
-      offDOM(dragHandlerEl, 'selectstart', preventSelect);
+
+      if (opt.preventSelect) {
+        offDOM(dragHandlerEl, 'selectstart', preventSelect);
+      }
+
       delete dragHandlerEl._draggbleEventHandler;
     };
 
@@ -2741,7 +2750,11 @@
 
     dragHandlerEl._draggbleEventHandler = start;
     index.on(dragHandlerEl, 'start', dragHandlerEl._draggbleEventHandler);
-    onDOM(dragHandlerEl, 'selectstart', preventSelect);
+
+    if (opt.preventSelect) {
+      onDOM(dragHandlerEl, 'selectstart', preventSelect);
+    }
+
     return destroy;
 
     function start(e, mouse) {
@@ -2889,7 +2902,11 @@
     }
 
     function preventSelect(e) {
-      e.preventDefault();
+      var tagName = e.target.tagName;
+
+      if (tagName !== 'INPUT' && tagName === 'TEXTAREA') {
+        e.preventDefault();
+      }
     }
   }
 
@@ -3104,13 +3121,13 @@
   }
 
   /*!
-   * vue-functions v0.0.4
-   * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
+   * vue-functions v1.0.1
+   * (c) 2019-present phphe <phphe@outlook.com> (https://github.com/phphe)
    * Released under the MIT License.
    */
   function isPropTrue(value) {
     return value === '' || value;
-  }
+  } // the dependences in getter can't be auto resolved. must use exec to include dependences
 
   // 对 drag placeholder进行的操作
 
@@ -3826,6 +3843,7 @@
         if (isPropTrue(draggable)) {
           var triggerEl = _this.store.getTriggerEl ? _this.store.getTriggerEl(_this) : _this.$el.querySelector('.tree-node-inner');
           _this._draggableDestroy = index$1(triggerEl, {
+            preventSelect: isPropTrue(_this.store.preventSelect),
             // trigger el
             getEl: function getEl() {
               return _this.$el;
@@ -4004,6 +4022,9 @@
       },
       ondragend: {
         type: Function
+      },
+      preventSelect: {
+        default: true
       }
     },
     components: {
