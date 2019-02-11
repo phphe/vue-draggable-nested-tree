@@ -35,7 +35,7 @@ export default {
           return
         }
         // make rootData always use a same object
-        this.rootData = this.rootData || {isRoot: true, _id: `tree_${this._uid}_node_root`}
+        this.rootData = this.rootData || {isRoot: true, _id: `tree_${this._uid}_node_root`, children: []}
         th.breadthFirstSearch(data, (node, k, parent) => {
           this.compeleteNode(node, parent)
         })
