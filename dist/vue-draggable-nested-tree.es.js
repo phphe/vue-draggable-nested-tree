@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v2.2.5
+ * vue-draggable-nested-tree v2.2.6
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -179,7 +179,8 @@ var script$1 = {
 
         this.rootData = this.rootData || {
           isRoot: true,
-          _id: "tree_".concat(this._uid, "_node_root")
+          _id: "tree_".concat(this._uid, "_node_root"),
+          children: []
         };
         breadthFirstSearch(data, function (node, k, parent) {
           _this.compeleteNode(node, parent);
