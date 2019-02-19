@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v2.2.6
+ * vue-draggable-nested-tree v2.2.7
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -8,7 +8,7 @@ import assign from 'core-js/library/fn/object/assign';
 import { breadthFirstSearch, insertAfter, insertBefore, appendTo, prependTo } from 'tree-helper';
 import 'core-js/modules/web.dom.iterable';
 import 'core-js/modules/es6.number.constructor';
-import { strRand, arrayRemove, getOffset, isOffsetInEl, binarySearch, hasClass } from 'helper-js';
+import { strRand, arrayRemove, getOffset, binarySearch, hasClass } from 'helper-js';
 import defineProperty from 'core-js/library/fn/object/define-property';
 import 'core-js/modules/es6.function.name';
 import 'core-js/modules/es6.array.find';
@@ -492,6 +492,45 @@ function attachCache(obj, cache, toCache) {
   }
 }
 
+// from https://gist.github.com/iddan/54d5d9e58311b0495a91bf06de661380
+
+if (!document.elementsFromPoint) {
+  document.elementsFromPoint = elementsFromPoint;
+}
+
+function elementsFromPoint(x, y) {
+  var parents = [];
+  var parent = void 0;
+
+  do {
+    if (parent !== document.elementFromPoint(x, y)) {
+      parent = document.elementFromPoint(x, y);
+      parents.push(parent);
+      parent.style.pointerEvents = 'none';
+    } else {
+      parent = false;
+    }
+  } while (parent);
+
+  parents.forEach(function (parent) {
+    return parent.style.pointerEvents = 'all';
+  });
+  return parents;
+}
+
+function getTreeByPoint(x, y, trees) {
+  var els = document.elementsFromPoint(x, y);
+  var treeEL = els.find(function (el) {
+    return hasClass(el, 'tree');
+  });
+
+  if (treeEL) {
+    return trees.find(function (v) {
+      return v.$el === treeEL;
+    });
+  }
+}
+
 // 对 drag placeholder进行的操作
 
 var targets = {
@@ -769,11 +808,8 @@ function autoMoveDragPlaceHolder(draggableHelperInfo) {
     // right bottom point
     // tree
     currentTree: function currentTree() {
-      var _this = this;
-
-      var currentTree = trees.find(function (tree) {
-        return isOffsetInEl(_this.offset.x, _this.offset.y, tree.$el);
-      });
+      // const currentTree = trees.find(tree => hp.isOffsetInEl(this.offset.x, this.offset.y, tree.$el))
+      var currentTree = getTreeByPoint(this.offset.x, this.offset.y, trees);
 
       if (currentTree) {
         var dragStartTree = this.store;
@@ -805,10 +841,10 @@ function autoMoveDragPlaceHolder(draggableHelperInfo) {
     },
     // the second child of currentTree root, excluding dragging node
     currentTreeRootSecondChildExcludingDragging: function currentTreeRootSecondChildExcludingDragging() {
-      var _this2 = this;
+      var _this = this;
 
       return this.currentTree.rootData.children.slice(0, 3).filter(function (v) {
-        return v !== _this2.node;
+        return v !== _this.node;
       })[1];
     },
     // placeholder

@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v2.2.6
+ * vue-draggable-nested-tree v2.2.7
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -1158,7 +1158,7 @@
   }
 
   /*!
-   * helper-js v1.3.1
+   * helper-js v1.3.5
    * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
    * Released under the MIT License.
    */
@@ -1417,17 +1417,6 @@
     el.style.display = originDisplay;
     return size;
   }
-  /**
-   * [isOffsetInEl]
-   * @param {Number} x
-   * @param {Number} y
-   * @param {Object} el HTML Element
-   */
-
-  function isOffsetInEl(x, y, el) {
-    var offset = getOffset(el);
-    return offset.x <= x && offset.x + el.offsetWidth >= x && offset.y <= y && offset.y + el.offsetHeight >= y;
-  } // get border
 
   function onDOM(el, name, handler) {
     for (var _len5 = arguments.length, args = new Array(_len5 > 3 ? _len5 - 3 : 0), _key6 = 3; _key6 < _len5; _key6++) {
@@ -1454,7 +1443,7 @@
       // IE 8 及更早 IE 版本
       el.detachEvent.apply(el, ["on".concat(name), handler].concat(args));
     }
-  } // advance
+  }
   // binarySearch 二分查找
 
   function binarySearch(arr, callback, start, end, returnNearestIfNoHit) {
@@ -1508,7 +1497,7 @@
   function () {
     // protocol, hostname, port, pastname
     function URLHelper(baseUrl) {
-      var _this2 = this;
+      var _this3 = this;
 
       _classCallCheck(this, URLHelper);
 
@@ -1530,7 +1519,7 @@
       if (t[1]) {
         t[1].split('&').forEach(function (v) {
           var t2 = v.split('=');
-          _this2.search[t2[0]] = t2[1] == null ? '' : decodeURIComponent(t2[1]);
+          _this3.search[t2[0]] = t2[1] == null ? '' : decodeURIComponent(t2[1]);
         });
       }
     }
@@ -1538,11 +1527,11 @@
     _createClass(URLHelper, [{
       key: "getHref",
       value: function getHref() {
-        var _this3 = this;
+        var _this4 = this;
 
         var t = [this.baseUrl];
         var searchStr = Object.keys(this.search).map(function (k) {
-          return "".concat(k, "=").concat(encodeURIComponent(_this3.search[k]));
+          return "".concat(k, "=").concat(encodeURIComponent(_this4.search[k]));
         }).join('&');
 
         if (searchStr) {
@@ -1581,10 +1570,10 @@
     }, {
       key: "once",
       value: function once(name, handler) {
-        var _this4 = this;
+        var _this5 = this;
 
         var off = function off() {
-          _this4.off(name, wrappedHandler);
+          _this5.off(name, wrappedHandler);
         };
 
         var wrappedHandler = function wrappedHandler() {
@@ -1620,35 +1609,35 @@
       value: function emit(name) {
         // 重要: 先找到要执行的项放在新数组里, 因为执行项会改变事件项存储数组
         var items = [];
-        var _iteratorNormalCompletion5 = true;
-        var _didIteratorError5 = false;
-        var _iteratorError5 = undefined;
+        var _iteratorNormalCompletion9 = true;
+        var _didIteratorError9 = false;
+        var _iteratorError9 = undefined;
 
         try {
-          for (var _iterator5 = this.eventStore[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-            var item = _step5.value;
+          for (var _iterator9 = this.eventStore[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+            var item = _step9.value;
 
             if (item.name === name) {
               items.push(item);
             }
           }
         } catch (err) {
-          _didIteratorError5 = true;
-          _iteratorError5 = err;
+          _didIteratorError9 = true;
+          _iteratorError9 = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion5 && _iterator5.return != null) {
-              _iterator5.return();
+            if (!_iteratorNormalCompletion9 && _iterator9.return != null) {
+              _iterator9.return();
             }
           } finally {
-            if (_didIteratorError5) {
-              throw _iteratorError5;
+            if (_didIteratorError9) {
+              throw _iteratorError9;
             }
           }
         }
 
-        for (var _len7 = arguments.length, args = new Array(_len7 > 1 ? _len7 - 1 : 0), _key8 = 1; _key8 < _len7; _key8++) {
-          args[_key8 - 1] = arguments[_key8];
+        for (var _len8 = arguments.length, args = new Array(_len8 > 1 ? _len8 - 1 : 0), _key9 = 1; _key9 < _len8; _key9++) {
+          args[_key9 - 1] = arguments[_key9];
         }
 
         for (var _i9 = 0; _i9 < items.length; _i9++) {
@@ -1667,12 +1656,12 @@
     _inherits(CrossWindow, _EventProcessor);
 
     function CrossWindow() {
-      var _this5;
+      var _this6;
 
       _classCallCheck(this, CrossWindow);
 
-      _this5 = _possibleConstructorReturn(this, (CrossWindow.__proto__ || Object.getPrototypeOf(CrossWindow)).call(this));
-      Object.defineProperty(_assertThisInitialized(_this5), "storageName", {
+      _this6 = _possibleConstructorReturn(this, (CrossWindow.__proto__ || Object.getPrototypeOf(CrossWindow)).call(this));
+      Object.defineProperty(_assertThisInitialized(_this6), "storageName", {
         configurable: true,
         enumerable: true,
         writable: true,
@@ -1683,17 +1672,17 @@
       if (!cls._listen) {
         cls._listen = true;
         onDOM(window, 'storage', function (ev) {
-          if (ev.key === _this5.storageName) {
+          if (ev.key === _this6.storageName) {
             var _get2;
 
             var event = JSON.parse(ev.newValue);
 
-            (_get2 = _get(CrossWindow.prototype.__proto__ || Object.getPrototypeOf(CrossWindow.prototype), "emit", _assertThisInitialized(_this5))).call.apply(_get2, [_this5, event.name].concat(_toConsumableArray(event.args)));
+            (_get2 = _get(CrossWindow.prototype.__proto__ || Object.getPrototypeOf(CrossWindow.prototype), "emit", _assertThisInitialized(_this6))).call.apply(_get2, [_this6, event.name].concat(_toConsumableArray(event.args)));
           }
         });
       }
 
-      return _this5;
+      return _this6;
     }
 
     _createClass(CrossWindow, [{
@@ -1701,8 +1690,8 @@
       value: function emit(name) {
         var _get3;
 
-        for (var _len8 = arguments.length, args = new Array(_len8 > 1 ? _len8 - 1 : 0), _key9 = 1; _key9 < _len8; _key9++) {
-          args[_key9 - 1] = arguments[_key9];
+        for (var _len9 = arguments.length, args = new Array(_len9 > 1 ? _len9 - 1 : 0), _key10 = 1; _key10 < _len9; _key10++) {
+          args[_key10 - 1] = arguments[_key10];
         }
 
         (_get3 = _get(CrossWindow.prototype.__proto__ || Object.getPrototypeOf(CrossWindow.prototype), "emit", this)).call.apply(_get3, [this, name].concat(args));
@@ -2911,93 +2900,6 @@
     }
   }
 
-  // 7.2.2 IsArray(argument)
-
-  var _isArray = Array.isArray || function isArray(arg) {
-    return _cof$1(arg) == 'Array';
-  };
-
-  var SPECIES$1 = _wks('species');
-
-  var _arraySpeciesConstructor = function (original) {
-    var C;
-    if (_isArray(original)) {
-      C = original.constructor;
-      // cross-realm fallback
-      if (typeof C == 'function' && (C === Array || _isArray(C.prototype))) C = undefined;
-      if (_isObject$1(C)) {
-        C = C[SPECIES$1];
-        if (C === null) C = undefined;
-      }
-    } return C === undefined ? Array : C;
-  };
-
-  // 9.4.2.3 ArraySpeciesCreate(originalArray, length)
-
-
-  var _arraySpeciesCreate = function (original, length) {
-    return new (_arraySpeciesConstructor(original))(length);
-  };
-
-  // 0 -> Array#forEach
-  // 1 -> Array#map
-  // 2 -> Array#filter
-  // 3 -> Array#some
-  // 4 -> Array#every
-  // 5 -> Array#find
-  // 6 -> Array#findIndex
-
-
-
-
-
-  var _arrayMethods = function (TYPE, $create) {
-    var IS_MAP = TYPE == 1;
-    var IS_FILTER = TYPE == 2;
-    var IS_SOME = TYPE == 3;
-    var IS_EVERY = TYPE == 4;
-    var IS_FIND_INDEX = TYPE == 6;
-    var NO_HOLES = TYPE == 5 || IS_FIND_INDEX;
-    var create = $create || _arraySpeciesCreate;
-    return function ($this, callbackfn, that) {
-      var O = _toObject$1($this);
-      var self = _iobject$1(O);
-      var f = _ctx$1(callbackfn, that, 3);
-      var length = _toLength$1(self.length);
-      var index = 0;
-      var result = IS_MAP ? create($this, length) : IS_FILTER ? create($this, 0) : undefined;
-      var val, res;
-      for (;length > index; index++) if (NO_HOLES || index in self) {
-        val = self[index];
-        res = f(val, index, O);
-        if (TYPE) {
-          if (IS_MAP) result[index] = res;   // map
-          else if (res) switch (TYPE) {
-            case 3: return true;             // some
-            case 5: return val;              // find
-            case 6: return index;            // findIndex
-            case 2: result.push(val);        // filter
-          } else if (IS_EVERY) return false; // every
-        }
-      }
-      return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : result;
-    };
-  };
-
-  // 22.1.3.8 Array.prototype.find(predicate, thisArg = undefined)
-
-  var $find = _arrayMethods(5);
-  var KEY = 'find';
-  var forced = true;
-  // Shouldn't skip holes
-  if (KEY in []) Array(1)[KEY](function () { forced = false; });
-  _export$1(_export$1.P + _export$1.F * forced, 'Array', {
-    find: function find(callbackfn /* , that = undefined */) {
-      return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
-    }
-  });
-  _addToUnscopables(KEY);
-
   // 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
   _export(_export.S + _export.F * !_descriptors, 'Object', { defineProperty: _objectDp.f });
 
@@ -3122,13 +3024,139 @@
   }
 
   /*!
-   * vue-functions v1.0.1
+   * vue-functions v1.0.3
    * (c) 2019-present phphe <phphe@outlook.com> (https://github.com/phphe)
    * Released under the MIT License.
    */
   function isPropTrue(value) {
     return value === '' || value;
   } // the dependences in getter can't be auto resolved. must use exec to include dependences
+
+  // 7.2.2 IsArray(argument)
+
+  var _isArray = Array.isArray || function isArray(arg) {
+    return _cof$1(arg) == 'Array';
+  };
+
+  var SPECIES$1 = _wks('species');
+
+  var _arraySpeciesConstructor = function (original) {
+    var C;
+    if (_isArray(original)) {
+      C = original.constructor;
+      // cross-realm fallback
+      if (typeof C == 'function' && (C === Array || _isArray(C.prototype))) C = undefined;
+      if (_isObject$1(C)) {
+        C = C[SPECIES$1];
+        if (C === null) C = undefined;
+      }
+    } return C === undefined ? Array : C;
+  };
+
+  // 9.4.2.3 ArraySpeciesCreate(originalArray, length)
+
+
+  var _arraySpeciesCreate = function (original, length) {
+    return new (_arraySpeciesConstructor(original))(length);
+  };
+
+  // 0 -> Array#forEach
+  // 1 -> Array#map
+  // 2 -> Array#filter
+  // 3 -> Array#some
+  // 4 -> Array#every
+  // 5 -> Array#find
+  // 6 -> Array#findIndex
+
+
+
+
+
+  var _arrayMethods = function (TYPE, $create) {
+    var IS_MAP = TYPE == 1;
+    var IS_FILTER = TYPE == 2;
+    var IS_SOME = TYPE == 3;
+    var IS_EVERY = TYPE == 4;
+    var IS_FIND_INDEX = TYPE == 6;
+    var NO_HOLES = TYPE == 5 || IS_FIND_INDEX;
+    var create = $create || _arraySpeciesCreate;
+    return function ($this, callbackfn, that) {
+      var O = _toObject$1($this);
+      var self = _iobject$1(O);
+      var f = _ctx$1(callbackfn, that, 3);
+      var length = _toLength$1(self.length);
+      var index = 0;
+      var result = IS_MAP ? create($this, length) : IS_FILTER ? create($this, 0) : undefined;
+      var val, res;
+      for (;length > index; index++) if (NO_HOLES || index in self) {
+        val = self[index];
+        res = f(val, index, O);
+        if (TYPE) {
+          if (IS_MAP) result[index] = res;   // map
+          else if (res) switch (TYPE) {
+            case 3: return true;             // some
+            case 5: return val;              // find
+            case 6: return index;            // findIndex
+            case 2: result.push(val);        // filter
+          } else if (IS_EVERY) return false; // every
+        }
+      }
+      return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : result;
+    };
+  };
+
+  // 22.1.3.8 Array.prototype.find(predicate, thisArg = undefined)
+
+  var $find = _arrayMethods(5);
+  var KEY = 'find';
+  var forced = true;
+  // Shouldn't skip holes
+  if (KEY in []) Array(1)[KEY](function () { forced = false; });
+  _export$1(_export$1.P + _export$1.F * forced, 'Array', {
+    find: function find(callbackfn /* , that = undefined */) {
+      return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+    }
+  });
+  _addToUnscopables(KEY);
+
+  // from https://gist.github.com/iddan/54d5d9e58311b0495a91bf06de661380
+
+  if (!document.elementsFromPoint) {
+    document.elementsFromPoint = elementsFromPoint;
+  }
+
+  function elementsFromPoint(x, y) {
+    var parents = [];
+    var parent = void 0;
+
+    do {
+      if (parent !== document.elementFromPoint(x, y)) {
+        parent = document.elementFromPoint(x, y);
+        parents.push(parent);
+        parent.style.pointerEvents = 'none';
+      } else {
+        parent = false;
+      }
+    } while (parent);
+
+    parents.forEach(function (parent) {
+      return parent.style.pointerEvents = 'all';
+    });
+    return parents;
+  }
+
+  function getTreeByPoint(x, y, trees) {
+    var els = document.elementsFromPoint(x, y);
+    var treeEL = els.find(function (el) {
+      return hasClass(el, 'tree');
+    });
+
+    if (treeEL) {
+      return trees.find(function (v) {
+        return v.$el === treeEL;
+      });
+    }
+  }
 
   // 对 drag placeholder进行的操作
 
@@ -3407,11 +3435,8 @@
       // right bottom point
       // tree
       currentTree: function currentTree() {
-        var _this = this;
-
-        var currentTree = trees.find(function (tree) {
-          return isOffsetInEl(_this.offset.x, _this.offset.y, tree.$el);
-        });
+        // const currentTree = trees.find(tree => hp.isOffsetInEl(this.offset.x, this.offset.y, tree.$el))
+        var currentTree = getTreeByPoint(this.offset.x, this.offset.y, trees);
 
         if (currentTree) {
           var dragStartTree = this.store;
@@ -3443,10 +3468,10 @@
       },
       // the second child of currentTree root, excluding dragging node
       currentTreeRootSecondChildExcludingDragging: function currentTreeRootSecondChildExcludingDragging() {
-        var _this2 = this;
+        var _this = this;
 
         return this.currentTree.rootData.children.slice(0, 3).filter(function (v) {
-          return v !== _this2.node;
+          return v !== _this.node;
         })[1];
       },
       // placeholder
