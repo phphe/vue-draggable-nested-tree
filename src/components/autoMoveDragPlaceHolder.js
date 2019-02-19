@@ -4,6 +4,7 @@ import Cache, {
   attachCache
 } from '../plugins/Cache'
 import * as vf from 'vue-functions'
+import getTreeByPoint from './temporarily-fix-overlapping-tree-issue'
 
 // actions for drag placeholder
 // 对 drag placeholder进行的操作
@@ -215,7 +216,8 @@ export default function autoMoveDragPlaceHolder(draggableHelperInfo) {
     }, // right bottom point
     // tree
     currentTree() {
-      const currentTree = trees.find(tree => hp.isOffsetInEl(this.offset.x, this.offset.y, tree.$el))
+      // const currentTree = trees.find(tree => hp.isOffsetInEl(this.offset.x, this.offset.y, tree.$el))
+      const currentTree = getTreeByPoint(this.offset.x, this.offset.y, trees)
       if (currentTree) {
         const dragStartTree = this.store
         let treeChanged
