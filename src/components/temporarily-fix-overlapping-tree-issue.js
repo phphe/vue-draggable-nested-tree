@@ -26,8 +26,48 @@ function elementsFromPoint(x, y) {
 
 export default function getTreeByPoint(x, y, trees) {
   const els = document.elementsFromPoint(x, y)
-  const treeEL = els.find(el => hp.hasClass(el, 'tree'))
-  if (treeEL) {
-    return trees.find(v => v.$el === treeEL)
+  let treeEl
+  let nodeEl
+  const betweenEls = []
+  for (const el of els) {
+    if (!nodeEl) {
+      if (hp.hasClass(el, 'tree-node')) {
+        nodeEl = el
+      }
+    } else {
+      // console.log(el);
+      if (hp.hasClass(el, 'tree')) {
+        treeEl = el
+        break
+      }
+      betweenEls.push(el)
+    }
+  }
+  if (treeEl) {
+    // is target tree is another tree, and be covered by other element, like modal, popup
+    let covered = false
+    if (!isParent(nodeEl, treeEl)) {
+      // cross tree
+      for (const el of betweenEls) {
+        if (!isParent(el, treeEl)) {
+          covered = true
+          break
+        }
+      }
+    }
+    //
+    if (!covered) {
+      return trees.find(v => v.$el === treeEl)
+    }
+  }
+}
+
+function isParent(child, parent) {
+  let cur = child
+  while (cur) {
+    cur = cur.parentNode
+    if (cur === parent) {
+      return true
+    }
   }
 }

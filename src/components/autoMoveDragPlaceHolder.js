@@ -214,10 +214,16 @@ export default function autoMoveDragPlaceHolder(draggableHelperInfo) {
         y: this.offset.y + this.nodeInnerEl.offsetHeight
       }
     }, // right bottom point
+    offsetToViewPort() {
+      const r = this.nodeInnerEl.getBoundingClientRect()
+      r.x = r.left
+      r.y = r.top
+      return r
+    },
     // tree
     currentTree() {
       // const currentTree = trees.find(tree => hp.isOffsetInEl(this.offset.x, this.offset.y, tree.$el))
-      const currentTree = getTreeByPoint(this.offset.x, this.offset.y, trees)
+      const currentTree = getTreeByPoint(this.offsetToViewPort.x, this.offsetToViewPort.y, trees)
       if (currentTree) {
         const dragStartTree = this.store
         let treeChanged
