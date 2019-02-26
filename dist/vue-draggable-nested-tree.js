@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v2.2.7
+ * vue-draggable-nested-tree v2.2.8
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -3032,6 +3032,292 @@
     return value === '' || value;
   } // the dependences in getter can't be auto resolved. must use exec to include dependences
 
+  var _iterStep$1 = function (done, value) {
+    return { value: value, done: !!done };
+  };
+
+  var _iterators$1 = {};
+
+  var _redefine$1 = _hide;
+
+  var _objectDps$1 = _descriptors ? Object.defineProperties : function defineProperties(O, Properties) {
+    _anObject(O);
+    var keys = _objectKeys(Properties);
+    var length = keys.length;
+    var i = 0;
+    var P;
+    while (length > i) _objectDp.f(O, P = keys[i++], Properties[P]);
+    return O;
+  };
+
+  var document$4 = _global.document;
+  var _html$1 = document$4 && document$4.documentElement;
+
+  // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
+
+
+
+  var IE_PROTO$4 = _sharedKey('IE_PROTO');
+  var Empty$1 = function () { /* empty */ };
+  var PROTOTYPE$3 = 'prototype';
+
+  // Create object with fake `null` prototype: use iframe Object with cleared prototype
+  var createDict$1 = function () {
+    // Thrash, waste and sodomy: IE GC bug
+    var iframe = _domCreate('iframe');
+    var i = _enumBugKeys.length;
+    var lt = '<';
+    var gt = '>';
+    var iframeDocument;
+    iframe.style.display = 'none';
+    _html$1.appendChild(iframe);
+    iframe.src = 'javascript:'; // eslint-disable-line no-script-url
+    // createDict = iframe.contentWindow.Object;
+    // html.removeChild(iframe);
+    iframeDocument = iframe.contentWindow.document;
+    iframeDocument.open();
+    iframeDocument.write(lt + 'script' + gt + 'document.F=Object' + lt + '/script' + gt);
+    iframeDocument.close();
+    createDict$1 = iframeDocument.F;
+    while (i--) delete createDict$1[PROTOTYPE$3][_enumBugKeys[i]];
+    return createDict$1();
+  };
+
+  var _objectCreate$1 = Object.create || function create(O, Properties) {
+    var result;
+    if (O !== null) {
+      Empty$1[PROTOTYPE$3] = _anObject(O);
+      result = new Empty$1();
+      Empty$1[PROTOTYPE$3] = null;
+      // add "__proto__" for Object.getPrototypeOf polyfill
+      result[IE_PROTO$4] = O;
+    } else result = createDict$1();
+    return Properties === undefined ? result : _objectDps$1(result, Properties);
+  };
+
+  var _wks$1 = createCommonjsModule(function (module) {
+  var store = _shared('wks');
+
+  var Symbol = _global.Symbol;
+  var USE_SYMBOL = typeof Symbol == 'function';
+
+  var $exports = module.exports = function (name) {
+    return store[name] || (store[name] =
+      USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : _uid)('Symbol.' + name));
+  };
+
+  $exports.store = store;
+  });
+
+  var def$1 = _objectDp.f;
+
+  var TAG$2 = _wks$1('toStringTag');
+
+  var _setToStringTag$1 = function (it, tag, stat) {
+    if (it && !_has(it = stat ? it : it.prototype, TAG$2)) def$1(it, TAG$2, { configurable: true, value: tag });
+  };
+
+  var IteratorPrototype$1 = {};
+
+  // 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
+  _hide(IteratorPrototype$1, _wks$1('iterator'), function () { return this; });
+
+  var _iterCreate$1 = function (Constructor, NAME, next) {
+    Constructor.prototype = _objectCreate$1(IteratorPrototype$1, { next: _propertyDesc(1, next) });
+    _setToStringTag$1(Constructor, NAME + ' Iterator');
+  };
+
+  // 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
+
+
+  var IE_PROTO$5 = _sharedKey('IE_PROTO');
+  var ObjectProto$1 = Object.prototype;
+
+  var _objectGpo$1 = Object.getPrototypeOf || function (O) {
+    O = _toObject(O);
+    if (_has(O, IE_PROTO$5)) return O[IE_PROTO$5];
+    if (typeof O.constructor == 'function' && O instanceof O.constructor) {
+      return O.constructor.prototype;
+    } return O instanceof Object ? ObjectProto$1 : null;
+  };
+
+  var ITERATOR$2 = _wks$1('iterator');
+  var BUGGY$1 = !([].keys && 'next' in [].keys()); // Safari has buggy iterators w/o `next`
+  var FF_ITERATOR$1 = '@@iterator';
+  var KEYS$1 = 'keys';
+  var VALUES$1 = 'values';
+
+  var returnThis$1 = function () { return this; };
+
+  var _iterDefine$1 = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED) {
+    _iterCreate$1(Constructor, NAME, next);
+    var getMethod = function (kind) {
+      if (!BUGGY$1 && kind in proto) return proto[kind];
+      switch (kind) {
+        case KEYS$1: return function keys() { return new Constructor(this, kind); };
+        case VALUES$1: return function values() { return new Constructor(this, kind); };
+      } return function entries() { return new Constructor(this, kind); };
+    };
+    var TAG = NAME + ' Iterator';
+    var DEF_VALUES = DEFAULT == VALUES$1;
+    var VALUES_BUG = false;
+    var proto = Base.prototype;
+    var $native = proto[ITERATOR$2] || proto[FF_ITERATOR$1] || DEFAULT && proto[DEFAULT];
+    var $default = $native || getMethod(DEFAULT);
+    var $entries = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined;
+    var $anyNative = NAME == 'Array' ? proto.entries || $native : $native;
+    var methods, key, IteratorPrototype;
+    // Fix native
+    if ($anyNative) {
+      IteratorPrototype = _objectGpo$1($anyNative.call(new Base()));
+      if (IteratorPrototype !== Object.prototype && IteratorPrototype.next) {
+        // Set @@toStringTag to native iterators
+        _setToStringTag$1(IteratorPrototype, TAG, true);
+        // fix for some old engines
+        if (!_library && typeof IteratorPrototype[ITERATOR$2] != 'function') _hide(IteratorPrototype, ITERATOR$2, returnThis$1);
+      }
+    }
+    // fix Array#{values, @@iterator}.name in V8 / FF
+    if (DEF_VALUES && $native && $native.name !== VALUES$1) {
+      VALUES_BUG = true;
+      $default = function values() { return $native.call(this); };
+    }
+    // Define iterator
+    if ((!_library || FORCED) && (BUGGY$1 || VALUES_BUG || !proto[ITERATOR$2])) {
+      _hide(proto, ITERATOR$2, $default);
+    }
+    // Plug for library
+    _iterators$1[NAME] = $default;
+    _iterators$1[TAG] = returnThis$1;
+    if (DEFAULT) {
+      methods = {
+        values: DEF_VALUES ? $default : getMethod(VALUES$1),
+        keys: IS_SET ? $default : getMethod(KEYS$1),
+        entries: $entries
+      };
+      if (FORCED) for (key in methods) {
+        if (!(key in proto)) _redefine$1(proto, key, methods[key]);
+      } else _export(_export.P + _export.F * (BUGGY$1 || VALUES_BUG), NAME, methods);
+    }
+    return methods;
+  };
+
+  // 22.1.3.4 Array.prototype.entries()
+  // 22.1.3.13 Array.prototype.keys()
+  // 22.1.3.29 Array.prototype.values()
+  // 22.1.3.30 Array.prototype[@@iterator]()
+  var es6_array_iterator$1 = _iterDefine$1(Array, 'Array', function (iterated, kind) {
+    this._t = _toIobject(iterated); // target
+    this._i = 0;                   // next index
+    this._k = kind;                // kind
+  // 22.1.5.2.1 %ArrayIteratorPrototype%.next()
+  }, function () {
+    var O = this._t;
+    var kind = this._k;
+    var index = this._i++;
+    if (!O || index >= O.length) {
+      this._t = undefined;
+      return _iterStep$1(1);
+    }
+    if (kind == 'keys') return _iterStep$1(0, index);
+    if (kind == 'values') return _iterStep$1(0, O[index]);
+    return _iterStep$1(0, [index, O[index]]);
+  }, 'values');
+
+  // argumentsList[@@iterator] is %ArrayProto_values% (9.4.4.6, 9.4.4.7)
+  _iterators$1.Arguments = _iterators$1.Array;
+
+  var TO_STRING_TAG$1 = _wks$1('toStringTag');
+
+  var DOMIterables$1 = ('CSSRuleList,CSSStyleDeclaration,CSSValueList,ClientRectList,DOMRectList,DOMStringList,' +
+    'DOMTokenList,DataTransferItemList,FileList,HTMLAllCollection,HTMLCollection,HTMLFormElement,HTMLSelectElement,' +
+    'MediaList,MimeTypeArray,NamedNodeMap,NodeList,PaintRequestList,Plugin,PluginArray,SVGLengthList,SVGNumberList,' +
+    'SVGPathSegList,SVGPointList,SVGStringList,SVGTransformList,SourceBufferList,StyleSheetList,TextTrackCueList,' +
+    'TextTrackList,TouchList').split(',');
+
+  for (var i$1 = 0; i$1 < DOMIterables$1.length; i$1++) {
+    var NAME$2 = DOMIterables$1[i$1];
+    var Collection$1 = _global[NAME$2];
+    var proto$2 = Collection$1 && Collection$1.prototype;
+    if (proto$2 && !proto$2[TO_STRING_TAG$1]) _hide(proto$2, TO_STRING_TAG$1, NAME$2);
+    _iterators$1[NAME$2] = _iterators$1.Array;
+  }
+
+  // true  -> String#at
+  // false -> String#codePointAt
+  var _stringAt$1 = function (TO_STRING) {
+    return function (that, pos) {
+      var s = String(_defined(that));
+      var i = _toInteger(pos);
+      var l = s.length;
+      var a, b;
+      if (i < 0 || i >= l) return TO_STRING ? '' : undefined;
+      a = s.charCodeAt(i);
+      return a < 0xd800 || a > 0xdbff || i + 1 === l || (b = s.charCodeAt(i + 1)) < 0xdc00 || b > 0xdfff
+        ? TO_STRING ? s.charAt(i) : a
+        : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
+    };
+  };
+
+  var $at = _stringAt$1(true);
+
+  // 21.1.3.27 String.prototype[@@iterator]()
+  _iterDefine$1(String, 'String', function (iterated) {
+    this._t = String(iterated); // target
+    this._i = 0;                // next index
+  // 21.1.5.2.1 %StringIteratorPrototype%.next()
+  }, function () {
+    var O = this._t;
+    var index = this._i;
+    var point;
+    if (index >= O.length) return { value: undefined, done: true };
+    point = $at(O, index);
+    this._i += point.length;
+    return { value: point, done: false };
+  });
+
+  // getting tag from 19.1.3.6 Object.prototype.toString()
+
+  var TAG$3 = _wks$1('toStringTag');
+  // ES3 wrong here
+  var ARG$1 = _cof(function () { return arguments; }()) == 'Arguments';
+
+  // fallback for IE11 Script Access Denied error
+  var tryGet$1 = function (it, key) {
+    try {
+      return it[key];
+    } catch (e) { /* empty */ }
+  };
+
+  var _classof$1 = function (it) {
+    var O, T, B;
+    return it === undefined ? 'Undefined' : it === null ? 'Null'
+      // @@toStringTag case
+      : typeof (T = tryGet$1(O = Object(it), TAG$3)) == 'string' ? T
+      // builtinTag case
+      : ARG$1 ? _cof(O)
+      // ES3 arguments fallback
+      : (B = _cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
+  };
+
+  var ITERATOR$3 = _wks$1('iterator');
+
+  var core_getIteratorMethod = _core.getIteratorMethod = function (it) {
+    if (it != undefined) return it[ITERATOR$3]
+      || it['@@iterator']
+      || _iterators$1[_classof$1(it)];
+  };
+
+  var core_getIterator = _core.getIterator = function (it) {
+    var iterFn = core_getIteratorMethod(it);
+    if (typeof iterFn != 'function') throw TypeError(it + ' is not iterable!');
+    return _anObject(iterFn.call(it));
+  };
+
+  var getIterator = core_getIterator;
+
+  var getIterator$1 = getIterator;
+
   // 7.2.2 IsArray(argument)
 
   var _isArray = Array.isArray || function isArray(arg) {
@@ -3147,14 +3433,80 @@
 
   function getTreeByPoint(x, y, trees) {
     var els = document.elementsFromPoint(x, y);
-    var treeEL = els.find(function (el) {
-      return hasClass(el, 'tree');
-    });
+    var treeEl;
+    var nodeEl;
+    var betweenEls = [];
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
 
-    if (treeEL) {
-      return trees.find(function (v) {
-        return v.$el === treeEL;
-      });
+    try {
+      for (var _iterator = getIterator$1(els), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var _el = _step.value;
+
+        if (!nodeEl) {
+          if (hasClass(_el, 'tree-node')) {
+            nodeEl = _el;
+          }
+        } else {
+          // console.log(el);
+          if (hasClass(_el, 'tree')) {
+            treeEl = _el;
+            break;
+          }
+
+          betweenEls.push(_el);
+        }
+      }
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator.return != null) {
+          _iterator.return();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
+      }
+    }
+
+    if (treeEl) {
+      // is target tree is another tree, and be covered by other element, like modal, popup
+      var covered = false;
+
+      if (!isParent(nodeEl, treeEl)) {
+        // cross tree
+        for (var _i = 0; _i < betweenEls.length; _i++) {
+          var el = betweenEls[_i];
+
+          if (!isParent(el, treeEl)) {
+            covered = true;
+            break;
+          }
+        }
+      } //
+
+
+      if (!covered) {
+        return trees.find(function (v) {
+          return v.$el === treeEl;
+        });
+      }
+    }
+  }
+
+  function isParent(child, parent) {
+    var cur = child;
+
+    while (cur) {
+      cur = cur.parentNode;
+
+      if (cur === parent) {
+        return true;
+      }
     }
   }
 
@@ -3433,10 +3785,16 @@
         };
       },
       // right bottom point
+      offsetToViewPort: function offsetToViewPort() {
+        var r = this.nodeInnerEl.getBoundingClientRect();
+        r.x = r.left;
+        r.y = r.top;
+        return r;
+      },
       // tree
       currentTree: function currentTree() {
         // const currentTree = trees.find(tree => hp.isOffsetInEl(this.offset.x, this.offset.y, tree.$el))
-        var currentTree = getTreeByPoint(this.offset.x, this.offset.y, trees);
+        var currentTree = getTreeByPoint(this.offsetToViewPort.x, this.offsetToViewPort.y, trees);
 
         if (currentTree) {
           var dragStartTree = this.store;

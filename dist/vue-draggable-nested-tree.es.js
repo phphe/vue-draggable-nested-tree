@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v2.2.7
+ * vue-draggable-nested-tree v2.2.8
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -11,6 +11,7 @@ import 'core-js/modules/es6.number.constructor';
 import { strRand, arrayRemove, getOffset, binarySearch, hasClass } from 'helper-js';
 import defineProperty from 'core-js/library/fn/object/define-property';
 import 'core-js/modules/es6.function.name';
+import getIterator from 'core-js/library/fn/get-iterator';
 import 'core-js/modules/es6.array.find';
 import { isPropTrue } from 'vue-functions';
 import 'core-js/modules/es6.regexp.replace';
@@ -492,6 +493,8 @@ function attachCache(obj, cache, toCache) {
   }
 }
 
+var getIterator$1 = getIterator;
+
 // from https://gist.github.com/iddan/54d5d9e58311b0495a91bf06de661380
 
 if (!document.elementsFromPoint) {
@@ -520,14 +523,80 @@ function elementsFromPoint(x, y) {
 
 function getTreeByPoint(x, y, trees) {
   var els = document.elementsFromPoint(x, y);
-  var treeEL = els.find(function (el) {
-    return hasClass(el, 'tree');
-  });
+  var treeEl;
+  var nodeEl;
+  var betweenEls = [];
+  var _iteratorNormalCompletion = true;
+  var _didIteratorError = false;
+  var _iteratorError = undefined;
 
-  if (treeEL) {
-    return trees.find(function (v) {
-      return v.$el === treeEL;
-    });
+  try {
+    for (var _iterator = getIterator$1(els), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      var _el = _step.value;
+
+      if (!nodeEl) {
+        if (hasClass(_el, 'tree-node')) {
+          nodeEl = _el;
+        }
+      } else {
+        // console.log(el);
+        if (hasClass(_el, 'tree')) {
+          treeEl = _el;
+          break;
+        }
+
+        betweenEls.push(_el);
+      }
+    }
+  } catch (err) {
+    _didIteratorError = true;
+    _iteratorError = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion && _iterator.return != null) {
+        _iterator.return();
+      }
+    } finally {
+      if (_didIteratorError) {
+        throw _iteratorError;
+      }
+    }
+  }
+
+  if (treeEl) {
+    // is target tree is another tree, and be covered by other element, like modal, popup
+    var covered = false;
+
+    if (!isParent(nodeEl, treeEl)) {
+      // cross tree
+      for (var _i = 0; _i < betweenEls.length; _i++) {
+        var el = betweenEls[_i];
+
+        if (!isParent(el, treeEl)) {
+          covered = true;
+          break;
+        }
+      }
+    } //
+
+
+    if (!covered) {
+      return trees.find(function (v) {
+        return v.$el === treeEl;
+      });
+    }
+  }
+}
+
+function isParent(child, parent) {
+  var cur = child;
+
+  while (cur) {
+    cur = cur.parentNode;
+
+    if (cur === parent) {
+      return true;
+    }
   }
 }
 
@@ -806,10 +875,16 @@ function autoMoveDragPlaceHolder(draggableHelperInfo) {
       };
     },
     // right bottom point
+    offsetToViewPort: function offsetToViewPort() {
+      var r = this.nodeInnerEl.getBoundingClientRect();
+      r.x = r.left;
+      r.y = r.top;
+      return r;
+    },
     // tree
     currentTree: function currentTree() {
       // const currentTree = trees.find(tree => hp.isOffsetInEl(this.offset.x, this.offset.y, tree.$el))
-      var currentTree = getTreeByPoint(this.offset.x, this.offset.y, trees);
+      var currentTree = getTreeByPoint(this.offsetToViewPort.x, this.offsetToViewPort.y, trees);
 
       if (currentTree) {
         var dragStartTree = this.store;
