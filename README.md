@@ -5,6 +5,7 @@
 This is a draggable tree component. This component does not have css, you need to add your style refer to demo. The demo style is less, not difficult.
 This component doesn't render node. It exposes a node rendering slot. Please refer to the demo for rendering.   
 * [demo / 示例/演示](https://codepen.io/phphe/pen/KRapQm)
+* [ie11 example / ie11示例](https://github.com/phphe/vue-draggable-nested-tree/tree/master/ie11-example)
 * [English Doc](https://github.com/phphe/vue-draggable-nested-tree/blob/master/README.md)
 * [中文文档](https://github.com/phphe/vue-draggable-nested-tree/blob/master/README_CN.md)
 
@@ -20,6 +21,7 @@ Support touch(single point).
   * [import](#import)
   * [data](#data)
   * [template](#template)
+  * [template for old browsers(eg: IE)](#template_for_old_browsers)
 * [api](#api)
   * [Tree props](#tree_props)
      * [Noraml - Tree props](#noraml_tree_props)
@@ -96,6 +98,19 @@ Tree(:data="data" draggable crossTree)
     template(v-if="!data.isDragPlaceHolder")
       b(v-if="data.children && data.children.length" @click="store.toggleOpen(data)") {{data.open ? '-' : '+'}}&nbsp;
       span {{data.text}}
+```
+<a name="template_for_old_browsers"></a>
+### template for old browsers(eg: IE)
+```pug
+//- slot-scope="{data, store, vm}" may not work in old browsers, replace with slot-scope="slot"
+Tree(:data="data" draggable crossTree)
+  div(slot-scope="slot")
+    //- data is node
+    //- store is the tree
+    //- vm is node Vue instance, you can get node level by vm.level
+    template(v-if="!slot.data.isDragPlaceHolder")
+      b(v-if="slot.data.children && slot.data.children.length" @click="slot.store.toggleOpen(slot.data)") {{slot.data.open ? '-' : '+'}}&nbsp;
+      span {{slot.data.text}}
 ```
 <a name="api"></a>
 # api
