@@ -1,0 +1,31 @@
+#app
+  .row
+    .col-3
+      .mb-2
+        button.btn.btn-primary(@click="collapseAll") collapse all
+        button.btn.btn-primary.ml-1(@click="expandAll") expand all
+      Tree(:data="tree1data" draggable cross-tree)
+          div(slot-scope="{data, store}")
+            template(v-if="!data.isDragPlaceHolder")
+              b(v-if="data.children && data.children.length" @click="store.toggleOpen(data)") {{data.open ? '-' : '+'}}&nbsp;
+              span {{data.text}}
+    .col-3
+      Tree(:data="tree2data" draggable cross-tree)
+        div(slot-scope="{data, store}")
+          template(v-if="!data.isDragPlaceHolder")
+            b(v-if="data.children && data.children.length" @click="store.toggleOpen(data)") {{data.open ? '-' : '+'}}&nbsp;
+            span {{data.text}}
+      .mt-2
+        button.btn.btn-primary(@click="addChild") Add child
+    .col-3
+      Tree.tree3(:data="tree3data" draggable cross-tree)
+        div(slot-scope="{data, store}")
+          template(v-if="!data.isDragPlaceHolder")
+            b(v-if="data.children && data.children.length" @click="store.toggleOpen(data)") {{data.open ? '-' : '+'}}&nbsp;
+            span {{data.text}}
+    .col-3
+      Tree.tree4(:data="tree4data" draggable cross-tree :indent="30" :space="0")
+        div(slot-scope="{data, store}")
+          template(v-if="!data.isDragPlaceHolder")
+            b(v-if="data.children && data.children.length" @click="store.toggleOpen(data)") {{data.open ? '-' : '+'}}&nbsp;
+            span {{data.text}}

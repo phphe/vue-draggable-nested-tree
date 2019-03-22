@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="UTF-8">
+  <title>vue-draggable-nested-tree demo</title>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-123874320-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-123874320-1');
+</script>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.0/css/bootstrap.css'>
+
+      <link rel="stylesheet" href="css/style.css">
+
+
+</head>
+
+<body>
+
+
+<div id="app">
+  <div class="row">
+    <div class="col-3">
+      <div class="mb-2">
+        <button class="btn btn-primary" @click="collapseAll">collapse all</button>
+        <button class="btn btn-primary ml-1" @click="expandAll">expand all</button>
+      </div>
+      <Tree :data="tree1data" draggable="draggable" cross-tree="cross-tree">
+        <div slot-scope="slotProps">
+          <template v-if="!slotProps.data.isDragPlaceHolder"><b v-if="slotProps.data.children &amp;&amp; slotProps.data.children.length" @click="slotProps.store.toggleOpen(slotProps.data)">{{slotProps.data.open ? '-' : '+'}}&nbsp;</b><span>{{slotProps.data.text}}</span></template>
+        </div>
+      </Tree>
+    </div>
+    <div class="col-3">
+      <Tree :data="tree2data" draggable="draggable" cross-tree="cross-tree">
+        <div slot-scope="slotProps">
+          <template v-if="!slotProps.data.isDragPlaceHolder"><b v-if="slotProps.data.children &amp;&amp; slotProps.data.children.length" @click="slotProps.store.toggleOpen(slotProps.data)">{{slotProps.data.open ? '-' : '+'}}&nbsp;</b><span>{{slotProps.data.text}}</span></template>
+        </div>
+      </Tree>
+    </div>
+    <!-- <div class="col-3">
+      <Tree :data="tree2data" draggable="draggable" cross-tree="cross-tree">
+        <div slot-scope="{data, store}">
+          <template v-if="!data.isDragPlaceHolder"><b v-if="data.children &amp;&amp; data.children.length" @click="store.toggleOpen(data)">{{data.open ? '-' : '+'}}&nbsp;</b><span>{{data.text}}</span></template>
+        </div>
+      </Tree>
+      <div class="mt-2">
+        <button class="btn btn-primary" @click="addChild">Add child</button>
+      </div>
+    </div>
+    <div class="col-3">
+      <Tree class="tree3" :data="tree3data" draggable="draggable" cross-tree="cross-tree">
+        <div slot-scope="{data, store}">
+          <template v-if="!data.isDragPlaceHolder"><b v-if="data.children &amp;&amp; data.children.length" @click="store.toggleOpen(data)">{{data.open ? '-' : '+'}}&nbsp;</b><span>{{data.text}}</span></template>
+        </div>
+      </Tree>
+    </div>
+    <div class="col-3">
+      <Tree class="tree4" :data="tree4data" draggable="draggable" cross-tree="cross-tree" :indent="30" :space="0">
+        <div slot-scope="{data, store}">
+          <template v-if="!data.isDragPlaceHolder"><b v-if="data.children &amp;&amp; data.children.length" @click="store.toggleOpen(data)">{{data.open ? '-' : '+'}}&nbsp;</b><span>{{data.text}}</span></template>
+        </div>
+      </Tree>
+    </div> -->
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17-beta.0/vue.js'></script>
+  <script src='https://unpkg.com/vue-draggable-nested-tree@latest/dist/vue-draggable-nested-tree.js'></script>
+<script src='https://unpkg.com/tree-helper@latest/dist/tree-helper.js'></script>
+
+
+
+    <script  src="js/index.js"></script>
+
+
+
+
+</body>
+
+</html>
