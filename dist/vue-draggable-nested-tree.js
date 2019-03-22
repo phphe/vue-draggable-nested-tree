@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v2.2.8
+ * vue-draggable-nested-tree v2.2.9
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -1158,7 +1158,7 @@
   }
 
   /*!
-   * helper-js v1.3.5
+   * helper-js v1.3.7
    * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
    * Released under the MIT License.
    */
@@ -2669,7 +2669,7 @@
   };
 
   /*!
-   * draggable-helper v1.0.19
+   * draggable-helper v1.0.20
    * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
    * Released under the MIT License.
    */
@@ -2679,7 +2679,6 @@
   opt.drag(e, opt, store)
   [Object] opt.style || opt.getStyle(opt) set style of moving el style
   [Boolean] opt.clone
-  [Boolean, default: true] opt.preventSelect, if to prevent text be selected, excluded input, textarea
   opt.draggingClass, default dragging
   opt.moving(e, opt, store) return false can prevent moving
   opt.drop(e, opt, store)
@@ -2713,10 +2712,6 @@
 
   function index$1 (dragHandlerEl) {
     var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    var defaultOpt = {
-      preventSelect: true
-    };
-    opt = Object.assign(defaultOpt, opt);
 
     if (opt.minTranslate == null) {
       opt.minTranslate = 10;
@@ -2726,11 +2721,7 @@
 
     var destroy = function destroy() {
       index.off(dragHandlerEl, 'end', dragHandlerEl._draggbleEventHandler);
-
-      if (opt.preventSelect) {
-        offDOM(dragHandlerEl, 'selectstart', preventSelect);
-      }
-
+      offDOM(dragHandlerEl, 'selectstart', preventSelect);
       delete dragHandlerEl._draggbleEventHandler;
     };
 
@@ -2740,11 +2731,7 @@
 
     dragHandlerEl._draggbleEventHandler = start;
     index.on(dragHandlerEl, 'start', dragHandlerEl._draggbleEventHandler);
-
-    if (opt.preventSelect) {
-      onDOM(dragHandlerEl, 'selectstart', preventSelect);
-    }
-
+    onDOM(dragHandlerEl, 'selectstart', preventSelect);
     return destroy;
 
     function start(e, mouse) {
@@ -2848,7 +2835,9 @@
     }
 
     function drop(e) {
-      index.off(document, 'move', moving);
+      index.off(document, 'move', moving, {
+        passive: false
+      });
       index.off(window, 'end', drop); // drag executed if movedCount > 0
 
       if (store$$1.movedCount > 0) {
@@ -2892,11 +2881,7 @@
     }
 
     function preventSelect(e) {
-      var tagName = e.target.tagName;
-
-      if (tagName !== 'INPUT' && tagName === 'TEXTAREA') {
-        e.preventDefault();
-      }
+      e.preventDefault();
     }
   }
 
