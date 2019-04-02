@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v2.2.9
+ * vue-draggable-nested-tree v2.2.10
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -120,7 +120,7 @@
     return store[key] || (store[key] = value !== undefined ? value : {});
   })('versions', []).push({
     version: _core.version,
-    mode: _library ? 'pure' : 'global',
+    mode: 'pure',
     copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
   });
   });
@@ -1877,11 +1877,11 @@
         return this.level + 1;
       },
       isRoot: function isRoot() {
-        return this.data.isRoot;
+        return this.data && this.data.isRoot;
       },
       childrenVisible: function childrenVisible() {
         var data = this.data;
-        return this.isRoot || data.children && data.children.length && data.open;
+        return this.isRoot || data && data.children && data.children.length && data.open;
       },
       innerBackStyle: function innerBackStyle() {
         var r = {
