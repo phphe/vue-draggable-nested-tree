@@ -33,10 +33,10 @@ export default {
     childrenLevel() {
       return this.level + 1
     },
-    isRoot() {return this.data.isRoot},
+    isRoot() {return this.data && this.data.isRoot},
     childrenVisible() {
       const {data} = this
-      return this.isRoot || data.children && data.children.length && data.open
+      return this.isRoot || data && data.children && data.children.length && data.open
     },
     innerBackStyle() {
       const r = {
