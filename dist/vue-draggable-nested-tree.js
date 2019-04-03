@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v2.2.11
+ * vue-draggable-nested-tree v2.2.12
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -1918,7 +1918,7 @@
               const __vue_script__ = script;
               
   /* template */
-  var __vue_render__ = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"tree-node",class:[_vm.data.active ? _vm.store.activatedClass : '', _vm.data.open ? _vm.store.openedClass : '', _vm.data.class],style:(_vm.data.style),attrs:{"id":_vm.data._id}},[(!_vm.isRoot)?_vm._t("node-inner-back",[_c('div',{staticClass:"tree-node-inner-back",class:[_vm.data.innerBackClass],style:([_vm.innerBackStyle, _vm.data.innerBackStyle])},[_c('div',{staticClass:"tree-node-inner",class:[_vm.data.innerClass],style:([_vm.data.innerStyle])},[_vm._t("default",null,{data:_vm.data,store:_vm.store,vm:_vm.vm})],2)])],{data:_vm.data,store:_vm.store,vm:_vm.vm}):_vm._e(),(_vm.childrenVisible)?_c('div',{staticClass:"tree-node-children"},_vm._l((_vm.data.children),function(child){return _c('TreeNode',{key:child._id,attrs:{"data":child,"store":_vm.store,"level":_vm.childrenLevel},scopedSlots:_vm._u([{key:"default",fn:function(props){return [_vm._t("default",null,{data:props.data,store:props.store,vm:props.vm})]}},{key:"node-inner-back",fn:function(props){return (_vm.$slots['node-inner-back'])?[_vm._t("node-inner-back",null,{data:props.data,store:props.store,vm:props.vm})]:undefined}}])})}),1):_vm._e()],2)};
+  var __vue_render__ = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"tree-node",class:[_vm.data.active ? _vm.store.activatedClass : '', _vm.data.open ? _vm.store.openedClass : '', _vm.data.class],style:(_vm.data.style),attrs:{"id":_vm.data._id}},[(!_vm.isRoot)?_vm._t("node-inner-back",[_c('div',{staticClass:"tree-node-inner-back",class:[_vm.data.innerBackClass],style:([_vm.innerBackStyle, _vm.data.innerBackStyle])},[_c('div',{staticClass:"tree-node-inner",class:[_vm.data.innerClass],style:([_vm.data.innerStyle])},[_vm._t("default",null,{data:_vm.data,store:_vm.store,vm:_vm.vm})],2)])],{data:_vm.data,store:_vm.store,vm:_vm.vm}):_vm._e(),(_vm.childrenVisible)?_c('div',{staticClass:"tree-node-children"},_vm._l((_vm.data.children),function(child){return _c('TreeNode',{key:child._id,attrs:{"data":child,"store":_vm.store,"level":_vm.childrenLevel},scopedSlots:_vm._u([{key:"default",fn:function(props){return [_vm._t("default",null,{data:props.data,store:props.store,vm:props.vm})]}},{key:"node-inner-back",fn:function(props){return (_vm.$slots['node-inner-back'] || _vm.$scopedSlots['node-inner-back'])?[_vm._t("node-inner-back",null,{data:props.data,store:props.store,vm:props.vm})]:undefined}}])})}),1):_vm._e()],2)};
   var __vue_staticRenderFns__ = [];
 
     /* style */
@@ -2179,7 +2179,7 @@
               const __vue_script__$1 = script$1;
               
   /* template */
-  var __vue_render__$1 = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"he-tree tree"},[_c('TreeNode',{attrs:{"data":_vm.rootData,"store":_vm.store},scopedSlots:_vm._u([{key:"default",fn:function(props){return [_vm._t("default",null,{data:props.data,store:_vm.store,vm:props.vm})]}},{key:"node-inner-back",fn:function(props){return (_vm.$slots['node-inner-back'])?[_vm._t("node-inner-back",null,{data:props.data,store:props.store,vm:props.vm})]:undefined}}])})],1)};
+  var __vue_render__$1 = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"he-tree tree"},[_c('TreeNode',{attrs:{"data":_vm.rootData,"store":_vm.store},scopedSlots:_vm._u([{key:"default",fn:function(props){return [_vm._t("default",null,{data:props.data,store:_vm.store,vm:props.vm})]}},{key:"node-inner-back",fn:function(props){return (_vm.$slots['node-inner-back'] || _vm.$scopedSlots['node-inner-back'])?[_vm._t("node-inner-back",null,{data:props.data,store:props.store,vm:props.vm})]:undefined}}])})],1)};
   var __vue_staticRenderFns__$1 = [];
 
     /* style */
