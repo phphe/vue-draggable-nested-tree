@@ -3,6 +3,8 @@
   TreeNode(:data="rootData" :store="store")
     template(slot-scope="props")
       slot(:data="props.data" :store="store" :vm="props.vm")
+    template(v-if="$slots['node-inner-back']" slot="node-inner-back" slot-scope="props")
+      slot(name="node-inner-back" :style="props.style" :data="props.data" :store="props.store" :vm="props.vm")
 </template>
 
 <script>
