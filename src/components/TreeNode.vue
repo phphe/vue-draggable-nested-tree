@@ -8,14 +8,15 @@
     .tree-node-inner-back(:style="[innerBackStyle, data.innerBackStyle]" :class="[data.innerBackClass]")
       .tree-node-inner(:style="[data.innerStyle]" :class="[data.innerClass]")
         slot(:data="data" :store="store" :vm="vm")
-  .tree-node-children(v-if="childrenVisible")
-    TreeNode(v-for="child in data.children" :key="child._id"
-      :data="child" :store="store" :level="childrenLevel"
-    )
-      template(slot-scope="props")
-        slot(:data="props.data" :store="props.store" :vm="props.vm")
-      template(v-if="$slots['node-inner-back'] || $scopedSlots['node-inner-back']" slot="node-inner-back" slot-scope="props")
-        slot(name="node-inner-back" :styleObj="props.styleObj" :data="props.data" :store="props.store" :vm="props.vm")
+  transition(:name="store.childrenTransitionName")
+    .tree-node-children(v-if="childrenVisible")
+      TreeNode(v-for="child in data.children" :key="child._id"
+        :data="child" :store="store" :level="childrenLevel"
+      )
+        template(slot-scope="props")
+          slot(:data="props.data" :store="props.store" :vm="props.vm")
+        template(v-if="$slots['node-inner-back'] || $scopedSlots['node-inner-back']" slot="node-inner-back" slot-scope="props")
+          slot(name="node-inner-back" :styleObj="props.styleObj" :data="props.data" :store="props.store" :vm="props.vm")
 </template>
 <script>
 import * as th from 'tree-helper'

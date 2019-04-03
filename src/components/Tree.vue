@@ -20,6 +20,7 @@ export default {
     activatedClass: {default: 'active'},
     openedClass: {default: 'open'},
     space: {type: Number, default: 10}, // space between node, unit px
+    childrenTransitionName: {}, // there are issues under draggable tree
   },
   components: {TreeNode},
   data() {
