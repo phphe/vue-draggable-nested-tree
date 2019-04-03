@@ -15,9 +15,8 @@
       )
         template(slot-scope="props")
           slot(:data="props.data" :store="props.store" :vm="props.vm")
-        template(v-if="$slots['node-inner-back'] || $scopedSlots['node-inner-back']")
-          template(slot="node-inner-back" slot-scope="props")
-            slot(name="node-inner-back" :styleObj="props.styleObj" :data="props.data" :store="props.store" :vm="props.vm")
+        template(v-if="store.customInnerBack" slot="node-inner-back" slot-scope="props")
+          slot(name="node-inner-back" :styleObj="props.styleObj" :data="props.data" :store="props.store" :vm="props.vm")
 </template>
 <script>
 import * as th from 'tree-helper'

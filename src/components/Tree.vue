@@ -3,9 +3,8 @@
   TreeNode(:data="rootData" :store="store")
     template(slot-scope="props")
       slot(:data="props.data" :store="store" :vm="props.vm")
-    template(v-if="$slots['node-inner-back'] || $scopedSlots['node-inner-back']")
-      template(slot="node-inner-back" slot-scope="props")
-        slot(name="node-inner-back" :styleObj="props.styleObj" :data="props.data" :store="props.store" :vm="props.vm")
+    template(v-if="customInnerBack" slot="node-inner-back" slot-scope="props")
+      slot(name="node-inner-back" :styleObj="props.styleObj" :data="props.data" :store="props.store" :vm="props.vm")
 </template>
 
 <script>
@@ -22,6 +21,7 @@ export default {
     openedClass: {default: 'open'},
     space: {type: Number, default: 10}, // space between node, unit px
     childrenTransitionName: {}, // there are issues under draggable tree
+    customInnerBack: {},
   },
   components: {TreeNode},
   data() {
