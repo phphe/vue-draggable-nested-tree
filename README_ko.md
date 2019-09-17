@@ -1,0 +1,272 @@
+<a name="vue_draggable_nested_tree"></a>
+# vue-draggable-nested-tree vue
+이 프로젝트는 드래그가 가능한 트리 컴포넌트입니다. 이 컴포넌트는 css를 포함하지 않으며, 데모를 사용하기위해 당신의 style을 추가할 필요가 있습니다. 데모의 style은 어렵지 않습니다.
+
+* [데모](https://codepen.io/phphe/pen/KRapQm)
+* [ie11 예제](https://github.com/phphe/vue-draggable-nested-tree/tree/master/ie11-example)
+* [영어 문서](https://github.com/phphe/vue-draggable-nested-tree/blob/master/README.md)
+* [중국어 문서](https://github.com/phphe/vue-draggable-nested-tree/blob/master/README_CN.md)
+
+# 터치 
+터치를 지원합니다 (1개의 아이템)
+
+# 기부
+[페이팔](https://www.paypal.me/phphe) | [알리페이](https://github.com/phphe/my-alipay-wechat-qr-code/blob/master/alipay.jpg) | [위챗](https://github.com/phphe/my-alipay-wechat-qr-code/blob/master/wechat.png)
+
+# 목차
+* [vue-draggable-nested-tree](#vue_draggable_nested_tree)
+* [install](#install)
+* [usage](#usage)
+  * [import](#import)
+  * [data](#data)
+  * [template](#template)
+  * [template for old browsers(eg: IE)](#template_for_old_browsers)
+* [api](#api)
+  * [Tree props](#tree_props)
+     * [Noraml - Tree props](#noraml_tree_props)
+     * [Hooks - Tree props](#hooks_tree_props)
+     * [draggableHelperInfo: {event, options, store}](#draggable_helper_info)
+  * [Tree properties](#tree_properties)
+  * [Tree events](#tree_events)
+  * [Tree methods](#tree_methods)
+  * [node properties](#node_properties)
+   * [node deep properties example](#node_deep_properties_example)
+* [other](#other)
+  * [demo css](#demo_css)
+  * [examples](#examples)
+  * [draggable & droppable](#draggable_&_droppable)
+  * [Traverse tree](#traverse_tree)
+  * [draggable library](#draggable_library)
+
+<a name="install"></a>
+# 설치
+```sh
+npm i vue-draggable-nested-tree
+```
+<a name="usage"></a>
+# 사용
+<a name="import"></a>
+### 함수 import
+```js
+import {DraggableTree} from 'vue-draggable-nested-tree'
+// vue-draggable-nested-tree contains Tree, TreeNode, DraggableTree, DraggableTreeNode
+// import the component and register it as global or local component
+```
+<a name="data"></a>
+### json 데이터
+```js
+data: [
+  {text: 'node 1'},
+  {text: 'node 2'},
+  {text: 'node 3 undraggable', draggable: false},
+  {text: 'node 4'},
+  {text: 'node 4 undroppable', droppable: false},
+  {text: 'node 5', children: [
+    {text: 'node 1'},
+    {text: 'node 2', children: [
+      {text: 'node 3'},
+      {text: 'node 4'},
+    ]},
+    {text: 'node 2 undroppable', droppable: false, children: [
+      {text: 'node 3'},
+      {text: 'node 4'},
+    ]},
+    {text: 'node 2', children: [
+      {text: 'node 3'},
+      {text: 'node 4 undroppable', droppable: false},
+    ]},
+    {text: 'node 3'},
+    {text: 'node 4'},
+    {text: 'node 3'},
+    {text: 'node 4'},
+    {text: 'node 3'},
+    {text: 'node 4'},
+    {text: 'node 3'},
+    {text: 'node 4'},
+  ]},
+]
+```
+<a name="template"></a>
+### template
+```pug
+Tree(:data="data" draggable crossTree)
+  div(slot-scope="{data, store, vm}")
+    //- data is node
+    //- store is the tree
+    //- vm is node Vue instance, you can get node level by vm.level
+    template(v-if="!data.isDragPlaceHolder")
+      b(v-if="data.children && data.children.length" @click="store.toggleOpen(data)") {{data.open ? '-' : '+'}}&nbsp;
+      span {{data.text}}
+```
+<a name="template_for_old_browsers"></a>
+### 오래된 브라우저를 위한 template(eg: IE)
+```pug
+//- slot-scope="{data, store, vm}" may not work in old browsers, replace with slot-scope="slot"
+Tree(:data="data" draggable crossTree)
+  div(slot-scope="slot")
+    //- data is node
+    //- store is the tree
+    //- vm is node Vue instance, you can get node level by vm.level
+    template(v-if="!slot.data.isDragPlaceHolder")
+      b(v-if="slot.data.children && slot.data.children.length" @click="slot.store.toggleOpen(slot.data)") {{slot.data.open ? '-' : '+'}}&nbsp;
+      span {{slot.data.text}}
+```
+<a name="api"></a>
+# api
+**'store'는 tree에 있는 VM입니다.**
+<a name="tree_props"></a>
+### Tree props
+<a name="noraml_tree_props"></a>
+###### 기본 - Tree props
+```js
+// base tree
+data: {}, // type Array
+indent: {default: 16},
+activatedClass: {default: 'active'},
+openedClass: {default: 'open'},
+space: {default: 10}, // space between node, unit px
+// draggable tree
+preventSelect: {default: true}, // if to prevent drag handler text be selected when drag, excluding input and textarea
+getTriggerEl: {type: Function}, // get the el trigger drag, default is node self. arguments(nodeVm)
+draggable: {}, // is the tree draggable, default false
+droppable: {default: true}, // is the tree droppable, default true
+crossTree: {}, // can a node of the tree be dragged into other tree, or receive other tree node
+```
+<a name="hooks_tree_props"></a>
+###### 훅 - Tree props
+```js
+ondragstart: {type: Function}, // hook. return false to prevent drag. arguments(node, draggableHelperInfo)
+ondragend: {type: Function}, // hook. return false to prevent drop. arguments(node, draggableHelperInfo)
+```
+<a name="draggable_helper_info"></a>
+###### draggableHelperInfo
+{event, options, store}
+<a name="tree_properties"></a>
+### Tree properties
+```js
+// base
+rootData, // generated by tree
+// draggable
+dplh, // drag placeholder. globally unique.
+trees, // array, all trees in the app. globally unique.
+```
+<a name="tree_events"></a>
+### Tree 이벤트
+```js
+// store is the tree vm
+drag(node), // on drag start.
+drop(node, targetTree, oldTree), // after drop.
+change(node, targetTree, oldTree), // after drop, only when the node position changed
+nodeOpenChanged(node) // on a node is closed or open
+```
+* targetTree와 oldTree 는 tree vm입니다.
+* oldTree is 오직 cross tree에서만 사용이 가능합니다. 그 외에는 null입니다..
+* 만약 cross tree를 사용중이라면 targetTree와 oldTree 는 드롭할 때 값이 바뀔것입니다.
+<a name="tree_methods"></a>
+### Tree 함수
+```js
+pure(node, withChildren, after)
+/*
+pure
+return a node data without runtime properties.(!: property which starts with '_' will be removed)
+withChildren: optional. after: Function, optional
+the code about after(t is computed node data):
+if (after) {
+  return after(t, node) || t
+}
+return t
+*/
+getNodeById(id)
+getActivated()
+getOpened()
+activeNode(node, inactiveOld)
+toggleActive(node, inactiveOld)
+openNode(node, closeOld)
+toggleOpen(node, closeOld)
+// follow methods are easy, so I paste their soure code
+getPureData(after) { return this.pure(this.rootData, true, after).children } // after: Function, optional
+deleteNode(node) { return hp.arrayRemove(node.parent.children, node) }
+// add node: like array. eg: node.children.push(newNodeData)
+// update node: just assign to the node properties directly
+isNodeDraggable(node)
+isNodeDroppable(node)
+```
+<a name="node_properties"></a>
+### node 속성
+```js
+// base
+_id
+_vm
+parent
+children: [],
+open,
+active: false,
+style: {},
+class: '',
+innerStyle: {},
+innerClass: '',
+innerBackStyle: {},
+innerBackClass: {},
+// draggable
+draggable // default true. Please check 'draggable & droppable' below
+droppable // default true. Please check 'draggable & droppable' below
+isDragPlaceHolder
+```
+<a name="node_deep_properties_example"></a>
+#### node의 아래 속성 예제
+```js
+node._vm // vm
+node._vm.level // 노드 레벨
+node._vm.store // 트리
+node.parent._vm // 부모 node vm
+node._vm.store
+```
+<a name="other"></a>
+# 기타
+<a name="demo_css"></a>
+### 데모 css
+```css
+.he-tree{
+  border: 1px solid #ccc;
+  padding: 20px;
+  width: 300px;
+}
+.tree-node{
+}
+.tree-node-inner{
+  padding: 5px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+.draggable-placeholder{
+}
+.draggable-placeholder-inner{
+  border: 1px dashed #0088F8;
+  box-sizing: border-box;
+  background: rgba(0, 136, 249, 0.09);
+  color: #0088f9;
+  text-align: center;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+```
+<a name="examples"></a>
+### 예제
+이 패키지를 clone합니다. 그리고,
+```sh
+npm install
+npm run dev
+```
+* [기본 예제](https://github.com/phphe/vue-draggable-nested-tree/blob/master/src/examples/Base.vue)
+* [트리의 최대 레벨설정](https://github.com/phphe/vue-draggable-nested-tree/blob/master/src/examples/MaxLevel.vue)
+
+<a name="draggable_&_droppable"></a>
+### draggable & droppable
+한개의 node는 기본으로 드래그&드랍이 사용 가능합니다. 당신은 node의 속성을 드래그&드랍으로 설정 가능합니다. 다른방법으로는 'drag'이벤트를 기다리다가 모든 데이터를 드래그 혹은 드랍속성으로 세팅하는것입니다.
+<a name="traverse_tree"></a>
+### Traverse tree
+나의 다른 라이브러리인 [tree-helper](https://github.com/phphe/tree-helper)를 추천한다.. 그것은 2가지의 가로트리를 지원한다: depthFirstSearch, breadthFirstSearch.
+<a name="draggable_library"></a>
+### draggable library
+[draggable-helper](https://github.com/phphe/draggable-helper) 드래그를 위한 제가 개발한 다른 라이브러리입니다.. 그리고 그것은 이 컴포넌트를 통해 사용하고 있습니다. 드래그 함수를 사용할 때 도움이 될것입니다.
