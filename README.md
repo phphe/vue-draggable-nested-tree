@@ -8,6 +8,8 @@ This component doesn't render node. It exposes a node rendering slot. Please ref
 * [ie11 example / ie11示例](https://github.com/phphe/vue-draggable-nested-tree/tree/master/ie11-example)
 * [English Doc](https://github.com/phphe/vue-draggable-nested-tree/blob/master/README.md)
 * [中文文档](https://github.com/phphe/vue-draggable-nested-tree/blob/master/README_CN.md)
+* [한국어 Korean](https://github.com/phphe/vue-draggable-nested-tree/blob/master/README_ko.md) by [cjstk7168](https://github.com/cjstk7168)
+
 
 # touch
 已支持简单触摸(单点).   
