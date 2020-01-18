@@ -1,25 +1,14 @@
 /*!
- * vue-draggable-nested-tree v2.2.18
- * (c) 2018-present phphe <phphe@outlook.com>
+ * vue-draggable-nested-tree v3.0.0-beta
+ * (c) phphe <phphe@outlook.com> (https://github.com/phphe)
  * Released under the MIT License.
  */
-import keys from 'core-js/library/fn/object/keys';
-import assign from 'core-js/library/fn/object/assign';
-import { breadthFirstSearch, insertAfter, insertBefore, appendTo, prependTo } from 'tree-helper';
-import 'core-js/modules/web.dom.iterable';
-import 'core-js/modules/es6.number.constructor';
-import { strRand, arrayRemove, getOffset, binarySearch, hasClass } from 'helper-js';
-import defineProperty from 'core-js/library/fn/object/define-property';
-import 'core-js/modules/es6.function.name';
-import getIterator from 'core-js/library/fn/get-iterator';
-import 'core-js/modules/es6.array.find';
-import { isPropTrue } from 'vue-functions';
-import 'core-js/modules/es6.regexp.replace';
+import { strRand, arrayRemove, hasClass, getOffset, binarySearch } from 'helper-js';
+import { breadthFirstSearch, insertBefore, appendTo, prependTo, insertAfter } from 'tree-helper';
+import __vue_normalize__ from 'vue-runtime-helpers/dist/normalize-component.mjs';
 import draggableHelper from 'draggable-helper';
-
-var keys$1 = keys;
-
-var assign$1 = assign;
+import _defineProperty from '@babel/runtime/helpers/defineProperty';
+import { isPropTrue } from 'vue-functions';
 
 //
 var script = {
@@ -32,23 +21,30 @@ var script = {
     } // readonly
 
   },
-  data: function data() {
+
+  data() {
     return {
       vm: this
     };
   },
+
   computed: {
-    childrenLevel: function childrenLevel() {
+    childrenLevel() {
       return this.level + 1;
     },
-    isRoot: function isRoot() {
+
+    isRoot() {
       return this.data && this.data.isRoot;
     },
-    childrenVisible: function childrenVisible() {
-      var data = this.data;
+
+    childrenVisible() {
+      var {
+        data
+      } = this;
       return this.isRoot || data && data.children && data.children.length && data.open;
     },
-    innerBackStyle: function innerBackStyle() {
+
+    innerBackStyle() {
       var r = {
         marginBottom: this.store.space + 'px'
       };
@@ -59,11 +55,13 @@ var script = {
 
       return r;
     }
+
   },
   watch: {
     data: {
       immediate: true,
-      handler: function handler(data) {
+
+      handler(data) {
         if (data) {
           data._vm = this;
 
@@ -72,6 +70,7 @@ var script = {
           }
         }
       }
+
     }
   } // methods: {},
   // created() {},
@@ -80,60 +79,104 @@ var script = {
 };
 
 /* script */
-            const __vue_script__ = script;
-            
+var __vue_script__ = script;
 /* template */
-var __vue_render__ = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"tree-node",class:[_vm.data.active ? _vm.store.activatedClass : '', _vm.data.open ? _vm.store.openedClass : '', _vm.data.class],style:(_vm.data.style),attrs:{"id":_vm.data._id}},[(!_vm.isRoot)?_vm._t("node-inner-back",[_c('div',{staticClass:"tree-node-inner-back",class:[_vm.data.innerBackClass],style:([_vm.innerBackStyle, _vm.data.innerBackStyle])},[_c('div',{staticClass:"tree-node-inner",class:[_vm.data.innerClass],style:([_vm.data.innerStyle])},[_vm._t("default",null,{data:_vm.data,store:_vm.store,vm:_vm.vm})],2)])],{styleObj:_vm.innerBackStyle,data:_vm.data,store:_vm.store,vm:_vm.vm}):_vm._e(),_c('transition',{attrs:{"name":_vm.store.childrenTransitionName}},[(_vm.childrenVisible)?_c('div',{staticClass:"tree-node-children"},_vm._l((_vm.data.children),function(child){return _c('TreeNode',{key:child._id,attrs:{"data":child,"store":_vm.store,"level":_vm.childrenLevel},scopedSlots:_vm._u([{key:"default",fn:function(props){return [_vm._t("default",null,{data:props.data,store:props.store,vm:props.vm})]}},{key:"node-inner-back",fn:function(props){return (_vm.store.customInnerBack)?[_vm._t("node-inner-back",null,{styleObj:props.styleObj,data:props.data,store:props.store,vm:props.vm})]:undefined}}])})}),1):_vm._e()])],2)};
-var __vue_staticRenderFns__ = [];
 
-  /* style */
-  const __vue_inject_styles__ = undefined;
-  /* scoped */
-  const __vue_scope_id__ = undefined;
-  /* module identifier */
-  const __vue_module_identifier__ = undefined;
-  /* functional template */
-  const __vue_is_functional_template__ = false;
-  /* component normalizer */
-  function __vue_normalize__(
-    template, style, script$$1,
-    scope, functional, moduleIdentifier,
-    createInjector, createInjectorSSR
-  ) {
-    const component = (typeof script$$1 === 'function' ? script$$1.options : script$$1) || {};
+var __vue_render__ = function __vue_render__() {
+  var _vm = this;
 
-    // For security concerns, we use only base name in production mode.
-    component.__file = "TreeNode.vue";
+  var _h = _vm.$createElement;
 
-    if (!component.render) {
-      component.render = template.render;
-      component.staticRenderFns = template.staticRenderFns;
-      component._compiled = true;
+  var _c = _vm._self._c || _h;
 
-      if (functional) component.functional = true;
+  return _c("div", {
+    staticClass: "tree-node",
+    class: [_vm.data.active ? _vm.store.activatedClass : "", _vm.data.open ? _vm.store.openedClass : "", _vm.data.class],
+    style: _vm.data.style,
+    attrs: {
+      id: _vm.data._id
     }
+  }, [!_vm.isRoot ? _vm._t("node-inner-back", [_c("div", {
+    staticClass: "tree-node-inner-back",
+    class: [_vm.data.innerBackClass],
+    style: [_vm.innerBackStyle, _vm.data.innerBackStyle]
+  }, [_c("div", {
+    staticClass: "tree-node-inner",
+    class: [_vm.data.innerClass],
+    style: [_vm.data.innerStyle]
+  }, [_vm._t("default", null, {
+    data: _vm.data,
+    store: _vm.store,
+    vm: _vm.vm
+  })], 2)])], {
+    styleObj: _vm.innerBackStyle,
+    data: _vm.data,
+    store: _vm.store,
+    vm: _vm.vm
+  }) : _vm._e(), _c("transition", {
+    attrs: {
+      name: _vm.store.childrenTransitionName
+    }
+  }, [_vm.childrenVisible ? _c("div", {
+    staticClass: "tree-node-children"
+  }, _vm._l(_vm.data.children, function (child) {
+    return _c("TreeNode", {
+      key: child._id,
+      attrs: {
+        data: child,
+        store: _vm.store,
+        level: _vm.childrenLevel
+      },
+      scopedSlots: _vm._u([{
+        key: "default",
+        fn: function fn(props) {
+          return [_vm._t("default", null, {
+            data: props.data,
+            store: props.store,
+            vm: props.vm
+          })];
+        }
+      }, {
+        key: "node-inner-back",
+        fn: function fn(props) {
+          return _vm.store.customInnerBack ? [_vm._t("node-inner-back", null, {
+            styleObj: props.styleObj,
+            data: props.data,
+            store: props.store,
+            vm: props.vm
+          })] : undefined;
+        }
+      }], null, true)
+    });
+  }), 1) : _vm._e()])], 2);
+};
 
-    component._scopeId = scope;
+var __vue_staticRenderFns__ = [];
+__vue_render__._withStripped = true;
+/* style */
 
-    return component
-  }
-  /* style inject */
-  
-  /* style inject SSR */
-  
+var __vue_inject_styles__ = undefined;
+/* scoped */
 
-  
-  var TreeNode = __vue_normalize__(
-    { render: __vue_render__, staticRenderFns: __vue_staticRenderFns__ },
-    __vue_inject_styles__,
-    __vue_script__,
-    __vue_scope_id__,
-    __vue_is_functional_template__,
-    __vue_module_identifier__,
-    undefined,
-    undefined
-  );
+var __vue_scope_id__ = undefined;
+/* module identifier */
 
+var __vue_module_identifier__ = undefined;
+/* functional template */
+
+var __vue_is_functional_template__ = false;
+/* style inject */
+
+/* style inject SSR */
+
+/* style inject shadow dom */
+
+var __vue_component__ = __vue_normalize__({
+  render: __vue_render__,
+  staticRenderFns: __vue_staticRenderFns__
+}, __vue_inject_styles__, __vue_script__, __vue_scope_id__, __vue_is_functional_template__, __vue_module_identifier__, false, undefined, undefined, undefined);
+
+//
 var script$1 = {
   props: {
     data: {},
@@ -161,21 +204,22 @@ var script$1 = {
     customInnerBack: {}
   },
   components: {
-    TreeNode: TreeNode
+    TreeNode: __vue_component__
   },
-  data: function data() {
+
+  data() {
     return {
       store: this,
       rootData: null
     };
   },
+
   // computed: {},
   watch: {
     data: {
       immediate: true,
-      handler: function handler(data, old) {
-        var _this = this;
 
+      handler(data, old) {
         if (data === old) {
           return;
         } // make rootData always use a same object
@@ -186,15 +230,16 @@ var script$1 = {
           _id: "tree_".concat(this._uid, "_node_root"),
           children: []
         };
-        breadthFirstSearch(data, function (node, k, parent) {
-          _this.compeleteNode(node, parent);
+        breadthFirstSearch(data, (node, k, parent) => {
+          this.compeleteNode(node, parent);
         });
         this.rootData.children = data;
       }
+
     }
   },
   methods: {
-    compeleteNode: function compeleteNode(node, parent) {
+    compeleteNode(node, parent) {
       var compeletedData = {
         open: true,
         children: [],
@@ -221,12 +266,10 @@ var script$1 = {
 
       node._treeNodePropertiesCompleted = true;
     },
+
     // pure node self
-    pure: function pure(node, withChildren, after) {
-      var _this2 = this;
-
-      var t = assign$1({}, node);
-
+    pure(node, withChildren, after) {
+      var t = Object.assign({}, node);
       delete t._id;
       delete t.parent;
       delete t.children;
@@ -239,11 +282,7 @@ var script$1 = {
       delete t.innerBackStyle;
       delete t.innerBackClass;
 
-      var _arr = keys$1(t);
-
-      for (var _i = 0; _i < _arr.length; _i++) {
-        var key = _arr[_i];
-
+      for (var key of Object.keys(t)) {
         if (key[0] === '_') {
           delete t[key];
         }
@@ -251,8 +290,8 @@ var script$1 = {
 
       if (withChildren && node.children) {
         t.children = node.children.slice();
-        t.children.forEach(function (v, k) {
-          t.children[k] = _this2.pure(v, withChildren);
+        t.children.forEach((v, k) => {
+          t.children[k] = this.pure(v, withChildren);
         });
       }
 
@@ -262,9 +301,10 @@ var script$1 = {
 
       return t;
     },
-    getNodeById: function getNodeById(id) {
+
+    getNodeById(id) {
       var r;
-      breadthFirstSearch(this.rootData.children, function (node) {
+      breadthFirstSearch(this.rootData.children, node => {
         if (node._id === id) {
           r = node;
           return false;
@@ -272,59 +312,60 @@ var script$1 = {
       });
       return r;
     },
-    getActivated: function getActivated() {
+
+    getActivated() {
       var r = [];
-      breadthFirstSearch(this.rootData.children, function (node) {
+      breadthFirstSearch(this.rootData.children, node => {
         if (node.active) {
           r.push(node);
         }
       });
       return r;
     },
-    getOpened: function getOpened() {
+
+    getOpened() {
       var r = [];
-      breadthFirstSearch(this.rootData.children, function (node) {
+      breadthFirstSearch(this.rootData.children, node => {
         if (node.open) {
           r.push(node);
         }
       });
       return r;
     },
-    activeNode: function activeNode(node, inactiveOld) {
-      var activated = this.activated;
+
+    activeNode(node, inactiveOld) {
 
       if (inactiveOld) {
-        this.getActivated().forEach(function (node2) {
+        this.getActivated().forEach(node2 => {
           node2.active = false;
         });
       }
 
       node.active = true;
     },
-    toggleActive: function toggleActive(node, inactiveOld) {
+
+    toggleActive(node, inactiveOld) {
       if (node.active) {
         node.active = false;
       } else {
         this.activeNode(node, inactiveOld);
       }
     },
-    openNode: function openNode(node, closeOld) {
-      var _this3 = this;
 
-      var opened = this.opened;
+    openNode(node, closeOld) {
 
       if (closeOld) {
-        this.getOpened().forEach(function (node2) {
+        this.getOpened().forEach(node2 => {
           node2.open = false;
-
-          _this3.$emit('nodeOpenChanged', node2);
+          this.$emit('nodeOpenChanged', node2);
         });
       }
 
       node.open = true;
       this.$emit('nodeOpenChanged', node);
     },
-    toggleOpen: function toggleOpen(node, closeOld) {
+
+    toggleOpen(node, closeOld) {
       if (node.open) {
         node.open = false;
         this.$emit('nodeOpenChanged', node);
@@ -332,162 +373,123 @@ var script$1 = {
         this.openNode(node, closeOld);
       }
     },
-    getPureData: function getPureData(after) {
+
+    getPureData(after) {
       return this.pure(this.rootData, true, after).children;
     },
-    deleteNode: function deleteNode(node) {
+
+    deleteNode(node) {
       return arrayRemove(node.parent.children, node);
     }
+
   } // created() {},
   // mounted() {},
 
 };
 
 /* script */
-            const __vue_script__$1 = script$1;
-            
+var __vue_script__$1 = script$1;
 /* template */
-var __vue_render__$1 = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"he-tree tree"},[_c('TreeNode',{attrs:{"data":_vm.rootData,"store":_vm.store},scopedSlots:_vm._u([{key:"default",fn:function(props){return [_vm._t("default",null,{data:props.data,store:_vm.store,vm:props.vm})]}},{key:"node-inner-back",fn:function(props){return (_vm.customInnerBack)?[_vm._t("node-inner-back",null,{styleObj:props.styleObj,data:props.data,store:props.store,vm:props.vm})]:undefined}}])})],1)};
+
+var __vue_render__$1 = function __vue_render__() {
+  var _vm = this;
+
+  var _h = _vm.$createElement;
+
+  var _c = _vm._self._c || _h;
+
+  return _c("div", {
+    staticClass: "he-tree tree"
+  }, [_c("TreeNode", {
+    attrs: {
+      data: _vm.rootData,
+      store: _vm.store
+    },
+    scopedSlots: _vm._u([{
+      key: "default",
+      fn: function fn(props) {
+        return [_vm._t("default", null, {
+          data: props.data,
+          store: _vm.store,
+          vm: props.vm
+        })];
+      }
+    }, {
+      key: "node-inner-back",
+      fn: function fn(props) {
+        return _vm.customInnerBack ? [_vm._t("node-inner-back", null, {
+          styleObj: props.styleObj,
+          data: props.data,
+          store: props.store,
+          vm: props.vm
+        })] : undefined;
+      }
+    }], null, true)
+  })], 1);
+};
+
 var __vue_staticRenderFns__$1 = [];
+__vue_render__$1._withStripped = true;
+/* style */
 
-  /* style */
-  const __vue_inject_styles__$1 = undefined;
-  /* scoped */
-  const __vue_scope_id__$1 = undefined;
-  /* module identifier */
-  const __vue_module_identifier__$1 = undefined;
-  /* functional template */
-  const __vue_is_functional_template__$1 = false;
-  /* component normalizer */
-  function __vue_normalize__$1(
-    template, style, script,
-    scope, functional, moduleIdentifier,
-    createInjector, createInjectorSSR
-  ) {
-    const component = (typeof script === 'function' ? script.options : script) || {};
+var __vue_inject_styles__$1 = undefined;
+/* scoped */
 
-    // For security concerns, we use only base name in production mode.
-    component.__file = "Tree.vue";
+var __vue_scope_id__$1 = undefined;
+/* module identifier */
 
-    if (!component.render) {
-      component.render = template.render;
-      component.staticRenderFns = template.staticRenderFns;
-      component._compiled = true;
+var __vue_module_identifier__$1 = undefined;
+/* functional template */
 
-      if (functional) component.functional = true;
-    }
+var __vue_is_functional_template__$1 = false;
+/* style inject */
 
-    component._scopeId = scope;
+/* style inject SSR */
 
-    return component
-  }
-  /* style inject */
-  
-  /* style inject SSR */
-  
+/* style inject shadow dom */
 
-  
-  var Tree = __vue_normalize__$1(
-    { render: __vue_render__$1, staticRenderFns: __vue_staticRenderFns__$1 },
-    __vue_inject_styles__$1,
-    __vue_script__$1,
-    __vue_scope_id__$1,
-    __vue_is_functional_template__$1,
-    __vue_module_identifier__$1,
-    undefined,
-    undefined
-  );
+var __vue_component__$1 = __vue_normalize__({
+  render: __vue_render__$1,
+  staticRenderFns: __vue_staticRenderFns__$1
+}, __vue_inject_styles__$1, __vue_script__$1, __vue_scope_id__$1, __vue_is_functional_template__$1, __vue_module_identifier__$1, false, undefined, undefined, undefined);
 
-var defineProperty$1 = defineProperty;
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _defineProperties(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-
-    defineProperty$1(target, descriptor.key, descriptor);
-  }
-}
-
-function _createClass(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties(Constructor, staticProps);
-  return Constructor;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    defineProperty$1(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-var Cache =
-/*#__PURE__*/
-function () {
-  function Cache() {
-    _classCallCheck(this, Cache);
-
+class Cache {
+  constructor() {
     _defineProperty(this, "store", {});
   }
 
-  _createClass(Cache, [{
-    key: "has",
-    value: function has(name) {
-      return this.store.hasOwnProperty(name);
-    }
-  }, {
-    key: "remember",
-    value: function remember(name, getter) {
-      if (!this.has(name)) {
-        this.store[name] = {
-          value: getter()
-        };
-      }
+  has(name) {
+    return this.store.hasOwnProperty(name);
+  }
 
-      return this.store[name].value;
+  remember(name, getter) {
+    if (!this.has(name)) {
+      this.store[name] = {
+        value: getter()
+      };
     }
-  }, {
-    key: "forget",
-    value: function forget(name) {
-      if (name) {
-        if (this.has(name)) {
-          delete this.store[name];
-        }
-      } else {
-        this.store = {};
-      }
-    }
-  }]);
 
-  return Cache;
-}();
+    return this.store[name].value;
+  }
+
+  forget(name) {
+    if (name) {
+      if (this.has(name)) {
+        delete this.store[name];
+      }
+    } else {
+      this.store = {};
+    }
+  }
+
+}
 function attachCache(obj, cache, toCache) {
   var _loop = function _loop(key) {
-    defineProperty$1(obj, key, {
-      get: function get() {
-        var _this = this;
-
-        return cache.remember(key, function () {
-          return toCache[key].call(_this);
-        });
+    Object.defineProperty(obj, key, {
+      get() {
+        return cache.remember(key, () => toCache[key].call(this));
       }
+
     });
   };
 
@@ -495,8 +497,6 @@ function attachCache(obj, cache, toCache) {
     _loop(key);
   }
 }
-
-var getIterator$1 = getIterator;
 
 // from https://gist.github.com/iddan/54d5d9e58311b0495a91bf06de661380
 
@@ -529,40 +529,20 @@ function getTreeByPoint(x, y, trees) {
   var treeEl;
   var nodeEl;
   var betweenEls = [];
-  var _iteratorNormalCompletion = true;
-  var _didIteratorError = false;
-  var _iteratorError = undefined;
 
-  try {
-    for (var _iterator = getIterator$1(els), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-      var _el = _step.value;
+  for (var el of els) {
+    if (!nodeEl) {
+      if (hasClass(el, 'tree-node')) {
+        nodeEl = el;
+      }
+    } else {
+      // console.log(el);
+      if (hasClass(el, 'tree')) {
+        treeEl = el;
+        break;
+      }
 
-      if (!nodeEl) {
-        if (hasClass(_el, 'tree-node')) {
-          nodeEl = _el;
-        }
-      } else {
-        // console.log(el);
-        if (hasClass(_el, 'tree')) {
-          treeEl = _el;
-          break;
-        }
-
-        betweenEls.push(_el);
-      }
-    }
-  } catch (err) {
-    _didIteratorError = true;
-    _iteratorError = err;
-  } finally {
-    try {
-      if (!_iteratorNormalCompletion && _iterator.return != null) {
-        _iterator.return();
-      }
-    } finally {
-      if (_didIteratorError) {
-        throw _iteratorError;
-      }
+      betweenEls.push(el);
     }
   }
 
@@ -572,10 +552,8 @@ function getTreeByPoint(x, y, trees) {
 
     if (!isParent(nodeEl, treeEl)) {
       // cross tree
-      for (var _i = 0; _i < betweenEls.length; _i++) {
-        var el = betweenEls[_i];
-
-        if (!isParent(el, treeEl)) {
+      for (var _el of betweenEls) {
+        if (!isParent(_el, treeEl)) {
           covered = true;
           break;
         }
@@ -584,9 +562,7 @@ function getTreeByPoint(x, y, trees) {
 
 
     if (!covered) {
-      return trees.find(function (v) {
-        return v.$el === treeEl;
-      });
+      return trees.find(v => v.$el === treeEl);
     }
   }
 }
@@ -606,47 +582,47 @@ function isParent(child, parent) {
 // 对 drag placeholder进行的操作
 
 var targets = {
-  'nothing': function nothing(info) {},
-  'after': function after(info) {
-    insertDplhAfterTo(info.dplh, info.targetNode, info);
+  'nothing': info => {},
+  'after': info => {
+    insertDplhAfterTo(info.dplh, info.targetNode);
   },
-  'before': function before(info) {
+  'before': info => {
     if (isNodeDroppable(info.targetNode.parent)) {
       insertBefore(info.dplh, info.targetNode);
     } else {
-      insertDplhAfterTo(info.dplh, info.targetNode.parent, info);
+      insertDplhAfterTo(info.dplh, info.targetNode.parent);
     }
   },
-  'append': function append(info) {
+  'append': info => {
     if (isNodeDroppable(info.targetNode)) {
       appendTo(info.dplh, info.targetNode);
       if (!info.targetNode.open) info.store.toggleOpen(info.targetNode);
     } else {
-      insertDplhAfterTo(info.dplh, info.targetNode, info);
+      insertDplhAfterTo(info.dplh, info.targetNode);
     }
   },
-  'prepend': function prepend(info) {
+  'prepend': info => {
     if (isNodeDroppable(info.targetNode)) {
       prependTo(info.dplh, info.targetNode);
       if (!info.targetNode.open) info.store.toggleOpen(info.targetNode);
     } else {
-      insertDplhAfterTo(info.dplh, info.targetNode, info);
+      insertDplhAfterTo(info.dplh, info.targetNode);
     }
   },
-  'after target parent': function afterTargetParent(info) {
-    insertDplhAfterTo(info.dplh, info.targetNode.parent, info);
+  'after target parent': info => {
+    insertDplhAfterTo(info.dplh, info.targetNode.parent);
   },
   // append to prev sibling
-  'append prev': function appendPrev(info) {
+  'append prev': info => {
     if (isNodeDroppable(info.targetPrev)) {
       appendTo(info.dplh, info.targetPrev);
       if (!info.targetPrev.open) info.store.toggleOpen(info.targetPrev);
     } else {
-      insertDplhAfterTo(info.dplh, info.targetPrev, info);
+      insertDplhAfterTo(info.dplh, info.targetPrev);
     }
   },
   // append to current tree
-  'append current tree': function appendCurrentTree(info) {
+  'append current tree': info => {
     if (isNodeDroppable(info.currentTree.rootData)) {
       appendTo(info.dplh, info.currentTree.rootData);
     }
@@ -657,9 +633,7 @@ function insertDplhAfterTo(dplh, targetNode, info) {
   if (!targetNode) {
     return false;
   } else {
-    var closest = findParent(targetNode, function (node) {
-      return node.parent && isNodeDroppable(node.parent);
-    });
+    var closest = findParent(targetNode, node => node.parent && isNodeDroppable(node.parent));
 
     if (closest) {
       insertAfter(dplh, closest);
@@ -747,97 +721,51 @@ function findParent(node, handle) {
 
 var rules = {
   // 另一节点存在
-  'targetNode existed': function targetNodeExisted(info) {
-    return info.targetNode;
-  },
+  'targetNode existed': info => info.targetNode,
   // 另一节点是拖动占位节点
-  'targetNode is placeholder': function targetNodeIsPlaceholder(info) {
-    return info.targetNode.isDragPlaceHolder;
-  },
+  'targetNode is placeholder': info => info.targetNode.isDragPlaceHolder,
   // 另一节点在最上面
-  'targetNode at top': function targetNodeAtTop(info) {
-    return info.targetAtTop;
-  },
+  'targetNode at top': info => info.targetAtTop,
   // 另一节点在最下面
-  'targetNode at bottom': function targetNodeAtBottom(info) {
-    return info.targetAtBottom;
-  },
+  'targetNode at bottom': info => info.targetAtBottom,
   // 另一节点是根节点第二个子
-  'targetNode is the second child of root': function targetNodeIsTheSecondChildOfRoot(info) {
-    return info.currentTreeRootSecondChildExcludingDragging === info.targetNode;
-  },
+  'targetNode is the second child of root': info => info.currentTreeRootSecondChildExcludingDragging === info.targetNode,
   // 拖动点坐标在任一树中, 同时, 起始树要可拖出, 当前树要可拖入
-  'currentTree existed': function currentTreeExisted(info) {
-    return info.currentTree;
-  },
+  'currentTree existed': info => info.currentTree,
   // 当前树为空(不包括占位节点)
-  'currentTree empty': function currentTreeEmpty(info) {
-    return !findChild(info, info.currentTree.rootData.children, function (v) {
-      return v;
-    });
-  },
+  'currentTree empty': info => !findChild(info, info.currentTree.rootData.children, v => v),
   // 占位节点存在
-  'placeholder existed': function placeholderExisted(info) {
-    return info.dplhEl;
-  },
+  'placeholder existed': info => info.dplhEl,
   // 占位节点在当前树中
-  'placeholder in currentTree': function placeholderInCurrentTree(info) {
-    return info.dplhElInCurrentTree;
-  },
+  'placeholder in currentTree': info => info.dplhElInCurrentTree,
   // 占位节点在最上面
-  'placeholder at top': function placeholderAtTop(info) {
-    return info.dplhAtTop;
-  },
+  'placeholder at top': info => info.dplhAtTop,
   // 另一节点是打开的
-  'targetNode is open': function targetNodeIsOpen(info) {
-    return info.targetNode.open;
-  },
+  'targetNode is open': info => info.targetNode.open,
   // 另一节点有子(不包括占位节点)
-  'targetNode has children excluding placeholder': function targetNodeHasChildrenExcludingPlaceholder(info) {
-    return findChild(info, info.targetNode.children, function (v) {
-      return v !== info.dplh;
-    });
-  },
+  'targetNode has children excluding placeholder': info => findChild(info, info.targetNode.children, v => v !== info.dplh),
   // 另一节点是第一个节点
-  'targetNode is 1st child': function targetNodeIs1stChild(info) {
-    return findChild(info, info.targetNode.parent.children, function (v) {
-      return v;
-    }) === info.targetNode;
-  },
+  'targetNode is 1st child': info => findChild(info, info.targetNode.parent.children, v => v) === info.targetNode,
   // 另一节点是最后节点
-  'targetNode is last child': function targetNodeIsLastChild(info) {
-    return findChild(info, info.targetNode.parent.children, function (v) {
-      return v;
-    }, true) === info.targetNode;
-  },
+  'targetNode is last child': info => findChild(info, info.targetNode.parent.children, v => v, true) === info.targetNode,
   // 当前位置在另一节点inner垂直中线上
-  'on targetNode middle': function onTargetNodeMiddle(info) {
-    return info.offset.y <= info.tiMiddleY;
-  },
+  'on targetNode middle': info => info.offset.y <= info.tiMiddleY,
   // 当前位置在另一节点inner左边
-  'at left': function atLeft(info) {
-    return info.offset.x < info.tiOffset.x;
-  },
+  'at left': info => info.offset.x < info.tiOffset.x,
   // 当前位置在另一节点innner indent位置右边
-  'at indent right': function atIndentRight(info) {
-    return info.offset.x > info.tiOffset.x + info.currentTree.indent;
-  } // convert rule output to Boolean
+  'at indent right': info => info.offset.x > info.tiOffset.x + info.currentTree.indent
+}; // convert rule output to Boolean
 
-};
-
-var _arr = keys$1(rules);
-
-var _loop = function _loop() {
-  var key = _arr[_i2];
+var _loop = function _loop(key) {
   var old = rules[key];
 
   rules[key] = function () {
-    return Boolean(old.apply(void 0, arguments));
+    return Boolean(old(...arguments));
   };
 };
 
-for (var _i2 = 0; _i2 < _arr.length; _i2++) {
-  _loop();
+for (var key of Object.keys(rules)) {
+  _loop(key);
 }
 
 var prevTree;
@@ -858,34 +786,38 @@ function autoMoveDragPlaceHolder(draggableHelperInfo) {
     draggableHelperData: {
       opt: draggableHelperInfo.options,
       store: dhStore
-    } //
+    }
+  }; //
 
-  };
   attachCache(info, new Cache(), {
     // dragging node coordinate
     // 拖动中的节点相关坐标
-    nodeInnerEl: function nodeInnerEl() {
+    nodeInnerEl() {
       return this.el.querySelector('.tree-node-inner');
     },
-    offset: function offset() {
+
+    offset() {
       return getOffset(this.nodeInnerEl);
     },
+
     // left top point
-    offset2: function offset2() {
+    offset2() {
       return {
         x: this.offset.x + this.nodeInnerEl.offsetWidth,
         y: this.offset.y + this.nodeInnerEl.offsetHeight
       };
     },
+
     // right bottom point
-    offsetToViewPort: function offsetToViewPort() {
+    offsetToViewPort() {
       var r = this.nodeInnerEl.getBoundingClientRect();
       r.x = r.left;
       r.y = r.top;
       return r;
     },
+
     // tree
-    currentTree: function currentTree() {
+    currentTree() {
       // const currentTree = trees.find(tree => hp.isOffsetInEl(this.offset.x, this.offset.y, tree.$el))
       var currentTree = getTreeByPoint(this.offsetToViewPort.x, this.offsetToViewPort.y, trees);
 
@@ -911,52 +843,61 @@ function autoMoveDragPlaceHolder(draggableHelperInfo) {
         return currentTree;
       }
     },
-    currentTreeRootEl: function currentTreeRootEl() {
+
+    currentTreeRootEl() {
       return document.getElementById(this.currentTree.rootData._id);
     },
-    currentTreeRootOf4: function currentTreeRootOf4() {
+
+    currentTreeRootOf4() {
       return getOf4(this.currentTreeRootEl, this.currentTree.space);
     },
-    // the second child of currentTree root, excluding dragging node
-    currentTreeRootSecondChildExcludingDragging: function currentTreeRootSecondChildExcludingDragging() {
-      var _this = this;
 
-      return this.currentTree.rootData.children.slice(0, 3).filter(function (v) {
-        return v !== _this.node;
-      })[1];
+    // the second child of currentTree root, excluding dragging node
+    currentTreeRootSecondChildExcludingDragging() {
+      return this.currentTree.rootData.children.slice(0, 3).filter(v => v !== this.node)[1];
     },
+
     // placeholder
-    dplhEl: function dplhEl() {
+    dplhEl() {
       return document.getElementById(this.dplh._id);
     },
-    dplhElInCurrentTree: function dplhElInCurrentTree() {
+
+    dplhElInCurrentTree() {
       return Boolean(this.currentTree.$el.querySelector("#".concat(this.dplh._id)));
     },
-    dplhOf4: function dplhOf4() {
+
+    dplhOf4() {
       return getOf4(this.dplhEl, this.currentTree.space);
     },
-    dplhAtTop: function dplhAtTop() {
+
+    dplhAtTop() {
       return Math.abs(this.dplhOf4.y - this.currentTreeRootOf4.y) < 5;
     },
-    targetAtTop: function targetAtTop() {
+
+    targetAtTop() {
       return Math.abs(this.tiOf4.y - this.currentTreeRootOf4.y) < 5;
     },
-    targetAtBottom: function targetAtBottom() {
+
+    targetAtBottom() {
       return Math.abs(this.tiOf4.y2 - this.currentTreeRootOf4.y2) < 5;
     },
+
     // most related node
     // 最相关的另一个节点
-    targetNode: function targetNode() {
-      var currentTree = this.currentTree;
+    targetNode() {
+      var {
+        currentTree
+      } = this;
 
       if (!currentTree) {
         throw 'no currentTree';
       } //
 
 
-      var _this$offset = this.offset,
-          x = _this$offset.x,
-          y = _this$offset.y;
+      var {
+        x,
+        y
+      } = this.offset;
       var currentNode = currentTree.rootData;
 
       while (true) {
@@ -976,7 +917,7 @@ function autoMoveDragPlaceHolder(draggableHelperInfo) {
           break;
         }
 
-        var t = binarySearch(children, function (node) {
+        var t = binarySearch(children, node => {
           var el = document.getElementById(node._id);
           var ty = getOffset(el).y;
           var ty2 = ty + el.offsetHeight + currentTree.space;
@@ -1019,24 +960,30 @@ function autoMoveDragPlaceHolder(draggableHelperInfo) {
 
       return currentNode;
     },
-    targetNodeEl: function targetNodeEl() {
+
+    targetNodeEl() {
       return document.getElementById(this.targetNode._id);
     },
+
     // targetNodeInnerElOffset
-    tiInnerEl: function tiInnerEl() {
+    tiInnerEl() {
       return this.targetNodeEl.querySelector('.tree-node-inner');
     },
-    tiOffset: function tiOffset() {
+
+    tiOffset() {
       return getOffset(this.tiInnerEl);
     },
-    tiOf4: function tiOf4() {
+
+    tiOf4() {
       return getOf4(this.tiInnerEl, this.currentTree.space);
     },
-    tiMiddleY: function tiMiddleY() {
+
+    tiMiddleY() {
       return this.tiOffset.y + this.tiInnerEl.offsetHeight / 2;
     },
+
     //
-    targetPrevEl: function targetPrevEl() {
+    targetPrevEl() {
       // tree node 之间不要有其他元素, 否则这里会获取到错误的元素
       var r = this.targetNodeEl.previousSibling;
 
@@ -1046,16 +993,18 @@ function autoMoveDragPlaceHolder(draggableHelperInfo) {
 
       return r;
     },
-    targetPrev: function targetPrev() {
+
+    targetPrev() {
       var id = this.targetPrevEl.getAttribute('id');
       return this.currentTree.getNodeById(id);
     }
+
   }); // attachCache end
   // decision start =================================
 
   var executedRuleCache = {}; // exec rule
 
-  var exec = function exec(ruleId) {
+  var exec = ruleId => {
     if (!executedRuleCache.hasOwnProperty(ruleId)) {
       var r;
 
@@ -1193,15 +1142,21 @@ function autoMoveDragPlaceHolder(draggableHelperInfo) {
       if (exec('targetNode at bottom') === false) {
         if (exec('targetNode is the second child of root') === false) {
           if (exec('targetNode is 1st child') === true) {
-            if (exec('targetNode is last child') === false) ; else if (exec('targetNode is last child') === true) {
+            if (exec('targetNode is last child') === false) {
+              targets['nothing'](info);
+            } else if (exec('targetNode is last child') === true) {
               if (exec('on targetNode middle') === false) {
                 if (exec('at left') === true) {
                   targets['after target parent'](info);
-                } else if (exec('at left') === false) ;
+                } else if (exec('at left') === false) {
+                  targets['nothing'](info);
+                }
               } else if (exec('on targetNode middle') === true) {
                 if (exec('at left') === true) {
                   targets['after target parent'](info);
-                } else if (exec('at left') === false) ;
+                } else if (exec('at left') === false) {
+                  targets['nothing'](info);
+                }
               }
             }
           } else if (exec('targetNode is 1st child') === false) {
@@ -1212,7 +1167,9 @@ function autoMoveDragPlaceHolder(draggableHelperInfo) {
                 } else if (exec('at left') === false) {
                   if (exec('at indent right') === true) {
                     targets['append prev'](info);
-                  } else if (exec('at indent right') === false) ;
+                  } else if (exec('at indent right') === false) {
+                    targets['nothing'](info);
+                  }
                 }
               } else if (exec('on targetNode middle') === false) {
                 if (exec('at left') === true) {
@@ -1220,21 +1177,31 @@ function autoMoveDragPlaceHolder(draggableHelperInfo) {
                 } else if (exec('at left') === false) {
                   if (exec('at indent right') === true) {
                     targets['append prev'](info);
-                  } else if (exec('at indent right') === false) ;
+                  } else if (exec('at indent right') === false) {
+                    targets['nothing'](info);
+                  }
                 }
               }
             } else if (exec('targetNode is last child') === false) {
               if (exec('on targetNode middle') === true) {
-                if (exec('at left') === true) ; else if (exec('at left') === false) {
+                if (exec('at left') === true) {
+                  targets['nothing'](info);
+                } else if (exec('at left') === false) {
                   if (exec('at indent right') === true) {
                     targets['append prev'](info);
-                  } else if (exec('at indent right') === false) ;
+                  } else if (exec('at indent right') === false) {
+                    targets['nothing'](info);
+                  }
                 }
               } else if (exec('on targetNode middle') === false) {
-                if (exec('at left') === true) ; else if (exec('at left') === false) {
+                if (exec('at left') === true) {
+                  targets['nothing'](info);
+                } else if (exec('at left') === false) {
                   if (exec('at indent right') === true) {
                     targets['append prev'](info);
-                  } else if (exec('at indent right') === false) ;
+                  } else if (exec('at indent right') === false) {
+                    targets['nothing'](info);
+                  }
                 }
               }
             }
@@ -1243,11 +1210,15 @@ function autoMoveDragPlaceHolder(draggableHelperInfo) {
           if (exec('on targetNode middle') === true) {
             if (exec('at indent right') === true) {
               targets['append prev'](info);
-            } else if (exec('at indent right') === false) ;
+            } else if (exec('at indent right') === false) {
+              targets['nothing'](info);
+            }
           } else if (exec('on targetNode middle') === false) {
             if (exec('at indent right') === true) {
               targets['append prev'](info);
-            } else if (exec('at indent right') === false) ;
+            } else if (exec('at indent right') === false) {
+              targets['nothing'](info);
+            }
           }
         }
       } else if (exec('targetNode at bottom') === true) {
@@ -1255,9 +1226,13 @@ function autoMoveDragPlaceHolder(draggableHelperInfo) {
           if (exec('on targetNode middle') === false) {
             if (exec('at left') === true) {
               targets['after target parent'](info);
-            } else if (exec('at left') === false) ;
+            } else if (exec('at left') === false) {
+              targets['nothing'](info);
+            }
           } else if (exec('on targetNode middle') === true) {
-            if (exec('at left') === false) ; else if (exec('at left') === true) {
+            if (exec('at left') === false) {
+              targets['nothing'](info);
+            } else if (exec('at left') === true) {
               targets['after target parent'](info);
             }
           }
@@ -1268,7 +1243,9 @@ function autoMoveDragPlaceHolder(draggableHelperInfo) {
             } else if (exec('at left') === false) {
               if (exec('at indent right') === true) {
                 targets['append prev'](info);
-              } else if (exec('at indent right') === false) ;
+              } else if (exec('at indent right') === false) {
+                targets['nothing'](info);
+              }
             }
           } else if (exec('on targetNode middle') === true) {
             if (exec('at left') === true) {
@@ -1276,13 +1253,17 @@ function autoMoveDragPlaceHolder(draggableHelperInfo) {
             } else if (exec('at left') === false) {
               if (exec('at indent right') === true) {
                 targets['append prev'](info);
-              } else if (exec('at indent right') === false) ;
+              } else if (exec('at indent right') === false) {
+                targets['nothing'](info);
+              }
             }
           }
         }
       }
     }
-  } else if (exec('currentTree existed') === false) ; // decision end =================================
+  } else if (exec('currentTree existed') === false) {
+    targets['nothing'](info);
+  } // decision end =================================
   //
 
 }
@@ -1303,11 +1284,10 @@ autoMoveDragPlaceHolder.dragEnd = function dragEnd() {
 };
 
 var script$2 = {
-  extends: TreeNode,
+  extends: __vue_component__,
   name: 'TreeNode',
-  mounted: function mounted() {
-    var _this = this;
 
+  mounted() {
     this.store.isNodeDraggable = isNodeDraggable;
     this.store.isNodeDroppable = isNodeDroppable;
 
@@ -1315,48 +1295,47 @@ var script$2 = {
       return;
     }
 
-    var dplh = this.store.dplh;
-    this.$watch('store.draggable', function (draggable) {
+    var {
+      dplh
+    } = this.store;
+    this.$watch('store.draggable', draggable => {
       if (isPropTrue(draggable)) {
-        var triggerEl = _this.store.getTriggerEl ? _this.store.getTriggerEl(_this) : _this.$el.querySelector('.tree-node-inner');
-        _this._draggableDestroy = draggableHelper(triggerEl, {
-          preventSelect: isPropTrue(_this.store.preventSelect),
+        var triggerEl = this.store.getTriggerEl ? this.store.getTriggerEl(this) : this.$el.querySelector('.tree-node-inner');
+        this._draggableDestroy = draggableHelper(triggerEl, {
+          preventSelect: isPropTrue(this.store.preventSelect),
           // trigger el
-          getEl: function getEl() {
-            return _this.$el;
-          },
+          getEl: () => this.$el,
           minTranslate: 10,
-          drag: function drag(e, opt, store) {
+          drag: (e, opt, store) => {
             autoMoveDragPlaceHolder.dragStart(); // this store is not tree
 
             var draggableHelperInfo = {
               event: e,
               options: opt,
-              store: store
+              store
             };
 
-            if (_this.store.ondragstart && _this.store.ondragstart(_this.data, draggableHelperInfo) === false) {
+            if (this.store.ondragstart && this.store.ondragstart(this.data, draggableHelperInfo) === false) {
               return false;
             }
 
-            if (!isNodeDraggable(_this.data)) {
+            if (!isNodeDraggable(this.data)) {
               return false;
             }
 
-            _this.store.$emit('drag', _this.data); // record start positon
+            this.store.$emit('drag', this.data); // record start positon
 
+            var siblings = this.data.parent.children;
+            this.startPosition = {
+              siblings,
+              index: siblings.indexOf(this.data)
+            }; //
 
-            var siblings = _this.data.parent.children;
-            _this.startPosition = {
-              siblings: siblings,
-              index: siblings.indexOf(_this.data) //
-
-            };
             dplh.innerStyle.height = store.el.offsetHeight + 'px';
-            insertAfter(dplh, _this.data);
-            _this.data.class += ' dragging'; // console.log('drag start');
+            insertAfter(dplh, this.data);
+            this.data.class += ' dragging'; // console.log('drag start');
           },
-          moving: function moving(e, opt, store) {
+          moving: (e, opt, store) => {
             if (store.movedCount === 0) {
               return;
             }
@@ -1364,108 +1343,79 @@ var script$2 = {
             var draggableHelperInfo = {
               event: e,
               options: opt,
-              store: store
+              store
             };
-            return autoMoveDragPlaceHolder.call(_this, draggableHelperInfo);
+            return autoMoveDragPlaceHolder.call(this, draggableHelperInfo);
           },
-          drop: function drop(e, opt, store) {
+          drop: (e, opt, store) => {
             autoMoveDragPlaceHolder.dragEnd();
             var draggableHelperInfo = {
               event: e,
               options: opt,
-              store: store
+              store
             };
 
-            if (_this.store.ondragend && _this.store.ondragend(_this.data, draggableHelperInfo) === false) {
+            if (this.store.ondragend && this.store.ondragend(this.data, draggableHelperInfo) === false) {
               arrayRemove(dplh.parent.children, dplh); // can't drop, no change
             } else {
               var targetTree = dplh._vm.store;
-              var crossTree = targetTree !== _this.store;
-              var oldTree = crossTree ? _this.store : null;
-              insertAfter(_this.data, dplh);
+              var crossTree = targetTree !== this.store;
+              var oldTree = crossTree ? this.store : null;
+              insertAfter(this.data, dplh);
               arrayRemove(dplh.parent.children, dplh);
-              _this.data.class = _this.data.class.replace(/(^| )dragging( |$)/g, ' ');
-              targetTree.$emit('drop', _this.data, targetTree, oldTree);
-              oldTree && oldTree.$emit('drop', _this.data, targetTree, oldTree); // emit change event if changed
+              this.data.class = this.data.class.replace(/(^| )dragging( |$)/g, ' ');
+              targetTree.$emit('drop', this.data, targetTree, oldTree);
+              oldTree && oldTree.$emit('drop', this.data, targetTree, oldTree); // emit change event if changed
 
-              var siblings = _this.data.parent.children;
+              var siblings = this.data.parent.children;
 
-              if (siblings === _this.startPosition.siblings && siblings.indexOf(_this.data) === _this.startPosition.index) ; else {
-                _this.store.$emit('change', _this.data, targetTree, oldTree);
-
-                oldTree && oldTree.$emit('change', _this.data, targetTree, oldTree);
+              if (siblings === this.startPosition.siblings && siblings.indexOf(this.data) === this.startPosition.index) ; else {
+                this.store.$emit('change', this.data, targetTree, oldTree);
+                oldTree && oldTree.$emit('change', this.data, targetTree, oldTree);
               }
 
-              _this.startPosition = null;
+              this.startPosition = null;
             } // console.log('drag end');
 
           }
         });
       } else {
-        if (_this._draggableDestroy) {
-          _this._draggableDestroy();
+        if (this._draggableDestroy) {
+          this._draggableDestroy();
 
-          _this._draggableDestroy = null;
+          this._draggableDestroy = null;
         }
       }
     }, {
       immediate: true
     });
   }
+
 };
 
 /* script */
-            const __vue_script__$2 = script$2;
-            
+var __vue_script__$2 = script$2;
 /* template */
 
-  /* style */
-  const __vue_inject_styles__$2 = undefined;
-  /* scoped */
-  const __vue_scope_id__$2 = undefined;
-  /* module identifier */
-  const __vue_module_identifier__$2 = undefined;
-  /* functional template */
-  const __vue_is_functional_template__$2 = undefined;
-  /* component normalizer */
-  function __vue_normalize__$2(
-    template, style, script,
-    scope, functional, moduleIdentifier,
-    createInjector, createInjectorSSR
-  ) {
-    const component = (typeof script === 'function' ? script.options : script) || {};
+/* style */
 
-    // For security concerns, we use only base name in production mode.
-    component.__file = "DraggableTreeNode.vue";
+var __vue_inject_styles__$2 = undefined;
+/* scoped */
 
-    if (!component.render) {
-      component.render = template.render;
-      component.staticRenderFns = template.staticRenderFns;
-      component._compiled = true;
+var __vue_scope_id__$2 = undefined;
+/* module identifier */
 
-      if (functional) component.functional = true;
-    }
+var __vue_module_identifier__$2 = undefined;
+/* functional template */
 
-    component._scopeId = scope;
+var __vue_is_functional_template__$2 = undefined;
+/* style inject */
 
-    return component
-  }
-  /* style inject */
-  
-  /* style inject SSR */
-  
+/* style inject SSR */
 
-  
-  var DraggableTreeNode = __vue_normalize__$2(
-    {},
-    __vue_inject_styles__$2,
-    __vue_script__$2,
-    __vue_scope_id__$2,
-    __vue_is_functional_template__$2,
-    __vue_module_identifier__$2,
-    undefined,
-    undefined
-  );
+/* style inject shadow dom */
+
+var __vue_component__$2 = __vue_normalize__({}, __vue_inject_styles__$2, __vue_script__$2, __vue_scope_id__$2, __vue_is_functional_template__$2, __vue_module_identifier__$2, false, undefined, undefined, undefined);
 
 var trees = []; // for multiple trees
 // DragPlaceHolder, unique
@@ -1484,7 +1434,7 @@ var dplh = {
 
 };
 var script$3 = {
-  extends: Tree,
+  extends: __vue_component__$1,
   props: {
     getTriggerEl: {
       type: Function
@@ -1505,78 +1455,54 @@ var script$3 = {
     }
   },
   components: {
-    TreeNode: DraggableTreeNode
+    TreeNode: __vue_component__$2
   },
-  data: function data() {
+
+  data() {
     return {
       // DragPlaceHolder
-      dplh: dplh,
-      trees: trees
+      dplh,
+      trees
     };
   },
+
   // computed: {},
   // watch: {},
   // methods: {},
-  created: function created() {
+  created() {
     trees.push(this);
   },
-  mounted: function mounted() {},
-  beforeDestroy: function beforeDestroy() {
+
+  mounted() {},
+
+  beforeDestroy() {
     arrayRemove(trees, this);
   }
+
 };
 
 /* script */
-            const __vue_script__$3 = script$3;
-            
+var __vue_script__$3 = script$3;
 /* template */
 
-  /* style */
-  const __vue_inject_styles__$3 = undefined;
-  /* scoped */
-  const __vue_scope_id__$3 = undefined;
-  /* module identifier */
-  const __vue_module_identifier__$3 = undefined;
-  /* functional template */
-  const __vue_is_functional_template__$3 = undefined;
-  /* component normalizer */
-  function __vue_normalize__$3(
-    template, style, script,
-    scope, functional, moduleIdentifier,
-    createInjector, createInjectorSSR
-  ) {
-    const component = (typeof script === 'function' ? script.options : script) || {};
+/* style */
 
-    // For security concerns, we use only base name in production mode.
-    component.__file = "DraggableTree.vue";
+var __vue_inject_styles__$3 = undefined;
+/* scoped */
 
-    if (!component.render) {
-      component.render = template.render;
-      component.staticRenderFns = template.staticRenderFns;
-      component._compiled = true;
+var __vue_scope_id__$3 = undefined;
+/* module identifier */
 
-      if (functional) component.functional = true;
-    }
+var __vue_module_identifier__$3 = undefined;
+/* functional template */
 
-    component._scopeId = scope;
+var __vue_is_functional_template__$3 = undefined;
+/* style inject */
 
-    return component
-  }
-  /* style inject */
-  
-  /* style inject SSR */
-  
+/* style inject SSR */
 
-  
-  var DraggableTree = __vue_normalize__$3(
-    {},
-    __vue_inject_styles__$3,
-    __vue_script__$3,
-    __vue_scope_id__$3,
-    __vue_is_functional_template__$3,
-    __vue_module_identifier__$3,
-    undefined,
-    undefined
-  );
+/* style inject shadow dom */
 
-export { Tree, TreeNode, DraggableTree, DraggableTreeNode };
+var __vue_component__$3 = __vue_normalize__({}, __vue_inject_styles__$3, __vue_script__$3, __vue_scope_id__$3, __vue_is_functional_template__$3, __vue_module_identifier__$3, false, undefined, undefined, undefined);
+
+export { __vue_component__$3 as DraggableTree, __vue_component__$2 as DraggableTreeNode, __vue_component__$1 as Tree, __vue_component__ as TreeNode };
