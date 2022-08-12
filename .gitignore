@@ -22,3 +22,5 @@ yarn-error.log*
 # dev
 /src/components/autoMoveDragPlaceHolderDev.js
 /src/components/_info.json
+
+__local*
