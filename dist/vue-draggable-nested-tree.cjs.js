@@ -1,5 +1,5 @@
 /*!
- * vue-draggable-nested-tree v2.2.18
+ * vue-draggable-nested-tree v2.2.20
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
@@ -60,7 +60,11 @@ var script = {
       };
 
       if (!this.isRoot && this.level > 1) {
-        r.paddingLeft = (this.level - 1) * this.store.indent + 'px';
+        if (this.store.dir === 'rtl') {
+          r.paddingRight = (this.level - 1) * this.store.indent + 'px';
+        } else {
+          r.paddingLeft = (this.level - 1) * this.store.indent + 'px';
+        }
       }
 
       return r;
@@ -824,9 +828,15 @@ var rules = {
   'at left': function atLeft(info) {
     return info.offset.x < info.tiOffset.x;
   },
+  'at right': function atRight(info) {
+    return info.offset.x > info.tiOffset.x;
+  },
   // 当前位置在另一节点innner indent位置右边
   'at indent right': function atIndentRight(info) {
     return info.offset.x > info.tiOffset.x + info.currentTree.indent;
+  },
+  'at indent left': function atIndentLeft(info) {
+    return info.offset.x < info.tiOffset.x + info.currentTree.indent;
   } // convert rule output to Boolean
 
 };
@@ -886,7 +896,7 @@ function autoMoveDragPlaceHolder(draggableHelperInfo) {
     // right bottom point
     offsetToViewPort: function offsetToViewPort() {
       var r = this.nodeInnerEl.getBoundingClientRect();
-      r.x = r.left;
+      r.x = this.store.dir === 'rtl' ? r.right : r.left;
       r.y = r.top;
       return r;
     },
@@ -1091,9 +1101,9 @@ function autoMoveDragPlaceHolder(draggableHelperInfo) {
           if (exec('on targetNode middle') === true) {
             targets['before'](info);
           } else if (exec('on targetNode middle') === false) {
-            if (exec('at indent right') === true) {
+            if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true) {
               targets['append'](info);
-            } else if (exec('at indent right') === false) {
+            } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false) {
               targets['after'](info);
             }
           }
@@ -1106,9 +1116,9 @@ function autoMoveDragPlaceHolder(draggableHelperInfo) {
             if (exec('placeholder in currentTree') === true) {
               if (exec('targetNode has children excluding placeholder') === false) {
                 if (exec('on targetNode middle') === false) {
-                  if (exec('at indent right') === false) {
+                  if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false) {
                     targets['after'](info);
-                  } else if (exec('at indent right') === true) {
+                  } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true) {
                     targets['append'](info);
                   }
                 } else if (exec('on targetNode middle') === true) {
@@ -1135,22 +1145,22 @@ function autoMoveDragPlaceHolder(draggableHelperInfo) {
                   if (exec('targetNode is 1st child') === false) {
                     if (exec('targetNode is last child') === false) {
                       if (exec('on targetNode middle') === true) {
-                        if (exec('at indent right') === true) {
+                        if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true) {
                           targets['append'](info);
-                        } else if (exec('at indent right') === false) {
+                        } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false) {
                           targets['after'](info);
                         }
                       } else if (exec('on targetNode middle') === false) {
-                        if (exec('at indent right') === true) {
+                        if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true) {
                           targets['append'](info);
-                        } else if (exec('at indent right') === false) {
+                        } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false) {
                           targets['after'](info);
                         }
                       }
                     } else if (exec('targetNode is last child') === true) {
-                      if (exec('at indent right') === true) {
+                      if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true) {
                         targets['append'](info);
-                      } else if (exec('at indent right') === false) {
+                      } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false) {
                         targets['after'](info);
                       }
                     }
@@ -1159,15 +1169,15 @@ function autoMoveDragPlaceHolder(draggableHelperInfo) {
                       targets['append'](info);
                     } else if (exec('targetNode is last child') === false) {
                       if (exec('on targetNode middle') === false) {
-                        if (exec('at indent right') === false) {
+                        if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false) {
                           targets['after'](info);
-                        } else if (exec('at indent right') === true) {
+                        } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true) {
                           targets['append'](info);
                         }
                       } else if (exec('on targetNode middle') === true) {
-                        if (exec('at indent right') === false) {
+                        if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false) {
                           targets['after'](info);
-                        } else if (exec('at indent right') === true) {
+                        } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true) {
                           targets['append'](info);
                         }
                       }
@@ -1178,9 +1188,9 @@ function autoMoveDragPlaceHolder(draggableHelperInfo) {
             } else if (exec('targetNode at bottom') === true) {
               if (exec('placeholder in currentTree') === true) {
                 if (exec('on targetNode middle') === false) {
-                  if (exec('at indent right') === true) {
+                  if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true) {
                     targets['append'](info);
-                  } else if (exec('at indent right') === false) {
+                  } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false) {
                     targets['after'](info);
                   }
                 } else if (exec('on targetNode middle') === true) {
@@ -1201,88 +1211,88 @@ function autoMoveDragPlaceHolder(draggableHelperInfo) {
           if (exec('targetNode is 1st child') === true) {
             if (exec('targetNode is last child') === false) ; else if (exec('targetNode is last child') === true) {
               if (exec('on targetNode middle') === false) {
-                if (exec('at left') === true) {
+                if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true) {
                   targets['after target parent'](info);
-                } else if (exec('at left') === false) ;
+                } else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false) ;
               } else if (exec('on targetNode middle') === true) {
-                if (exec('at left') === true) {
+                if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true) {
                   targets['after target parent'](info);
-                } else if (exec('at left') === false) ;
+                } else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false) ;
               }
             }
           } else if (exec('targetNode is 1st child') === false) {
             if (exec('targetNode is last child') === true) {
               if (exec('on targetNode middle') === true) {
-                if (exec('at left') === true) {
+                if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true) {
                   targets['after target parent'](info);
-                } else if (exec('at left') === false) {
-                  if (exec('at indent right') === true) {
+                } else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false) {
+                  if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true) {
                     targets['append prev'](info);
-                  } else if (exec('at indent right') === false) ;
+                  } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false) ;
                 }
               } else if (exec('on targetNode middle') === false) {
-                if (exec('at left') === true) {
+                if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true) {
                   targets['after target parent'](info);
-                } else if (exec('at left') === false) {
-                  if (exec('at indent right') === true) {
+                } else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false) {
+                  if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true) {
                     targets['append prev'](info);
-                  } else if (exec('at indent right') === false) ;
+                  } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false) ;
                 }
               }
             } else if (exec('targetNode is last child') === false) {
               if (exec('on targetNode middle') === true) {
-                if (exec('at left') === true) ; else if (exec('at left') === false) {
-                  if (exec('at indent right') === true) {
+                if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true) ; else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false) {
+                  if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true) {
                     targets['append prev'](info);
-                  } else if (exec('at indent right') === false) ;
+                  } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false) ;
                 }
               } else if (exec('on targetNode middle') === false) {
-                if (exec('at left') === true) ; else if (exec('at left') === false) {
-                  if (exec('at indent right') === true) {
+                if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true) ; else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false) {
+                  if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true) {
                     targets['append prev'](info);
-                  } else if (exec('at indent right') === false) ;
+                  } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false) ;
                 }
               }
             }
           }
         } else if (exec('targetNode is the second child of root') === true) {
           if (exec('on targetNode middle') === true) {
-            if (exec('at indent right') === true) {
+            if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true) {
               targets['append prev'](info);
-            } else if (exec('at indent right') === false) ;
+            } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false) ;
           } else if (exec('on targetNode middle') === false) {
-            if (exec('at indent right') === true) {
+            if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true) {
               targets['append prev'](info);
-            } else if (exec('at indent right') === false) ;
+            } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false) ;
           }
         }
       } else if (exec('targetNode at bottom') === true) {
         if (exec('targetNode is 1st child') === true) {
           if (exec('on targetNode middle') === false) {
-            if (exec('at left') === true) {
+            if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true) {
               targets['after target parent'](info);
-            } else if (exec('at left') === false) ;
+            } else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false) ;
           } else if (exec('on targetNode middle') === true) {
-            if (exec('at left') === false) ; else if (exec('at left') === true) {
+            if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false) ; else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true) {
               targets['after target parent'](info);
             }
           }
         } else if (exec('targetNode is 1st child') === false) {
           if (exec('on targetNode middle') === false) {
-            if (exec('at left') === true) {
+            if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true) {
               targets['after target parent'](info);
-            } else if (exec('at left') === false) {
-              if (exec('at indent right') === true) {
+            } else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false) {
+              if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true) {
                 targets['append prev'](info);
-              } else if (exec('at indent right') === false) ;
+              } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false) ;
             }
           } else if (exec('on targetNode middle') === true) {
-            if (exec('at left') === true) {
+            if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true) {
               targets['after target parent'](info);
-            } else if (exec('at left') === false) {
-              if (exec('at indent right') === true) {
+            } else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false) {
+              if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true) {
                 targets['append prev'](info);
-              } else if (exec('at indent right') === false) ;
+              } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false) ;
             }
           }
         }
@@ -1508,6 +1518,10 @@ var script$3 = {
     },
     preventSelect: {
       default: true
+    },
+    dir: {
+      type: String,
+      default: 'ltr'
     }
   },
   components: {

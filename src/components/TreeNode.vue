@@ -47,7 +47,11 @@ export default {
         marginBottom: this.store.space + 'px'
       }
       if (!this.isRoot && this.level > 1) {
-        r.paddingLeft = (this.level - 1) * this.store.indent + 'px'
+        if (this.store.dir === 'rtl') {
+          r.paddingRight = (this.level - 1) * this.store.indent + 'px'
+        } else {
+          r.paddingLeft = (this.level - 1) * this.store.indent + 'px'
+        }
       }
       return r
     },
