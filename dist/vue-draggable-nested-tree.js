@@ -1,13 +1,14 @@
 /*!
- * vue-draggable-nested-tree v2.2.20
+ * vue-draggable-nested-tree v2.3.0-beta.1
  * (c) 2018-present phphe <phphe@outlook.com>
  * Released under the MIT License.
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-  typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (factory((global.vueDraggableNestedTree = {})));
-}(this, (function (exports) { 'use strict';
+    typeof define === 'function' && define.amd ? define(['exports'], factory) :
+      (factory((global.vueDraggableNestedTree = {})));
+}(this, (function (exports) {
+  'use strict';
 
   // 7.2.1 RequireObjectCoercible(argument)
   var _defined = function (it) {
@@ -84,45 +85,45 @@
         value = O[index++];
         // eslint-disable-next-line no-self-compare
         if (value != value) return true;
-      // Array#indexOf ignores holes, Array#includes - not
-      } else for (;length > index; index++) if (IS_INCLUDES || index in O) {
+        // Array#indexOf ignores holes, Array#includes - not
+      } else for (; length > index; index++) if (IS_INCLUDES || index in O) {
         if (O[index] === el) return IS_INCLUDES || index || 0;
       } return !IS_INCLUDES && -1;
     };
   };
 
   function createCommonjsModule(fn, module) {
-  	return module = { exports: {} }, fn(module, module.exports), module.exports;
+    return module = { exports: {} }, fn(module, module.exports), module.exports;
   }
 
   var _core = createCommonjsModule(function (module) {
-  var core = module.exports = { version: '2.6.1' };
-  if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
+    var core = module.exports = { version: '2.6.1' };
+    if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
   });
   var _core_1 = _core.version;
 
   var _global = createCommonjsModule(function (module) {
-  // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
-  var global = module.exports = typeof window != 'undefined' && window.Math == Math
-    ? window : typeof self != 'undefined' && self.Math == Math ? self
-    // eslint-disable-next-line no-new-func
-    : Function('return this')();
-  if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
+    // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+    var global = module.exports = typeof window != 'undefined' && window.Math == Math
+      ? window : typeof self != 'undefined' && self.Math == Math ? self
+        // eslint-disable-next-line no-new-func
+        : Function('return this')();
+    if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
   });
 
   var _library = true;
 
   var _shared = createCommonjsModule(function (module) {
-  var SHARED = '__core-js_shared__';
-  var store = _global[SHARED] || (_global[SHARED] = {});
+    var SHARED = '__core-js_shared__';
+    var store = _global[SHARED] || (_global[SHARED] = {});
 
-  (module.exports = function (key, value) {
-    return store[key] || (store[key] = value !== undefined ? value : {});
-  })('versions', []).push({
-    version: _core.version,
-    mode: _library ? 'pure' : 'global',
-    copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
-  });
+    (module.exports = function (key, value) {
+      return store[key] || (store[key] = value !== undefined ? value : {});
+    })('versions', []).push({
+      version: _core.version,
+      mode: _library ? 'pure' : 'global',
+      copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
+    });
   });
 
   var id = 0;
@@ -253,7 +254,7 @@
   };
 
   var _objectDp = {
-  	f: f
+    f: f
   };
 
   var _propertyDesc = function (bitmap, value) {
@@ -294,23 +295,23 @@
       out = own ? target[key] : source[key];
       // prevent global pollution for namespaces
       exports[key] = IS_GLOBAL && typeof target[key] != 'function' ? source[key]
-      // bind timers to global for call from export context
-      : IS_BIND && own ? _ctx(out, _global)
-      // wrap global constructors for prevent change them in library
-      : IS_WRAP && target[key] == out ? (function (C) {
-        var F = function (a, b, c) {
-          if (this instanceof C) {
-            switch (arguments.length) {
-              case 0: return new C();
-              case 1: return new C(a);
-              case 2: return new C(a, b);
-            } return new C(a, b, c);
-          } return C.apply(this, arguments);
-        };
-        F[PROTOTYPE] = C[PROTOTYPE];
-        return F;
-      // make static versions for prototype methods
-      })(out) : IS_PROTO && typeof out == 'function' ? _ctx(Function.call, out) : out;
+        // bind timers to global for call from export context
+        : IS_BIND && own ? _ctx(out, _global)
+          // wrap global constructors for prevent change them in library
+          : IS_WRAP && target[key] == out ? (function (C) {
+            var F = function (a, b, c) {
+              if (this instanceof C) {
+                switch (arguments.length) {
+                  case 0: return new C();
+                  case 1: return new C(a);
+                  case 2: return new C(a, b);
+                } return new C(a, b, c);
+              } return C.apply(this, arguments);
+            };
+            F[PROTOTYPE] = C[PROTOTYPE];
+            return F;
+            // make static versions for prototype methods
+          })(out) : IS_PROTO && typeof out == 'function' ? _ctx(Function.call, out) : out;
       // export proto methods to core.%CONSTRUCTOR%.methods.%NAME%
       if (IS_PROTO) {
         (exports.virtual || (exports.virtual = {}))[key] = out;
@@ -356,33 +357,33 @@
   var keys$1 = keys;
 
   var _core$1 = createCommonjsModule(function (module) {
-  var core = module.exports = { version: '2.6.1' };
-  if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
+    var core = module.exports = { version: '2.6.1' };
+    if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
   });
   var _core_1$1 = _core$1.version;
 
   var _global$1 = createCommonjsModule(function (module) {
-  // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
-  var global = module.exports = typeof window != 'undefined' && window.Math == Math
-    ? window : typeof self != 'undefined' && self.Math == Math ? self
-    // eslint-disable-next-line no-new-func
-    : Function('return this')();
-  if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
+    // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+    var global = module.exports = typeof window != 'undefined' && window.Math == Math
+      ? window : typeof self != 'undefined' && self.Math == Math ? self
+        // eslint-disable-next-line no-new-func
+        : Function('return this')();
+    if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
   });
 
   var _library$1 = false;
 
   var _shared$1 = createCommonjsModule(function (module) {
-  var SHARED = '__core-js_shared__';
-  var store = _global$1[SHARED] || (_global$1[SHARED] = {});
+    var SHARED = '__core-js_shared__';
+    var store = _global$1[SHARED] || (_global$1[SHARED] = {});
 
-  (module.exports = function (key, value) {
-    return store[key] || (store[key] = value !== undefined ? value : {});
-  })('versions', []).push({
-    version: _core$1.version,
-    mode: _library$1 ? 'pure' : 'global',
-    copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
-  });
+    (module.exports = function (key, value) {
+      return store[key] || (store[key] = value !== undefined ? value : {});
+    })('versions', []).push({
+      version: _core$1.version,
+      mode: _library$1 ? 'pure' : 'global',
+      copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
+    });
   });
 
   var id$1 = 0;
@@ -392,17 +393,17 @@
   };
 
   var _wks = createCommonjsModule(function (module) {
-  var store = _shared$1('wks');
+    var store = _shared$1('wks');
 
-  var Symbol = _global$1.Symbol;
-  var USE_SYMBOL = typeof Symbol == 'function';
+    var Symbol = _global$1.Symbol;
+    var USE_SYMBOL = typeof Symbol == 'function';
 
-  var $exports = module.exports = function (name) {
-    return store[name] || (store[name] =
-      USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : _uid$1)('Symbol.' + name));
-  };
+    var $exports = module.exports = function (name) {
+      return store[name] || (store[name] =
+        USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : _uid$1)('Symbol.' + name));
+    };
 
-  $exports.store = store;
+    $exports.store = store;
   });
 
   var _isObject$1 = function (it) {
@@ -466,7 +467,7 @@
   };
 
   var _objectDp$1 = {
-  	f: f$1
+    f: f$1
   };
 
   var _propertyDesc$1 = function (bitmap, value) {
@@ -531,34 +532,34 @@
   };
 
   var _redefine = createCommonjsModule(function (module) {
-  var SRC = _uid$1('src');
-  var TO_STRING = 'toString';
-  var $toString = Function[TO_STRING];
-  var TPL = ('' + $toString).split(TO_STRING);
+    var SRC = _uid$1('src');
+    var TO_STRING = 'toString';
+    var $toString = Function[TO_STRING];
+    var TPL = ('' + $toString).split(TO_STRING);
 
-  _core$1.inspectSource = function (it) {
-    return $toString.call(it);
-  };
+    _core$1.inspectSource = function (it) {
+      return $toString.call(it);
+    };
 
-  (module.exports = function (O, key, val, safe) {
-    var isFunction = typeof val == 'function';
-    if (isFunction) _has$1(val, 'name') || _hide$1(val, 'name', key);
-    if (O[key] === val) return;
-    if (isFunction) _has$1(val, SRC) || _hide$1(val, SRC, O[key] ? '' + O[key] : TPL.join(String(key)));
-    if (O === _global$1) {
-      O[key] = val;
-    } else if (!safe) {
-      delete O[key];
-      _hide$1(O, key, val);
-    } else if (O[key]) {
-      O[key] = val;
-    } else {
-      _hide$1(O, key, val);
-    }
-  // add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
-  })(Function.prototype, TO_STRING, function toString() {
-    return typeof this == 'function' && this[SRC] || $toString.call(this);
-  });
+    (module.exports = function (O, key, val, safe) {
+      var isFunction = typeof val == 'function';
+      if (isFunction) _has$1(val, 'name') || _hide$1(val, 'name', key);
+      if (O[key] === val) return;
+      if (isFunction) _has$1(val, SRC) || _hide$1(val, SRC, O[key] ? '' + O[key] : TPL.join(String(key)));
+      if (O === _global$1) {
+        O[key] = val;
+      } else if (!safe) {
+        delete O[key];
+        _hide$1(O, key, val);
+      } else if (O[key]) {
+        O[key] = val;
+      } else {
+        _hide$1(O, key, val);
+      }
+      // add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
+    })(Function.prototype, TO_STRING, function toString() {
+      return typeof this == 'function' && this[SRC] || $toString.call(this);
+    });
   });
 
   var _aFunction$1 = function (it) {
@@ -664,8 +665,8 @@
         value = O[index++];
         // eslint-disable-next-line no-self-compare
         if (value != value) return true;
-      // Array#indexOf ignores holes, Array#includes - not
-      } else for (;length > index; index++) if (IS_INCLUDES || index in O) {
+        // Array#indexOf ignores holes, Array#includes - not
+      } else for (; length > index; index++) if (IS_INCLUDES || index in O) {
         if (O[index] === el) return IS_INCLUDES || index || 0;
       } return !IS_INCLUDES && -1;
     };
@@ -868,7 +869,7 @@
     this._t = _toIobject$1(iterated); // target
     this._i = 0;                   // next index
     this._k = kind;                // kind
-  // 22.1.5.2.1 %ArrayIteratorPrototype%.next()
+    // 22.1.5.2.1 %ArrayIteratorPrototype%.next()
   }, function () {
     var O = this._t;
     var kind = this._k;
@@ -944,13 +945,13 @@
   var f$2 = Object.getOwnPropertySymbols;
 
   var _objectGops = {
-  	f: f$2
+    f: f$2
   };
 
   var f$3 = {}.propertyIsEnumerable;
 
   var _objectPie = {
-  	f: f$3
+    f: f$3
   };
 
   // 19.1.2.1 Object.assign(target, source, ...)
@@ -999,7 +1000,7 @@
   var f$4 = {}.propertyIsEnumerable;
 
   var _objectPie$1 = {
-  	f: f$4
+    f: f$4
   };
 
   var gOPD = Object.getOwnPropertyDescriptor;
@@ -1014,7 +1015,7 @@
   };
 
   var _objectGopd = {
-  	f: f$5
+    f: f$5
   };
 
   // Works with __proto__ only. Old v8 can't work with null proto objects.
@@ -1061,7 +1062,7 @@
   };
 
   var _objectGopn = {
-  	f: f$6
+    f: f$6
   };
 
   var _stringWs = '\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003' +
@@ -1139,7 +1140,7 @@
       return that instanceof $Number
         // check on 1..constructor(foo) case
         && (BROKEN_COF ? _fails$1(function () { proto$1.valueOf.call(that); }) : _cof$1(that) != NUMBER)
-          ? _inheritIfRequired(new Base(toNumber(it)), that, $Number) : toNumber(it);
+        ? _inheritIfRequired(new Base(toNumber(it)), that, $Number) : toNumber(it);
     };
     for (var keys$2 = _descriptors$1 ? gOPN(Base) : (
       // ES3:
@@ -1493,221 +1494,221 @@
     } : null;
   } //
   var URLHelper =
-  /*#__PURE__*/
-  function () {
-    // protocol, hostname, port, pastname
-    function URLHelper(baseUrl) {
-      var _this3 = this;
+    /*#__PURE__*/
+    function () {
+      // protocol, hostname, port, pastname
+      function URLHelper(baseUrl) {
+        var _this3 = this;
 
-      _classCallCheck(this, URLHelper);
+        _classCallCheck(this, URLHelper);
 
-      Object.defineProperty(this, "baseUrl", {
-        configurable: true,
-        enumerable: true,
-        writable: true,
-        value: ''
-      });
-      Object.defineProperty(this, "search", {
-        configurable: true,
-        enumerable: true,
-        writable: true,
-        value: {}
-      });
-      var t = decodeURI(baseUrl).split('?');
-      this.baseUrl = t[0];
-
-      if (t[1]) {
-        t[1].split('&').forEach(function (v) {
-          var t2 = v.split('=');
-          _this3.search[t2[0]] = t2[1] == null ? '' : decodeURIComponent(t2[1]);
+        Object.defineProperty(this, "baseUrl", {
+          configurable: true,
+          enumerable: true,
+          writable: true,
+          value: ''
         });
-      }
-    }
+        Object.defineProperty(this, "search", {
+          configurable: true,
+          enumerable: true,
+          writable: true,
+          value: {}
+        });
+        var t = decodeURI(baseUrl).split('?');
+        this.baseUrl = t[0];
 
-    _createClass(URLHelper, [{
-      key: "getHref",
-      value: function getHref() {
-        var _this4 = this;
-
-        var t = [this.baseUrl];
-        var searchStr = Object.keys(this.search).map(function (k) {
-          return "".concat(k, "=").concat(encodeURIComponent(_this4.search[k]));
-        }).join('&');
-
-        if (searchStr) {
-          t.push(searchStr);
+        if (t[1]) {
+          t[1].split('&').forEach(function (v) {
+            var t2 = v.split('=');
+            _this3.search[t2[0]] = t2[1] == null ? '' : decodeURIComponent(t2[1]);
+          });
         }
-
-        return t.join('?');
       }
-    }]);
 
-    return URLHelper;
-  }(); // 解析函数参数, 帮助重载
+      _createClass(URLHelper, [{
+        key: "getHref",
+        value: function getHref() {
+          var _this4 = this;
+
+          var t = [this.baseUrl];
+          var searchStr = Object.keys(this.search).map(function (k) {
+            return "".concat(k, "=").concat(encodeURIComponent(_this4.search[k]));
+          }).join('&');
+
+          if (searchStr) {
+            t.push(searchStr);
+          }
+
+          return t.join('?');
+        }
+      }]);
+
+      return URLHelper;
+    }(); // 解析函数参数, 帮助重载
 
   var EventProcessor =
-  /*#__PURE__*/
-  function () {
-    function EventProcessor() {
-      _classCallCheck(this, EventProcessor);
+    /*#__PURE__*/
+    function () {
+      function EventProcessor() {
+        _classCallCheck(this, EventProcessor);
 
-      Object.defineProperty(this, "eventStore", {
-        configurable: true,
-        enumerable: true,
-        writable: true,
-        value: []
-      });
-    }
-
-    _createClass(EventProcessor, [{
-      key: "on",
-      value: function on(name, handler) {
-        this.eventStore.push({
-          name: name,
-          handler: handler
+        Object.defineProperty(this, "eventStore", {
+          configurable: true,
+          enumerable: true,
+          writable: true,
+          value: []
         });
       }
-    }, {
-      key: "once",
-      value: function once(name, handler) {
-        var _this5 = this;
 
-        var off = function off() {
-          _this5.off(name, wrappedHandler);
-        };
-
-        var wrappedHandler = function wrappedHandler() {
-          handler();
-          off();
-        };
-
-        this.on(name, wrappedHandler);
-        return off;
-      }
-    }, {
-      key: "off",
-      value: function off(name, handler) {
-        var indexes = []; // to remove indexes; reverse; 倒序的
-
-        var len = this.eventStore.length;
-
-        for (var i = 0; i < len; i++) {
-          var item = this.eventStore[i];
-
-          if (item.name === name && item.handler === handler) {
-            indexes.unshift(i);
-          }
+      _createClass(EventProcessor, [{
+        key: "on",
+        value: function on(name, handler) {
+          this.eventStore.push({
+            name: name,
+            handler: handler
+          });
         }
+      }, {
+        key: "once",
+        value: function once(name, handler) {
+          var _this5 = this;
 
-        for (var _i8 = 0; _i8 < indexes.length; _i8++) {
-          var index = indexes[_i8];
-          this.eventStore.splice(index, 1);
+          var off = function off() {
+            _this5.off(name, wrappedHandler);
+          };
+
+          var wrappedHandler = function wrappedHandler() {
+            handler();
+            off();
+          };
+
+          this.on(name, wrappedHandler);
+          return off;
         }
-      }
-    }, {
-      key: "emit",
-      value: function emit(name) {
-        // 重要: 先找到要执行的项放在新数组里, 因为执行项会改变事件项存储数组
-        var items = [];
-        var _iteratorNormalCompletion9 = true;
-        var _didIteratorError9 = false;
-        var _iteratorError9 = undefined;
+      }, {
+        key: "off",
+        value: function off(name, handler) {
+          var indexes = []; // to remove indexes; reverse; 倒序的
 
-        try {
-          for (var _iterator9 = this.eventStore[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
-            var item = _step9.value;
+          var len = this.eventStore.length;
 
-            if (item.name === name) {
-              items.push(item);
+          for (var i = 0; i < len; i++) {
+            var item = this.eventStore[i];
+
+            if (item.name === name && item.handler === handler) {
+              indexes.unshift(i);
             }
           }
-        } catch (err) {
-          _didIteratorError9 = true;
-          _iteratorError9 = err;
-        } finally {
+
+          for (var _i8 = 0; _i8 < indexes.length; _i8++) {
+            var index = indexes[_i8];
+            this.eventStore.splice(index, 1);
+          }
+        }
+      }, {
+        key: "emit",
+        value: function emit(name) {
+          // 重要: 先找到要执行的项放在新数组里, 因为执行项会改变事件项存储数组
+          var items = [];
+          var _iteratorNormalCompletion9 = true;
+          var _didIteratorError9 = false;
+          var _iteratorError9 = undefined;
+
           try {
-            if (!_iteratorNormalCompletion9 && _iterator9.return != null) {
-              _iterator9.return();
+            for (var _iterator9 = this.eventStore[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+              var item = _step9.value;
+
+              if (item.name === name) {
+                items.push(item);
+              }
             }
+          } catch (err) {
+            _didIteratorError9 = true;
+            _iteratorError9 = err;
           } finally {
-            if (_didIteratorError9) {
-              throw _iteratorError9;
+            try {
+              if (!_iteratorNormalCompletion9 && _iterator9.return != null) {
+                _iterator9.return();
+              }
+            } finally {
+              if (_didIteratorError9) {
+                throw _iteratorError9;
+              }
             }
           }
-        }
 
-        for (var _len8 = arguments.length, args = new Array(_len8 > 1 ? _len8 - 1 : 0), _key9 = 1; _key9 < _len8; _key9++) {
-          args[_key9 - 1] = arguments[_key9];
-        }
-
-        for (var _i9 = 0; _i9 < items.length; _i9++) {
-          var _item = items[_i9];
-
-          _item.handler.apply(_item, args);
-        }
-      }
-    }]);
-
-    return EventProcessor;
-  }();
-  var CrossWindow =
-  /*#__PURE__*/
-  function (_EventProcessor) {
-    _inherits(CrossWindow, _EventProcessor);
-
-    function CrossWindow() {
-      var _this6;
-
-      _classCallCheck(this, CrossWindow);
-
-      _this6 = _possibleConstructorReturn(this, (CrossWindow.__proto__ || Object.getPrototypeOf(CrossWindow)).call(this));
-      Object.defineProperty(_assertThisInitialized(_this6), "storageName", {
-        configurable: true,
-        enumerable: true,
-        writable: true,
-        value: '_crossWindow'
-      });
-      var cls = CrossWindow;
-
-      if (!cls._listen) {
-        cls._listen = true;
-        onDOM(window, 'storage', function (ev) {
-          if (ev.key === _this6.storageName) {
-            var _get2;
-
-            var event = JSON.parse(ev.newValue);
-
-            (_get2 = _get(CrossWindow.prototype.__proto__ || Object.getPrototypeOf(CrossWindow.prototype), "emit", _assertThisInitialized(_this6))).call.apply(_get2, [_this6, event.name].concat(_toConsumableArray(event.args)));
+          for (var _len8 = arguments.length, args = new Array(_len8 > 1 ? _len8 - 1 : 0), _key9 = 1; _key9 < _len8; _key9++) {
+            args[_key9 - 1] = arguments[_key9];
           }
+
+          for (var _i9 = 0; _i9 < items.length; _i9++) {
+            var _item = items[_i9];
+
+            _item.handler.apply(_item, args);
+          }
+        }
+      }]);
+
+      return EventProcessor;
+    }();
+  var CrossWindow =
+    /*#__PURE__*/
+    function (_EventProcessor) {
+      _inherits(CrossWindow, _EventProcessor);
+
+      function CrossWindow() {
+        var _this6;
+
+        _classCallCheck(this, CrossWindow);
+
+        _this6 = _possibleConstructorReturn(this, (CrossWindow.__proto__ || Object.getPrototypeOf(CrossWindow)).call(this));
+        Object.defineProperty(_assertThisInitialized(_this6), "storageName", {
+          configurable: true,
+          enumerable: true,
+          writable: true,
+          value: '_crossWindow'
         });
-      }
+        var cls = CrossWindow;
 
-      return _this6;
-    }
+        if (!cls._listen) {
+          cls._listen = true;
+          onDOM(window, 'storage', function (ev) {
+            if (ev.key === _this6.storageName) {
+              var _get2;
 
-    _createClass(CrossWindow, [{
-      key: "emit",
-      value: function emit(name) {
-        var _get3;
+              var event = JSON.parse(ev.newValue);
 
-        for (var _len9 = arguments.length, args = new Array(_len9 > 1 ? _len9 - 1 : 0), _key10 = 1; _key10 < _len9; _key10++) {
-          args[_key10 - 1] = arguments[_key10];
+              (_get2 = _get(CrossWindow.prototype.__proto__ || Object.getPrototypeOf(CrossWindow.prototype), "emit", _assertThisInitialized(_this6))).call.apply(_get2, [_this6, event.name].concat(_toConsumableArray(event.args)));
+            }
+          });
         }
 
-        (_get3 = _get(CrossWindow.prototype.__proto__ || Object.getPrototypeOf(CrossWindow.prototype), "emit", this)).call.apply(_get3, [this, name].concat(args));
-
-        glb().localStorage.setItem(this.storageName, JSON.stringify({
-          name: name,
-          args: args,
-          // use random make storage event triggered every time
-          // 加入随机保证触发storage事件
-          random: Math.random()
-        }));
+        return _this6;
       }
-    }]);
 
-    return CrossWindow;
-  }(EventProcessor);
+      _createClass(CrossWindow, [{
+        key: "emit",
+        value: function emit(name) {
+          var _get3;
+
+          for (var _len9 = arguments.length, args = new Array(_len9 > 1 ? _len9 - 1 : 0), _key10 = 1; _key10 < _len9; _key10++) {
+            args[_key10 - 1] = arguments[_key10];
+          }
+
+          (_get3 = _get(CrossWindow.prototype.__proto__ || Object.getPrototypeOf(CrossWindow.prototype), "emit", this)).call.apply(_get3, [this, name].concat(args));
+
+          glb().localStorage.setItem(this.storageName, JSON.stringify({
+            name: name,
+            args: args,
+            // use random make storage event triggered every time
+            // 加入随机保证触发storage事件
+            random: Math.random()
+          }));
+        }
+      }]);
+
+      return CrossWindow;
+    }(EventProcessor);
 
   /*!
    * tree-helper v1.0.5
@@ -1736,9 +1737,9 @@
 
     var _loop = function _loop() {
       var _stack$shift = stack.shift(),
-          item = _stack$shift.item,
-          index = _stack$shift.index,
-          parent = _stack$shift.parent;
+        item = _stack$shift.item,
+        index = _stack$shift.index,
+        parent = _stack$shift.parent;
 
       var r = handler(item, index, parent);
       if (r === false) {
@@ -1919,59 +1920,59 @@
   };
 
   /* script */
-              const __vue_script__ = script;
-              
+  const __vue_script__ = script;
+
   /* template */
-  var __vue_render__ = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"tree-node",class:[_vm.data.active ? _vm.store.activatedClass : '', _vm.data.open ? _vm.store.openedClass : '', _vm.data.class],style:(_vm.data.style),attrs:{"id":_vm.data._id}},[(!_vm.isRoot)?_vm._t("node-inner-back",[_c('div',{staticClass:"tree-node-inner-back",class:[_vm.data.innerBackClass],style:([_vm.innerBackStyle, _vm.data.innerBackStyle])},[_c('div',{staticClass:"tree-node-inner",class:[_vm.data.innerClass],style:([_vm.data.innerStyle])},[_vm._t("default",null,{data:_vm.data,store:_vm.store,vm:_vm.vm})],2)])],{styleObj:_vm.innerBackStyle,data:_vm.data,store:_vm.store,vm:_vm.vm}):_vm._e(),_c('transition',{attrs:{"name":_vm.store.childrenTransitionName}},[(_vm.childrenVisible)?_c('div',{staticClass:"tree-node-children"},_vm._l((_vm.data.children),function(child){return _c('TreeNode',{key:child._id,attrs:{"data":child,"store":_vm.store,"level":_vm.childrenLevel},scopedSlots:_vm._u([{key:"default",fn:function(props){return [_vm._t("default",null,{data:props.data,store:props.store,vm:props.vm})]}},{key:"node-inner-back",fn:function(props){return (_vm.store.customInnerBack)?[_vm._t("node-inner-back",null,{styleObj:props.styleObj,data:props.data,store:props.store,vm:props.vm})]:undefined}}])})}),1):_vm._e()])],2)};
+  var __vue_render__ = function () { var _vm = this; var _h = _vm.$createElement; var _c = _vm._self._c || _h; return _c('div', { staticClass: "tree-node", class: [_vm.data.active ? _vm.store.activatedClass : '', _vm.data.open ? _vm.store.openedClass : '', _vm.data.class], style: (_vm.data.style), attrs: { "id": _vm.data._id } }, [(!_vm.isRoot) ? _vm._t("node-inner-back", [_c('div', { staticClass: "tree-node-inner-back", class: [_vm.data.innerBackClass], style: ([_vm.innerBackStyle, _vm.data.innerBackStyle]) }, [_c('div', { staticClass: "tree-node-inner", class: [_vm.data.innerClass], style: ([_vm.data.innerStyle]) }, [_vm._t("default", null, { data: _vm.data, store: _vm.store, vm: _vm.vm })], 2)])], { styleObj: _vm.innerBackStyle, data: _vm.data, store: _vm.store, vm: _vm.vm }) : _vm._e(), _c('transition', { attrs: { "name": _vm.store.childrenTransitionName } }, [(_vm.childrenVisible) ? _c('div', { staticClass: "tree-node-children" }, _vm._l((_vm.data.children), function (child) { return _c('TreeNode', { key: child._id, attrs: { "data": child, "store": _vm.store, "level": _vm.childrenLevel }, scopedSlots: _vm._u([{ key: "default", fn: function (props) { return [_vm._t("default", null, { data: props.data, store: props.store, vm: props.vm })] } }, { key: "node-inner-back", fn: function (props) { return (_vm.store.customInnerBack) ? [_vm._t("node-inner-back", null, { styleObj: props.styleObj, data: props.data, store: props.store, vm: props.vm })] : undefined } }]) }) }), 1) : _vm._e()])], 2) };
   var __vue_staticRenderFns__ = [];
 
-    /* style */
-    const __vue_inject_styles__ = undefined;
-    /* scoped */
-    const __vue_scope_id__ = undefined;
-    /* module identifier */
-    const __vue_module_identifier__ = undefined;
-    /* functional template */
-    const __vue_is_functional_template__ = false;
-    /* component normalizer */
-    function __vue_normalize__(
-      template, style, script$$1,
-      scope, functional, moduleIdentifier,
-      createInjector, createInjectorSSR
-    ) {
-      const component = (typeof script$$1 === 'function' ? script$$1.options : script$$1) || {};
+  /* style */
+  const __vue_inject_styles__ = undefined;
+  /* scoped */
+  const __vue_scope_id__ = undefined;
+  /* module identifier */
+  const __vue_module_identifier__ = undefined;
+  /* functional template */
+  const __vue_is_functional_template__ = false;
+  /* component normalizer */
+  function __vue_normalize__(
+    template, style, script$$1,
+    scope, functional, moduleIdentifier,
+    createInjector, createInjectorSSR
+  ) {
+    const component = (typeof script$$1 === 'function' ? script$$1.options : script$$1) || {};
 
-      // For security concerns, we use only base name in production mode.
-      component.__file = "TreeNode.vue";
+    // For security concerns, we use only base name in production mode.
+    component.__file = "TreeNode.vue";
 
-      if (!component.render) {
-        component.render = template.render;
-        component.staticRenderFns = template.staticRenderFns;
-        component._compiled = true;
+    if (!component.render) {
+      component.render = template.render;
+      component.staticRenderFns = template.staticRenderFns;
+      component._compiled = true;
 
-        if (functional) component.functional = true;
-      }
-
-      component._scopeId = scope;
-
-      return component
+      if (functional) component.functional = true;
     }
-    /* style inject */
-    
-    /* style inject SSR */
-    
 
-    
-    var TreeNode = __vue_normalize__(
-      { render: __vue_render__, staticRenderFns: __vue_staticRenderFns__ },
-      __vue_inject_styles__,
-      __vue_script__,
-      __vue_scope_id__,
-      __vue_is_functional_template__,
-      __vue_module_identifier__,
-      undefined,
-      undefined
-    );
+    component._scopeId = scope;
+
+    return component
+  }
+  /* style inject */
+
+  /* style inject SSR */
+
+
+
+  var TreeNode = __vue_normalize__(
+    { render: __vue_render__, staticRenderFns: __vue_staticRenderFns__ },
+    __vue_inject_styles__,
+    __vue_script__,
+    __vue_scope_id__,
+    __vue_is_functional_template__,
+    __vue_module_identifier__,
+    undefined,
+    undefined
+  );
 
   var script$1 = {
     props: {
@@ -2183,59 +2184,59 @@
   };
 
   /* script */
-              const __vue_script__$1 = script$1;
-              
+  const __vue_script__$1 = script$1;
+
   /* template */
-  var __vue_render__$1 = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"he-tree tree"},[_c('TreeNode',{attrs:{"data":_vm.rootData,"store":_vm.store},scopedSlots:_vm._u([{key:"default",fn:function(props){return [_vm._t("default",null,{data:props.data,store:_vm.store,vm:props.vm})]}},{key:"node-inner-back",fn:function(props){return (_vm.customInnerBack)?[_vm._t("node-inner-back",null,{styleObj:props.styleObj,data:props.data,store:props.store,vm:props.vm})]:undefined}}])})],1)};
+  var __vue_render__$1 = function () { var _vm = this; var _h = _vm.$createElement; var _c = _vm._self._c || _h; return _c('div', { staticClass: "he-tree tree" }, [_c('TreeNode', { attrs: { "data": _vm.rootData, "store": _vm.store }, scopedSlots: _vm._u([{ key: "default", fn: function (props) { return [_vm._t("default", null, { data: props.data, store: _vm.store, vm: props.vm })] } }, { key: "node-inner-back", fn: function (props) { return (_vm.customInnerBack) ? [_vm._t("node-inner-back", null, { styleObj: props.styleObj, data: props.data, store: props.store, vm: props.vm })] : undefined } }]) })], 1) };
   var __vue_staticRenderFns__$1 = [];
 
-    /* style */
-    const __vue_inject_styles__$1 = undefined;
-    /* scoped */
-    const __vue_scope_id__$1 = undefined;
-    /* module identifier */
-    const __vue_module_identifier__$1 = undefined;
-    /* functional template */
-    const __vue_is_functional_template__$1 = false;
-    /* component normalizer */
-    function __vue_normalize__$1(
-      template, style, script,
-      scope, functional, moduleIdentifier,
-      createInjector, createInjectorSSR
-    ) {
-      const component = (typeof script === 'function' ? script.options : script) || {};
+  /* style */
+  const __vue_inject_styles__$1 = undefined;
+  /* scoped */
+  const __vue_scope_id__$1 = undefined;
+  /* module identifier */
+  const __vue_module_identifier__$1 = undefined;
+  /* functional template */
+  const __vue_is_functional_template__$1 = false;
+  /* component normalizer */
+  function __vue_normalize__$1(
+    template, style, script,
+    scope, functional, moduleIdentifier,
+    createInjector, createInjectorSSR
+  ) {
+    const component = (typeof script === 'function' ? script.options : script) || {};
 
-      // For security concerns, we use only base name in production mode.
-      component.__file = "Tree.vue";
+    // For security concerns, we use only base name in production mode.
+    component.__file = "Tree.vue";
 
-      if (!component.render) {
-        component.render = template.render;
-        component.staticRenderFns = template.staticRenderFns;
-        component._compiled = true;
+    if (!component.render) {
+      component.render = template.render;
+      component.staticRenderFns = template.staticRenderFns;
+      component._compiled = true;
 
-        if (functional) component.functional = true;
-      }
-
-      component._scopeId = scope;
-
-      return component
+      if (functional) component.functional = true;
     }
-    /* style inject */
-    
-    /* style inject SSR */
-    
 
-    
-    var Tree = __vue_normalize__$1(
-      { render: __vue_render__$1, staticRenderFns: __vue_staticRenderFns__$1 },
-      __vue_inject_styles__$1,
-      __vue_script__$1,
-      __vue_scope_id__$1,
-      __vue_is_functional_template__$1,
-      __vue_module_identifier__$1,
-      undefined,
-      undefined
-    );
+    component._scopeId = scope;
+
+    return component
+  }
+  /* style inject */
+
+  /* style inject SSR */
+
+
+
+  var Tree = __vue_normalize__$1(
+    { render: __vue_render__$1, staticRenderFns: __vue_staticRenderFns__$1 },
+    __vue_inject_styles__$1,
+    __vue_script__$1,
+    __vue_scope_id__$1,
+    __vue_is_functional_template__$1,
+    __vue_module_identifier__$1,
+    undefined,
+    undefined
+  );
 
   // true  -> String#at
   // false -> String#codePointAt
@@ -2255,7 +2256,7 @@
 
   var at = _stringAt(true);
 
-   // `AdvanceStringIndex` abstract operation
+  // `AdvanceStringIndex` abstract operation
   // https://tc39.github.io/ecma262/#sec-advancestringindex
   var _advanceStringIndex = function (S, index, unicode) {
     return index + (unicode ? at(S, index).length : 1);
@@ -2279,15 +2280,15 @@
     return it === undefined ? 'Undefined' : it === null ? 'Null'
       // @@toStringTag case
       : typeof (T = tryGet(O = Object(it), TAG$1)) == 'string' ? T
-      // builtinTag case
-      : ARG ? _cof$1(O)
-      // ES3 arguments fallback
-      : (B = _cof$1(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
+        // builtinTag case
+        : ARG ? _cof$1(O)
+          // ES3 arguments fallback
+          : (B = _cof$1(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
   };
 
   var builtinExec = RegExp.prototype.exec;
 
-   // `RegExpExec` abstract operation
+  // `RegExpExec` abstract operation
   // https://tc39.github.io/ecma262/#sec-regexpexec
   var _regexpExecAbstract = function (R, S) {
     var exec = R.exec;
@@ -2329,7 +2330,7 @@
 
   var UPDATES_LAST_INDEX_WRONG = (function () {
     var re1 = /a/,
-        re2 = /b*/g;
+      re2 = /b*/g;
     nativeExec.call(re1, 'a');
     nativeExec.call(re2, 'a');
     return re1[LAST_INDEX] !== 0 || re2[LAST_INDEX] !== 0;
@@ -2544,7 +2545,7 @@
       }
     ];
 
-      // https://tc39.github.io/ecma262/#sec-getsubstitution
+    // https://tc39.github.io/ecma262/#sec-getsubstitution
     function getSubstitution(matched, str, position, captures, namedCaptures, replacement) {
       var tailPos = position + matched.length;
       var m = captures.length;
@@ -2659,8 +2660,8 @@
 
       for (var i = store$$1.length - 1; i >= 0; i--) {
         var _store$i = store$$1[i],
-            handler2 = _store$i.handler,
-            wrapper = _store$i.wrapper;
+          handler2 = _store$i.handler,
+          wrapper = _store$i.wrapper;
 
         if (handler === handler2) {
           var _hp$offDOM, _hp$offDOM2;
@@ -2717,7 +2718,7 @@
   })
   ***/
 
-  function index$1 (dragHandlerEl) {
+  function index$1(dragHandlerEl) {
     var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
     if (opt.minTranslate == null) {
@@ -2757,8 +2758,8 @@
 
     function drag(e) {
       var _resolveDragedElAndIn = resolveDragedElAndInitialPosition(),
-          el = _resolveDragedElAndIn.el,
-          position = _resolveDragedElAndIn.position;
+        el = _resolveDragedElAndIn.el,
+        position = _resolveDragedElAndIn.position;
 
       store$$1.el = el;
       store$$1.initialPosition = Object.assign({}, position);
@@ -2850,7 +2851,7 @@
       if (store$$1.movedCount > 0) {
         store$$1.movedCount = 0;
         var _store = store$$1,
-            el = _store.el;
+          el = _store.el;
 
         if (opt.clone) {
           el.parentElement.removeChild(el);
@@ -2958,45 +2959,45 @@
   }
 
   var Cache =
-  /*#__PURE__*/
-  function () {
-    function Cache() {
-      _classCallCheck$1(this, Cache);
+    /*#__PURE__*/
+    function () {
+      function Cache() {
+        _classCallCheck$1(this, Cache);
 
-      _defineProperty(this, "store", {});
-    }
-
-    _createClass$1(Cache, [{
-      key: "has",
-      value: function has(name) {
-        return this.store.hasOwnProperty(name);
+        _defineProperty(this, "store", {});
       }
-    }, {
-      key: "remember",
-      value: function remember(name, getter) {
-        if (!this.has(name)) {
-          this.store[name] = {
-            value: getter()
-          };
+
+      _createClass$1(Cache, [{
+        key: "has",
+        value: function has(name) {
+          return this.store.hasOwnProperty(name);
         }
-
-        return this.store[name].value;
-      }
-    }, {
-      key: "forget",
-      value: function forget(name) {
-        if (name) {
-          if (this.has(name)) {
-            delete this.store[name];
+      }, {
+        key: "remember",
+        value: function remember(name, getter) {
+          if (!this.has(name)) {
+            this.store[name] = {
+              value: getter()
+            };
           }
-        } else {
-          this.store = {};
-        }
-      }
-    }]);
 
-    return Cache;
-  }();
+          return this.store[name].value;
+        }
+      }, {
+        key: "forget",
+        value: function forget(name) {
+          if (name) {
+            if (this.has(name)) {
+              delete this.store[name];
+            }
+          } else {
+            this.store = {};
+          }
+        }
+      }]);
+
+      return Cache;
+    }();
   function attachCache(obj, cache, toCache) {
     var _loop = function _loop(key) {
       defineProperty$1(obj, key, {
@@ -3088,17 +3089,17 @@
   };
 
   var _wks$1 = createCommonjsModule(function (module) {
-  var store = _shared('wks');
+    var store = _shared('wks');
 
-  var Symbol = _global.Symbol;
-  var USE_SYMBOL = typeof Symbol == 'function';
+    var Symbol = _global.Symbol;
+    var USE_SYMBOL = typeof Symbol == 'function';
 
-  var $exports = module.exports = function (name) {
-    return store[name] || (store[name] =
-      USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : _uid)('Symbol.' + name));
-  };
+    var $exports = module.exports = function (name) {
+      return store[name] || (store[name] =
+        USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : _uid)('Symbol.' + name));
+    };
 
-  $exports.store = store;
+    $exports.store = store;
   });
 
   var def$1 = _objectDp.f;
@@ -3202,7 +3203,7 @@
     this._t = _toIobject(iterated); // target
     this._i = 0;                   // next index
     this._k = kind;                // kind
-  // 22.1.5.2.1 %ArrayIteratorPrototype%.next()
+    // 22.1.5.2.1 %ArrayIteratorPrototype%.next()
   }, function () {
     var O = this._t;
     var kind = this._k;
@@ -3257,7 +3258,7 @@
   _iterDefine$1(String, 'String', function (iterated) {
     this._t = String(iterated); // target
     this._i = 0;                // next index
-  // 21.1.5.2.1 %StringIteratorPrototype%.next()
+    // 21.1.5.2.1 %StringIteratorPrototype%.next()
   }, function () {
     var O = this._t;
     var index = this._i;
@@ -3286,10 +3287,10 @@
     return it === undefined ? 'Undefined' : it === null ? 'Null'
       // @@toStringTag case
       : typeof (T = tryGet$1(O = Object(it), TAG$3)) == 'string' ? T
-      // builtinTag case
-      : ARG$1 ? _cof(O)
-      // ES3 arguments fallback
-      : (B = _cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
+        // builtinTag case
+        : ARG$1 ? _cof(O)
+          // ES3 arguments fallback
+          : (B = _cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
   };
 
   var ITERATOR$3 = _wks$1('iterator');
@@ -3366,7 +3367,7 @@
       var index = 0;
       var result = IS_MAP ? create($this, length) : IS_FILTER ? create($this, 0) : undefined;
       var val, res;
-      for (;length > index; index++) if (NO_HOLES || index in self) {
+      for (; length > index; index++) if (NO_HOLES || index in self) {
         val = self[index];
         res = f(val, index, O);
         if (TYPE) {
@@ -3505,7 +3506,7 @@
   // 对 drag placeholder进行的操作
 
   var targets = {
-    'nothing': function nothing(info) {},
+    'nothing': function nothing(info) { },
     'after': function after(info) {
       insertDplhAfterTo(info.dplh, info.targetNode, info);
     },
@@ -3860,8 +3861,8 @@
 
 
         var _this$offset = this.offset,
-            x = _this$offset.x,
-            y = _this$offset.y;
+          x = _this$offset.x,
+          y = _this$offset.y;
         var currentNode = currentTree.rootData;
 
         while (true) {
@@ -3974,7 +3975,7 @@
               // only visible when develop its self
               console.warn("failed to execute rule '".concat(ruleId, "'"), e);
             }
-          } catch (e2) {}
+          } catch (e2) { }
         }
 
         executedRuleCache[ruleId] = r;
@@ -4098,15 +4099,15 @@
         if (exec('targetNode at bottom') === false) {
           if (exec('targetNode is the second child of root') === false) {
             if (exec('targetNode is 1st child') === true) {
-              if (exec('targetNode is last child') === false) ; else if (exec('targetNode is last child') === true) {
+              if (exec('targetNode is last child') === false); else if (exec('targetNode is last child') === true) {
                 if (exec('on targetNode middle') === false) {
                   if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true) {
                     targets['after target parent'](info);
-                  } else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false) ;
+                  } else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false);
                 } else if (exec('on targetNode middle') === true) {
                   if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true) {
                     targets['after target parent'](info);
-                  } else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false) ;
+                  } else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false);
                 }
               }
             } else if (exec('targetNode is 1st child') === false) {
@@ -4117,7 +4118,7 @@
                   } else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false) {
                     if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true) {
                       targets['append prev'](info);
-                    } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false) ;
+                    } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false);
                   }
                 } else if (exec('on targetNode middle') === false) {
                   if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true) {
@@ -4125,21 +4126,21 @@
                   } else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false) {
                     if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true) {
                       targets['append prev'](info);
-                    } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false) ;
+                    } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false);
                   }
                 }
               } else if (exec('targetNode is last child') === false) {
                 if (exec('on targetNode middle') === true) {
-                  if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true) ; else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false) {
+                  if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true); else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false) {
                     if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true) {
                       targets['append prev'](info);
-                    } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false) ;
+                    } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false);
                   }
                 } else if (exec('on targetNode middle') === false) {
-                  if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true) ; else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false) {
+                  if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true); else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false) {
                     if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true) {
                       targets['append prev'](info);
-                    } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false) ;
+                    } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false);
                   }
                 }
               }
@@ -4148,11 +4149,11 @@
             if (exec('on targetNode middle') === true) {
               if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true) {
                 targets['append prev'](info);
-              } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false) ;
+              } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false);
             } else if (exec('on targetNode middle') === false) {
               if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true) {
                 targets['append prev'](info);
-              } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false) ;
+              } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false);
             }
           }
         } else if (exec('targetNode at bottom') === true) {
@@ -4160,9 +4161,9 @@
             if (exec('on targetNode middle') === false) {
               if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true) {
                 targets['after target parent'](info);
-              } else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false) ;
+              } else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false);
             } else if (exec('on targetNode middle') === true) {
-              if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false) ; else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true) {
+              if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false); else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true) {
                 targets['after target parent'](info);
               }
             }
@@ -4173,7 +4174,7 @@
               } else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false) {
                 if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true) {
                   targets['append prev'](info);
-                } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false) ;
+                } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false);
               }
             } else if (exec('on targetNode middle') === true) {
               if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true) {
@@ -4181,13 +4182,13 @@
               } else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false) {
                 if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true) {
                   targets['append prev'](info);
-                } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false) ;
+                } else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false);
               }
             }
           }
         }
       }
-    } else if (exec('currentTree existed') === false) ; // decision end =================================
+    } else if (exec('currentTree existed') === false); // decision end =================================
     //
 
   }
@@ -4199,7 +4200,7 @@
     return r;
   }
 
-  autoMoveDragPlaceHolder.dragStart = function dragStart() {};
+  autoMoveDragPlaceHolder.dragStart = function dragStart() { };
 
   autoMoveDragPlaceHolder.dragEnd = function dragEnd() {
     prevTree = null;
@@ -4295,7 +4296,7 @@
 
                 var siblings = _this.data.parent.children;
 
-                if (siblings === _this.startPosition.siblings && siblings.indexOf(_this.data) === _this.startPosition.index) ; else {
+                if (siblings === _this.startPosition.siblings && siblings.indexOf(_this.data) === _this.startPosition.index); else {
                   _this.store.$emit('change', _this.data, targetTree, oldTree);
 
                   oldTree && oldTree.$emit('change', _this.data, targetTree, oldTree);
@@ -4320,57 +4321,57 @@
   };
 
   /* script */
-              const __vue_script__$2 = script$2;
-              
+  const __vue_script__$2 = script$2;
+
   /* template */
 
-    /* style */
-    const __vue_inject_styles__$2 = undefined;
-    /* scoped */
-    const __vue_scope_id__$2 = undefined;
-    /* module identifier */
-    const __vue_module_identifier__$2 = undefined;
-    /* functional template */
-    const __vue_is_functional_template__$2 = undefined;
-    /* component normalizer */
-    function __vue_normalize__$2(
-      template, style, script,
-      scope, functional, moduleIdentifier,
-      createInjector, createInjectorSSR
-    ) {
-      const component = (typeof script === 'function' ? script.options : script) || {};
+  /* style */
+  const __vue_inject_styles__$2 = undefined;
+  /* scoped */
+  const __vue_scope_id__$2 = undefined;
+  /* module identifier */
+  const __vue_module_identifier__$2 = undefined;
+  /* functional template */
+  const __vue_is_functional_template__$2 = undefined;
+  /* component normalizer */
+  function __vue_normalize__$2(
+    template, style, script,
+    scope, functional, moduleIdentifier,
+    createInjector, createInjectorSSR
+  ) {
+    const component = (typeof script === 'function' ? script.options : script) || {};
 
-      // For security concerns, we use only base name in production mode.
-      component.__file = "DraggableTreeNode.vue";
+    // For security concerns, we use only base name in production mode.
+    component.__file = "DraggableTreeNode.vue";
 
-      if (!component.render) {
-        component.render = template.render;
-        component.staticRenderFns = template.staticRenderFns;
-        component._compiled = true;
+    if (!component.render) {
+      component.render = template.render;
+      component.staticRenderFns = template.staticRenderFns;
+      component._compiled = true;
 
-        if (functional) component.functional = true;
-      }
-
-      component._scopeId = scope;
-
-      return component
+      if (functional) component.functional = true;
     }
-    /* style inject */
-    
-    /* style inject SSR */
-    
 
-    
-    var DraggableTreeNode = __vue_normalize__$2(
-      {},
-      __vue_inject_styles__$2,
-      __vue_script__$2,
-      __vue_scope_id__$2,
-      __vue_is_functional_template__$2,
-      __vue_module_identifier__$2,
-      undefined,
-      undefined
-    );
+    component._scopeId = scope;
+
+    return component
+  }
+  /* style inject */
+
+  /* style inject SSR */
+
+
+
+  var DraggableTreeNode = __vue_normalize__$2(
+    {},
+    __vue_inject_styles__$2,
+    __vue_script__$2,
+    __vue_scope_id__$2,
+    __vue_is_functional_template__$2,
+    __vue_module_identifier__$2,
+    undefined,
+    undefined
+  );
 
   var trees = []; // for multiple trees
   // DragPlaceHolder, unique
@@ -4429,64 +4430,64 @@
     created: function created() {
       trees.push(this);
     },
-    mounted: function mounted() {},
+    mounted: function mounted() { },
     beforeDestroy: function beforeDestroy() {
       arrayRemove(trees, this);
     }
   };
 
   /* script */
-              const __vue_script__$3 = script$3;
-              
+  const __vue_script__$3 = script$3;
+
   /* template */
 
-    /* style */
-    const __vue_inject_styles__$3 = undefined;
-    /* scoped */
-    const __vue_scope_id__$3 = undefined;
-    /* module identifier */
-    const __vue_module_identifier__$3 = undefined;
-    /* functional template */
-    const __vue_is_functional_template__$3 = undefined;
-    /* component normalizer */
-    function __vue_normalize__$3(
-      template, style, script,
-      scope, functional, moduleIdentifier,
-      createInjector, createInjectorSSR
-    ) {
-      const component = (typeof script === 'function' ? script.options : script) || {};
+  /* style */
+  const __vue_inject_styles__$3 = undefined;
+  /* scoped */
+  const __vue_scope_id__$3 = undefined;
+  /* module identifier */
+  const __vue_module_identifier__$3 = undefined;
+  /* functional template */
+  const __vue_is_functional_template__$3 = undefined;
+  /* component normalizer */
+  function __vue_normalize__$3(
+    template, style, script,
+    scope, functional, moduleIdentifier,
+    createInjector, createInjectorSSR
+  ) {
+    const component = (typeof script === 'function' ? script.options : script) || {};
 
-      // For security concerns, we use only base name in production mode.
-      component.__file = "DraggableTree.vue";
+    // For security concerns, we use only base name in production mode.
+    component.__file = "DraggableTree.vue";
 
-      if (!component.render) {
-        component.render = template.render;
-        component.staticRenderFns = template.staticRenderFns;
-        component._compiled = true;
+    if (!component.render) {
+      component.render = template.render;
+      component.staticRenderFns = template.staticRenderFns;
+      component._compiled = true;
 
-        if (functional) component.functional = true;
-      }
-
-      component._scopeId = scope;
-
-      return component
+      if (functional) component.functional = true;
     }
-    /* style inject */
-    
-    /* style inject SSR */
-    
 
-    
-    var DraggableTree = __vue_normalize__$3(
-      {},
-      __vue_inject_styles__$3,
-      __vue_script__$3,
-      __vue_scope_id__$3,
-      __vue_is_functional_template__$3,
-      __vue_module_identifier__$3,
-      undefined,
-      undefined
-    );
+    component._scopeId = scope;
+
+    return component
+  }
+  /* style inject */
+
+  /* style inject SSR */
+
+
+
+  var DraggableTree = __vue_normalize__$3(
+    {},
+    __vue_inject_styles__$3,
+    __vue_script__$3,
+    __vue_scope_id__$3,
+    __vue_is_functional_template__$3,
+    __vue_module_identifier__$3,
+    undefined,
+    undefined
+  );
 
   exports.Tree = Tree;
   exports.TreeNode = TreeNode;
