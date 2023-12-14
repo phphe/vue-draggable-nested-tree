@@ -168,8 +168,10 @@ const rules = {
   'on targetNode middle': info => info.offset.y <= info.tiMiddleY,
   // 当前位置在另一节点inner左边
   'at left': info => info.offset.x < info.tiOffset.x,
+  'at right': info => info.offset.x > info.tiOffset.x,
   // 当前位置在另一节点innner indent位置右边
   'at indent right': info => info.offset.x > info.tiOffset.x + info.currentTree.indent,
+  'at indent left': info => info.offset.x < info.tiOffset.x + info.currentTree.indent,
 }
 
 // convert rule output to Boolean
@@ -216,7 +218,7 @@ export default function autoMoveDragPlaceHolder(draggableHelperInfo) {
     }, // right bottom point
     offsetToViewPort() {
       const r = this.nodeInnerEl.getBoundingClientRect()
-      r.x = r.left
+      r.x = this.store.dir === 'rtl' ? r.right : r.left
       r.y = r.top
       return r
     },
@@ -398,10 +400,10 @@ export default function autoMoveDragPlaceHolder(draggableHelperInfo) {
             targets['before'](info)
           }
           else if (exec('on targetNode middle') === false){
-            if (exec('at indent right') === true){
+            if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true){
               targets['append'](info)
             }
-            else if (exec('at indent right') === false){
+            else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false){
               targets['after'](info)
             }
           }
@@ -416,10 +418,10 @@ export default function autoMoveDragPlaceHolder(draggableHelperInfo) {
             if (exec('placeholder in currentTree') === true){
               if (exec('targetNode has children excluding placeholder') === false){
                 if (exec('on targetNode middle') === false){
-                  if (exec('at indent right') === false){
+                  if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false){
                     targets['after'](info)
                   }
-                  else if (exec('at indent right') === true){
+                  else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true){
                     targets['append'](info)
                   }
                 }
@@ -453,27 +455,27 @@ export default function autoMoveDragPlaceHolder(draggableHelperInfo) {
                   if (exec('targetNode is 1st child') === false){
                     if (exec('targetNode is last child') === false){
                       if (exec('on targetNode middle') === true){
-                        if (exec('at indent right') === true){
+                        if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true){
                           targets['append'](info)
                         }
-                        else if (exec('at indent right') === false){
+                        else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false){
                           targets['after'](info)
                         }
                       }
                       else if (exec('on targetNode middle') === false){
-                        if (exec('at indent right') === true){
+                        if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true){
                           targets['append'](info)
                         }
-                        else if (exec('at indent right') === false){
+                        else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false){
                           targets['after'](info)
                         }
                       }
                     }
                     else if (exec('targetNode is last child') === true){
-                      if (exec('at indent right') === true){
+                      if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true){
                         targets['append'](info)
                       }
-                      else if (exec('at indent right') === false){
+                      else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false){
                         targets['after'](info)
                       }
                     }
@@ -484,18 +486,18 @@ export default function autoMoveDragPlaceHolder(draggableHelperInfo) {
                     }
                     else if (exec('targetNode is last child') === false){
                       if (exec('on targetNode middle') === false){
-                        if (exec('at indent right') === false){
+                        if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false){
                           targets['after'](info)
                         }
-                        else if (exec('at indent right') === true){
+                        else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true){
                           targets['append'](info)
                         }
                       }
                       else if (exec('on targetNode middle') === true){
-                        if (exec('at indent right') === false){
+                        if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false){
                           targets['after'](info)
                         }
-                        else if (exec('at indent right') === true){
+                        else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true){
                           targets['append'](info)
                         }
                       }
@@ -507,10 +509,10 @@ export default function autoMoveDragPlaceHolder(draggableHelperInfo) {
             else if (exec('targetNode at bottom') === true){
               if (exec('placeholder in currentTree') === true){
                 if (exec('on targetNode middle') === false){
-                  if (exec('at indent right') === true){
+                  if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true){
                     targets['append'](info)
                   }
-                  else if (exec('at indent right') === false){
+                  else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false){
                     targets['after'](info)
                   }
                 }
@@ -538,18 +540,18 @@ export default function autoMoveDragPlaceHolder(draggableHelperInfo) {
             }
             else if (exec('targetNode is last child') === true){
               if (exec('on targetNode middle') === false){
-                if (exec('at left') === true){
+                if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true){
                   targets['after target parent'](info)
                 }
-                else if (exec('at left') === false){
+                else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false){
                   targets['nothing'](info)
                 }
               }
               else if (exec('on targetNode middle') === true){
-                if (exec('at left') === true){
+                if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true){
                   targets['after target parent'](info)
                 }
-                else if (exec('at left') === false){
+                else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false){
                   targets['nothing'](info)
                 }
               }
@@ -558,27 +560,27 @@ export default function autoMoveDragPlaceHolder(draggableHelperInfo) {
           else if (exec('targetNode is 1st child') === false){
             if (exec('targetNode is last child') === true){
               if (exec('on targetNode middle') === true){
-                if (exec('at left') === true){
+                if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true){
                   targets['after target parent'](info)
                 }
-                else if (exec('at left') === false){
-                  if (exec('at indent right') === true){
+                else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false){
+                  if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true){
                     targets['append prev'](info)
                   }
-                  else if (exec('at indent right') === false){
+                  else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false){
                     targets['nothing'](info)
                   }
                 }
               }
               else if (exec('on targetNode middle') === false){
-                if (exec('at left') === true){
+                if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true){
                   targets['after target parent'](info)
                 }
-                else if (exec('at left') === false){
-                  if (exec('at indent right') === true){
+                else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false){
+                  if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true){
                     targets['append prev'](info)
                   }
-                  else if (exec('at indent right') === false){
+                  else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false){
                     targets['nothing'](info)
                   }
                 }
@@ -586,27 +588,27 @@ export default function autoMoveDragPlaceHolder(draggableHelperInfo) {
             }
             else if (exec('targetNode is last child') === false){
               if (exec('on targetNode middle') === true){
-                if (exec('at left') === true){
+                if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true){
                   targets['nothing'](info)
                 }
-                else if (exec('at left') === false){
-                  if (exec('at indent right') === true){
+                else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false){
+                  if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true){
                     targets['append prev'](info)
                   }
-                  else if (exec('at indent right') === false){
+                  else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false){
                     targets['nothing'](info)
                   }
                 }
               }
               else if (exec('on targetNode middle') === false){
-                if (exec('at left') === true){
+                if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true){
                   targets['nothing'](info)
                 }
-                else if (exec('at left') === false){
-                  if (exec('at indent right') === true){
+                else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false){
+                  if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true){
                     targets['append prev'](info)
                   }
-                  else if (exec('at indent right') === false){
+                  else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false){
                     targets['nothing'](info)
                   }
                 }
@@ -616,18 +618,18 @@ export default function autoMoveDragPlaceHolder(draggableHelperInfo) {
         }
         else if (exec('targetNode is the second child of root') === true){
           if (exec('on targetNode middle') === true){
-            if (exec('at indent right') === true){
+            if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true){
               targets['append prev'](info)
             }
-            else if (exec('at indent right') === false){
+            else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false){
               targets['nothing'](info)
             }
           }
           else if (exec('on targetNode middle') === false){
-            if (exec('at indent right') === true){
+            if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true){
               targets['append prev'](info)
             }
-            else if (exec('at indent right') === false){
+            else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false){
               targets['nothing'](info)
             }
           }
@@ -636,45 +638,45 @@ export default function autoMoveDragPlaceHolder(draggableHelperInfo) {
       else if (exec('targetNode at bottom') === true){
         if (exec('targetNode is 1st child') === true){
           if (exec('on targetNode middle') === false){
-            if (exec('at left') === true){
+            if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true){
               targets['after target parent'](info)
             }
-            else if (exec('at left') === false){
+            else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false){
               targets['nothing'](info)
             }
           }
           else if (exec('on targetNode middle') === true){
-            if (exec('at left') === false){
+            if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false){
               targets['nothing'](info)
             }
-            else if (exec('at left') === true){
+            else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true){
               targets['after target parent'](info)
             }
           }
         }
         else if (exec('targetNode is 1st child') === false){
           if (exec('on targetNode middle') === false){
-            if (exec('at left') === true){
+            if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true){
               targets['after target parent'](info)
             }
-            else if (exec('at left') === false){
-              if (exec('at indent right') === true){
+            else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false){
+              if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true){
                 targets['append prev'](info)
               }
-              else if (exec('at indent right') === false){
+              else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false){
                 targets['nothing'](info)
               }
             }
           }
           else if (exec('on targetNode middle') === true){
-            if (exec('at left') === true){
+            if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === true){
               targets['after target parent'](info)
             }
-            else if (exec('at left') === false){
-              if (exec('at indent right') === true){
+            else if (exec(this.store.dir === 'rtl' ? 'at right' : 'at left') === false){
+              if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === true){
                 targets['append prev'](info)
               }
-              else if (exec('at indent right') === false){
+              else if (exec(this.store.dir === 'rtl' ? 'at indent left' : 'at indent right') === false){
                 targets['nothing'](info)
               }
             }

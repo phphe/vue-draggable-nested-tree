@@ -31,6 +31,7 @@ export default {
     ondragstart: {type: Function},
     ondragend: {type: Function},
     preventSelect: {default: true},
+    dir: {type: String, default: 'ltr'}
   },
   components: {
     TreeNode: DraggableTreeNode,

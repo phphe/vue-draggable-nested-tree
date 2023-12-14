@@ -5,6 +5,7 @@
   MaxLevelTree.mr
   CollapsingAnimation.mr
   Empty.mr
+  RTL.mr
 </template>
 
 <script>
@@ -12,9 +13,10 @@ import BaseTree from '@/examples/Base'
 import MaxLevelTree from '@/examples/MaxLevel'
 import CollapsingAnimation from '@/examples/CollapsingAnimation'
 import Empty from '@/examples/Empty'
+import RTL from "@/examples/RTL.vue";
 
 export default {
-  components: {BaseTree, MaxLevelTree, CollapsingAnimation, Empty},
+  components: {BaseTree, MaxLevelTree, CollapsingAnimation, Empty, RTL},
   // data() {
   //   return {}
   // },
